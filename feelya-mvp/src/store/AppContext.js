@@ -81,8 +81,9 @@ export const MOCK_GUIDES = [
 ];
 
 /* ═══════════════  MATCHING LOGIC  ═══════════════ */
-export function matchGuide(userTopics) {
-  const scored = MOCK_GUIDES.map((g) => {
+export function matchGuide(userTopics, skipId) {
+  const pool = skipId ? MOCK_GUIDES.filter((g) => g.id !== skipId) : MOCK_GUIDES;
+  const scored = pool.map((g) => {
     const overlap = g.topics.filter((t) => userTopics.includes(t)).length;
     return { guide: g, overlap, rating: g.rating };
   });

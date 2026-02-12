@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, SafetyBanner } from '../../components/UI';
+import { Button } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function SafetyDisclaimerScreen({ navigation }) {
@@ -20,11 +20,12 @@ export default function SafetyDisclaimerScreen({ navigation }) {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Before you begin</Text>
-
-        <SafetyBanner />
+        <Text style={styles.intro}>
+          A few things to know about Feelya before you get started.
+        </Text>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>What Feelya IS</Text>
+          <Text style={styles.sectionTitle}>What Feelya is</Text>
           <BulletItem text="Peer-to-peer guidance and coaching" />
           <BulletItem text="Real conversations with real people" />
           <BulletItem text="Supportive, non-judgmental space" />
@@ -32,48 +33,40 @@ export default function SafetyDisclaimerScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>What Feelya is NOT</Text>
-          <BulletItem text="Not therapy, counseling, or medical treatment" warn />
-          <BulletItem text="Not a substitute for professional mental health care" warn />
-          <BulletItem text="Not staffed by licensed clinicians" warn />
+          <Text style={styles.sectionTitle}>What Feelya is not</Text>
+          <BulletItem text="Not therapy, counseling, or medical treatment" muted />
+          <BulletItem text="Not a substitute for professional mental health care" muted />
+          <BulletItem text="Not staffed by licensed clinicians" muted />
         </View>
 
-        <View style={styles.crisisBox}>
-          <Text style={styles.crisisTitle}>In Crisis?</Text>
-          <Text style={styles.crisisText}>
-            If you or someone you know is in immediate danger, please contact emergency services or:
+        <View style={styles.infoBox}>
+          <Text style={styles.infoTitle}>Need immediate support?</Text>
+          <Text style={styles.infoText}>
+            If you or someone you know needs immediate help, please contact:
           </Text>
-          <Text style={styles.crisisNumber}>988 Suicide & Crisis Lifeline</Text>
-          <Text style={styles.crisisSubtext}>Call or text 988 — available 24/7</Text>
+          <Text style={styles.infoNumber}>988 Suicide & Crisis Lifeline</Text>
+          <Text style={styles.infoSubtext}>Call or text 988 — available 24/7</Text>
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button
-          title="I understand — continue"
-          onPress={acknowledge}
-        />
+        <Button title="I understand, continue" onPress={acknowledge} />
       </View>
     </View>
   );
 }
 
-function BulletItem({ text, warn }) {
+function BulletItem({ text, muted }) {
   return (
     <View style={styles.bullet}>
-      <Text style={[styles.bulletDot, warn && { color: colors.accent }]}>
-        {warn ? '\u2716' : '\u2714'}
-      </Text>
-      <Text style={styles.bulletText}>{text}</Text>
+      <Text style={styles.bulletDot}>{'\u2022'}</Text>
+      <Text style={[styles.bulletText, muted && { color: colors.textMuted }]}>{text}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
+  container: { flex: 1, backgroundColor: colors.bg },
   scroll: {
     padding: spacing.lg,
     paddingTop: 80,
@@ -81,16 +74,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: font.xxl,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: spacing.lg,
-  },
-  section: {
-    marginTop: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: font.lg,
     fontWeight: '700',
+    color: colors.text,
+    marginBottom: spacing.sm,
+  },
+  intro: {
+    fontSize: font.md,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
+    lineHeight: 22,
+  },
+  section: { marginBottom: spacing.lg },
+  sectionTitle: {
+    fontSize: font.md,
+    fontWeight: '600',
     color: colors.text,
     marginBottom: spacing.sm,
   },
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   bulletDot: {
-    color: colors.success,
+    color: colors.textMuted,
     fontSize: font.md,
     marginRight: spacing.sm,
     marginTop: 1,
@@ -111,36 +108,31 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 22,
   },
-  crisisBox: {
-    marginTop: spacing.xl,
-    backgroundColor: colors.accent + '12',
+  infoBox: {
+    backgroundColor: colors.surfaceLight,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.accent + '33',
+    marginTop: spacing.sm,
   },
-  crisisTitle: {
-    fontSize: font.lg,
-    fontWeight: '700',
-    color: colors.accent,
+  infoTitle: {
+    fontSize: font.md,
+    fontWeight: '600',
+    color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
-  crisisText: {
+  infoText: {
     fontSize: font.sm,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     lineHeight: 20,
     marginBottom: spacing.sm,
   },
-  crisisNumber: {
-    fontSize: font.xl,
-    fontWeight: '800',
+  infoNumber: {
+    fontSize: font.lg,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 2,
   },
-  crisisSubtext: {
-    fontSize: font.sm,
-    color: colors.textSecondary,
-  },
+  infoSubtext: { fontSize: font.sm, color: colors.textMuted },
   footer: {
     position: 'absolute',
     bottom: 0,

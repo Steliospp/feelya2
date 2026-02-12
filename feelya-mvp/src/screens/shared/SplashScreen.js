@@ -16,7 +16,9 @@ export default function SplashScreen({ navigation }) {
         <Text style={styles.logo}>feelya</Text>
         <Text style={styles.tagline}>human guidance, on demand</Text>
       </View>
-      <Text style={styles.disclaimer}>Peer support — not therapy or medical advice</Text>
+      <Text style={styles.disclaimer}>
+        Peer support & coaching — not therapy or medical advice
+      </Text>
     </View>
   );
 }
@@ -32,15 +34,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    fontSize: 52,
-    fontWeight: '800',
-    color: colors.primary,
-    letterSpacing: -2,
+    fontSize: 48,
+    fontWeight: '700',
+    color: colors.text,
+    letterSpacing: -1.5,
     textAlign: 'center',
   },
   tagline: {
     fontSize: font.md,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     marginTop: spacing.sm,
     textAlign: 'center',
   },

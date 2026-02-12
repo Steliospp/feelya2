@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { colors, spacing, radius, font } from '../../theme';
 import { Avatar } from '../../components/UI';
-import { useApp, getGuideReply, QUICK_REPLIES } from '../../store/AppContext';
+import { useApp, getGuideReply } from '../../store/AppContext';
 
 export default function SessionChatScreen({ navigation }) {
   const { state, dispatch } = useApp();
@@ -21,7 +21,6 @@ export default function SessionChatScreen({ navigation }) {
   const flatListRef = useRef(null);
   const timerRef = useRef(null);
 
-  // Duration timer
   useEffect(() => {
     timerRef.current = setInterval(() => {
       dispatch({
@@ -32,7 +31,6 @@ export default function SessionChatScreen({ navigation }) {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  // Auto-send first guide message
   useEffect(() => {
     const t = setTimeout(() => {
       dispatch({
@@ -50,7 +48,6 @@ export default function SessionChatScreen({ navigation }) {
     dispatch({ type: 'ADD_MESSAGE', payload: userMsg });
     setInput('');
 
-    // Simulate guide reply after a short delay
     setTimeout(() => {
       const reply = {
         id: 'm_g_' + Date.now(),
@@ -81,13 +78,8 @@ export default function SessionChatScreen({ navigation }) {
     const isUser = item.from === 'user';
     return (
       <View style={[styles.msgRow, isUser && styles.msgRowUser]}>
-        {!isUser && <Avatar name={session.guideName} size={32} />}
-        <View
-          style={[
-            styles.bubble,
-            isUser ? styles.bubbleUser : styles.bubbleGuide,
-          ]}
-        >
+        {!isUser && <Avatar name={session.guideName} size={30} />}
+        <View style={[styles.bubble, isUser ? styles.bubbleUser : styles.bubbleGuide]}>
           <Text style={[styles.bubbleText, isUser && { color: colors.white }]}>
             {item.text}
           </Text>
@@ -102,9 +94,8 @@ export default function SessionChatScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
-      {/* Header */}
       <View style={styles.header}>
-        <Avatar name={session?.guideName} size={36} />
+        <Avatar name={session?.guideName} size={34} />
         <View style={styles.headerInfo}>
           <Text style={styles.headerName}>{session?.guideName}</Text>
           <Text style={styles.headerTimer}>
@@ -116,7 +107,6 @@ export default function SessionChatScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Messages */}
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -125,29 +115,10 @@ export default function SessionChatScreen({ navigation }) {
         contentContainerStyle={styles.messageList}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Session started — your guide will message shortly...</Text>
+          <Text style={styles.emptyText}>Your guide will message shortly...</Text>
         }
       />
 
-      {/* Quick replies */}
-      <FlatList
-        horizontal
-        data={QUICK_REPLIES}
-        keyExtractor={(item) => item}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.quickRow}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.quickChip}
-            onPress={() => sendMessage(item)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.quickText}>{item}</Text>
-          </TouchableOpacity>
-        )}
-      />
-
-      {/* Input */}
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -159,7 +130,7 @@ export default function SessionChatScreen({ navigation }) {
           onSubmitEditing={() => sendMessage(input)}
         />
         <TouchableOpacity
-          style={[styles.sendBtn, !input.trim() && { opacity: 0.4 }]}
+          style={[styles.sendBtn, !input.trim() && { opacity: 0.3 }]}
           onPress={() => sendMessage(input)}
           disabled={!input.trim()}
         >
@@ -183,15 +154,15 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   headerInfo: { flex: 1, marginLeft: spacing.sm },
-  headerName: { color: colors.text, fontWeight: '700', fontSize: font.md },
-  headerTimer: { color: colors.textSecondary, fontSize: font.xs, marginTop: 2 },
+  headerName: { color: colors.text, fontWeight: '600', fontSize: font.md },
+  headerTimer: { color: colors.textMuted, fontSize: font.xs, marginTop: 2 },
   endBtn: {
-    backgroundColor: colors.danger,
+    backgroundColor: colors.surfaceLight,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  endBtnText: { color: colors.white, fontWeight: '700', fontSize: font.sm },
+  endBtnText: { color: colors.text, fontWeight: '600', fontSize: font.sm },
   messageList: {
     padding: spacing.md,
     paddingBottom: spacing.sm,
@@ -210,12 +181,15 @@ const styles = StyleSheet.create({
   msgRowUser: { justifyContent: 'flex-end' },
   bubble: {
     maxWidth: '75%',
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + 2,
     borderRadius: radius.lg,
     marginLeft: spacing.sm,
   },
   bubbleGuide: {
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderBottomLeftRadius: 4,
   },
   bubbleUser: {
@@ -224,20 +198,6 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   bubbleText: { color: colors.text, fontSize: font.md, lineHeight: 22 },
-  quickRow: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
-  },
-  quickChip: {
-    backgroundColor: colors.surfaceLight,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    marginRight: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  quickText: { color: colors.textSecondary, fontSize: font.xs },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -265,5 +225,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendText: { color: colors.white, fontSize: 18, fontWeight: '700' },
+  sendText: { color: colors.white, fontSize: 18, fontWeight: '600' },
 });

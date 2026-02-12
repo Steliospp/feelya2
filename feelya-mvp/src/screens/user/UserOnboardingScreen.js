@@ -21,7 +21,7 @@ export default function UserOnboardingScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>What should we{'\n'}call you?</Text>
+        <Text style={styles.title}>What should we call you?</Text>
         <Text style={styles.subtitle}>
           Just a first name or nickname — nothing formal.
         </Text>
@@ -38,11 +38,7 @@ export default function UserOnboardingScreen({ navigation }) {
         />
       </View>
       <View style={styles.footer}>
-        <Button
-          title="Continue"
-          onPress={proceed}
-          disabled={!name.trim()}
-        />
+        <Button title="Continue" onPress={proceed} disabled={!name.trim()} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -53,13 +49,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: spacing.lg,
-    paddingTop: 100,
+    paddingTop: 120,
   },
   title: {
-    fontSize: font.hero,
-    fontWeight: '800',
+    fontSize: font.xxl,
+    fontWeight: '700',
     color: colors.text,
-    lineHeight: 42,
     marginBottom: spacing.sm,
   },
   subtitle: {

@@ -9,7 +9,7 @@ import { colors } from './src/theme';
 
 const navTheme = {
   ...DefaultTheme,
-  dark: true,
+  dark: false,
   colors: {
     ...DefaultTheme.colors,
     primary: colors.primary,
@@ -27,7 +27,7 @@ export default function App() {
       <AppProvider>
         <NavigationContainer theme={navTheme}>
           <AppNavigator />
-          <StatusBar style="light" />
+          <StatusBar style="dark" />
         </NavigationContainer>
       </AppProvider>
     </SafeAreaProvider>

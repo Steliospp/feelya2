@@ -44,10 +44,10 @@ export default function GuideSessionScreen({ navigation }) {
 
   const modeLabel =
     session?.mode === 'chat'
-      ? '\u{1F4AC} Chat'
+      ? 'Chat'
       : session?.mode === 'voice'
-      ? '\u{1F3A4} Voice'
-      : '\u{1F4F9} Video';
+      ? 'Voice'
+      : 'Video';
 
   const currentEarnings = +(
     Math.max(1, Math.ceil((session?.durationSec || 0) / 60)) * state.guideRate

@@ -29,18 +29,18 @@ export default function RateGuideScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.center}>
         <Avatar name={session.guideName} size={72} />
-        <Text style={styles.title}>How was your{'\n'}session with {session.guideName}?</Text>
+        <Text style={styles.title}>How was your session{'\n'}with {session.guideName}?</Text>
 
-        <StarRating rating={rating} setRating={setRating} size={40} />
+        <StarRating rating={rating} setRating={setRating} size={36} />
 
         <Text style={styles.hint}>
           {rating === 0
             ? 'Tap a star to rate'
             : rating <= 2
-            ? "We're sorry it wasn't great"
+            ? "We'll work on that"
             : rating <= 4
-            ? 'Thanks for the feedback!'
-            : 'Awesome!'}
+            ? 'Thanks for the feedback'
+            : 'Great to hear'}
         </Text>
 
         <TextInput
@@ -56,7 +56,7 @@ export default function RateGuideScreen({ navigation }) {
 
       <View style={styles.footer}>
         <Button
-          title={rating > 0 ? 'Submit Rating' : 'Skip'}
+          title={rating > 0 ? 'Submit' : 'Skip'}
           variant={rating > 0 ? 'primary' : 'outline'}
           onPress={submit}
         />
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: font.xl,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
     textAlign: 'center',
     marginVertical: spacing.lg,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: font.sm,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     marginTop: spacing.md,
     marginBottom: spacing.lg,
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, font } from '../../theme';
 import { Button, SafetyBanner, Card, Divider } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 import { CommonActions } from '@react-navigation/native';
@@ -30,8 +30,6 @@ export default function SettingsScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scroll}>
-      <Text style={styles.title}>Settings</Text>
-
       <Card style={{ marginBottom: spacing.md }}>
         <Text style={styles.label}>Role</Text>
         <Text style={styles.value}>
@@ -52,10 +50,10 @@ export default function SettingsScreen({ navigation }) {
       </Card>
 
       <Card style={{ marginBottom: spacing.md }}>
-        <Text style={styles.sectionHead}>Safety & Disclaimers</Text>
+        <Text style={styles.sectionHead}>Safety & Info</Text>
         <SafetyBanner />
         <View style={styles.crisisBox}>
-          <Text style={styles.crisisLabel}>Crisis Resources</Text>
+          <Text style={styles.crisisLabel}>Resources</Text>
           <Text style={styles.crisisText}>
             988 Suicide & Crisis Lifeline{'\n'}
             Call or text 988 — 24/7{'\n\n'}
@@ -78,7 +76,7 @@ export default function SettingsScreen({ navigation }) {
 
       <Button
         title="Reset App"
-        variant="danger"
+        variant="outline"
         onPress={resetApp}
         style={{ marginBottom: spacing.xxl }}
       />
@@ -88,31 +86,25 @@ export default function SettingsScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  scroll: { padding: spacing.lg, paddingTop: spacing.xl },
-  title: {
-    fontSize: font.xxl,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: spacing.lg,
-  },
+  scroll: { padding: spacing.lg, paddingTop: spacing.lg },
   label: { fontSize: font.sm, color: colors.textMuted, marginBottom: 4 },
   value: { fontSize: font.lg, fontWeight: '600', color: colors.text },
   sectionHead: {
-    fontSize: font.lg,
-    fontWeight: '700',
+    fontSize: font.md,
+    fontWeight: '600',
     color: colors.text,
     marginBottom: spacing.md,
   },
   crisisBox: { marginTop: spacing.md },
   crisisLabel: {
-    fontSize: font.md,
-    fontWeight: '700',
-    color: colors.accent,
+    fontSize: font.sm,
+    fontWeight: '600',
+    color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
   crisisText: {
     fontSize: font.sm,
-    color: colors.textSecondary,
+    color: colors.textMuted,
     lineHeight: 22,
   },
   aboutText: {

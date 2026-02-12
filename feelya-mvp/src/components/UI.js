@@ -1,4 +1,3 @@
-// Reusable design-system primitives
 import React from 'react';
 import {
   TouchableOpacity,
@@ -13,8 +12,8 @@ import { colors, spacing, radius, font } from '../theme';
 export function Button({
   title,
   onPress,
-  variant = 'primary', // primary | outline | ghost | danger
-  size = 'lg',         // sm | md | lg
+  variant = 'primary', // primary | outline | ghost | danger | soft
+  size = 'lg',
   disabled = false,
   loading = false,
   style,
@@ -22,6 +21,7 @@ export function Button({
   const isPrimary = variant === 'primary';
   const isOutline = variant === 'outline';
   const isDanger = variant === 'danger';
+  const isSoft = variant === 'soft';
   const sizeH = size === 'sm' ? 40 : size === 'md' ? 48 : 56;
   const fontSize = size === 'sm' ? font.sm : size === 'md' ? font.md : font.lg;
 
@@ -29,7 +29,7 @@ export function Button({
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      activeOpacity={0.75}
       style={[
         styles.btn,
         { height: sizeH, borderRadius: radius.md },
@@ -37,24 +37,26 @@ export function Button({
         isOutline && {
           backgroundColor: 'transparent',
           borderWidth: 1.5,
-          borderColor: colors.primary,
+          borderColor: colors.border,
         },
         isDanger && { backgroundColor: colors.danger },
+        isSoft && { backgroundColor: colors.surfaceLight },
         variant === 'ghost' && { backgroundColor: 'transparent' },
-        (disabled || loading) && { opacity: 0.45 },
+        (disabled || loading) && { opacity: 0.35 },
         style,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={colors.white} />
+        <ActivityIndicator color={isPrimary ? colors.white : colors.text} />
       ) : (
         <Text
           style={[
             styles.btnText,
             { fontSize },
             isPrimary && { color: colors.white },
-            isOutline && { color: colors.primary },
+            isOutline && { color: colors.text },
             isDanger && { color: colors.white },
+            isSoft && { color: colors.text },
             variant === 'ghost' && { color: colors.textSecondary },
           ]}
         >
@@ -66,17 +68,14 @@ export function Button({
 }
 
 /* ───── Pill / Chip ───── */
-export function Pill({ label, selected, onPress, color }) {
+export function Pill({ label, selected, onPress }) {
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
       style={[
         styles.pill,
-        selected && {
-          backgroundColor: color || colors.primary,
-          borderColor: color || colors.primary,
-        },
+        selected && styles.pillSelected,
       ]}
     >
       <Text
@@ -102,10 +101,11 @@ export function SectionTitle({ children, style }) {
 }
 
 /* ───── Badge ───── */
-export function Badge({ label, color = colors.primary }) {
+export function Badge({ label, color }) {
+  const c = color || colors.textSecondary;
   return (
-    <View style={[styles.badge, { backgroundColor: color + '22', borderColor: color }]}>
-      <Text style={[styles.badgeText, { color }]}>{label}</Text>
+    <View style={[styles.badge, { backgroundColor: c + '12', borderColor: c + '30' }]}>
+      <Text style={[styles.badgeText, { color: c }]}>{label}</Text>
     </View>
   );
 }
@@ -130,7 +130,7 @@ export function Avatar({ name, size = 48 }) {
         },
       ]}
     >
-      <Text style={[styles.avatarText, { fontSize: size * 0.38 }]}>
+      <Text style={[styles.avatarText, { fontSize: size * 0.36 }]}>
         {initials}
       </Text>
     </View>
@@ -150,8 +150,8 @@ export function StarRating({ rating, setRating, size = 32 }) {
           <Text
             style={{
               fontSize: size,
-              color: n <= rating ? colors.warning : colors.textMuted,
-              marginHorizontal: 4,
+              color: n <= rating ? colors.warning : colors.border,
+              marginHorizontal: 3,
             }}
           >
             {n <= rating ? '\u2605' : '\u2606'}
@@ -167,18 +167,18 @@ export function Divider() {
   return <View style={styles.divider} />;
 }
 
-/* ───── SafetyBanner ───── */
+/* ───── SafetyBanner (subtle, not alarming) ───── */
 export function SafetyBanner({ compact }) {
   return (
-    <View style={[styles.safetyBanner, compact && { paddingVertical: spacing.sm }]}>
+    <View style={[styles.safetyBanner, compact && { paddingVertical: spacing.sm + 2 }]}>
       <Text style={styles.safetyTitle}>
-        {compact ? 'Not therapy or medical advice' : 'This is NOT therapy or medical advice'}
+        Peer guidance — not therapy or medical advice
       </Text>
       {!compact && (
         <Text style={styles.safetyBody}>
           Feelya connects you with peer guides for coaching and support.
-          {'\n'}If you are in crisis, call or text{' '}
-          <Text style={{ color: colors.accent, fontWeight: '700' }}>988</Text>{' '}
+          {'\n'}If you need immediate help, call or text{' '}
+          <Text style={{ fontWeight: '600' }}>988</Text>{' '}
           (Suicide & Crisis Lifeline).
         </Text>
       )}
@@ -193,22 +193,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   btnText: {
-    fontWeight: '700',
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   pill: {
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm + 2,
     borderRadius: radius.full,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.white,
     marginRight: spacing.sm,
     marginBottom: spacing.sm,
   },
+  pillSelected: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
   pillText: {
-    color: colors.textSecondary,
+    color: colors.text,
     fontSize: font.sm,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   card: {
     backgroundColor: colors.surface,
@@ -220,29 +225,29 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: colors.text,
     fontSize: font.lg,
-    fontWeight: '700',
+    fontWeight: '600',
     marginBottom: spacing.md,
   },
   badge: {
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm + 4,
+    paddingVertical: spacing.xs + 1,
     borderRadius: radius.full,
     borderWidth: 1,
-    marginRight: spacing.xs,
-    marginBottom: spacing.xs,
+    marginRight: spacing.xs + 2,
+    marginBottom: spacing.xs + 2,
   },
   badgeText: {
     fontSize: font.xs,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   avatar: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.surfaceLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    color: colors.white,
-    fontWeight: '700',
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
   starRow: {
     flexDirection: 'row',
@@ -255,21 +260,20 @@ const styles = StyleSheet.create({
     marginVertical: spacing.md,
   },
   safetyBanner: {
-    backgroundColor: colors.accent + '15',
-    borderLeftWidth: 3,
-    borderLeftColor: colors.accent,
+    backgroundColor: colors.surfaceLight,
     padding: spacing.md,
-    borderRadius: radius.sm,
+    borderRadius: radius.md,
   },
   safetyTitle: {
-    color: colors.accent,
-    fontWeight: '700',
+    color: colors.textSecondary,
+    fontWeight: '500',
     fontSize: font.sm,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   safetyBody: {
-    color: colors.textSecondary,
-    fontSize: font.sm,
-    lineHeight: 20,
+    color: colors.textMuted,
+    fontSize: font.xs,
+    lineHeight: 18,
+    marginTop: 4,
   },
 });

@@ -1,23 +1,22 @@
-// Feelya Design System — dark, modern, Gen-Z aesthetic
+// Feelya Design System — light, warm, open lifestyle aesthetic
 export const colors = {
-  bg: '#0D0D0D',
-  surface: '#1A1A1A',
-  surfaceLight: '#242424',
-  border: '#2E2E2E',
-  primary: '#7C5CFC',       // vibrant purple
-  primaryLight: '#9B82FC',
-  accent: '#FF6B6B',        // warm coral for alerts / warnings
-  success: '#34D399',
-  warning: '#FBBF24',
-  text: '#F5F5F5',
-  textSecondary: '#A0A0A0',
-  textMuted: '#666666',
+  bg: '#FAF8F5',               // warm off-white
+  surface: '#FFFFFF',           // clean white cards
+  surfaceLight: '#F3F0EB',     // light warm gray for inputs
+  border: '#E8E3DB',           // warm border
+  primary: '#1A1A1A',          // near-black (Uber-style CTAs)
+  primaryLight: '#3D3D3D',
+  accent: '#B8956A',           // muted warm gold
+  success: '#6B9E82',          // muted sage
+  warning: '#CDA658',          // warm gold
+  text: '#1A1A1A',             // near-black text
+  textSecondary: '#7A756E',    // warm medium gray
+  textMuted: '#ADA89F',        // warm light gray
   white: '#FFFFFF',
-  black: '#000000',
-  overlay: 'rgba(0,0,0,0.7)',
-  cardGradientStart: '#1E1E2E',
-  cardGradientEnd: '#1A1A1A',
-  danger: '#EF4444',
+  black: '#1A1A1A',
+  overlay: 'rgba(0,0,0,0.35)',
+  info: '#8A9AA5',             // muted steel for disclaimers
+  danger: '#C07A6E',           // muted terracotta
 };
 
 export const spacing = {
@@ -30,10 +29,10 @@ export const spacing = {
 };
 
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  sm: 10,
+  md: 14,
+  lg: 20,
+  xl: 28,
   full: 999,
 };
 

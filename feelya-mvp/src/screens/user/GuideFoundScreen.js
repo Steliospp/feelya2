@@ -26,18 +26,19 @@ export default function GuideFoundScreen({ navigation }) {
     }
   };
 
+  const findSomeoneElse = () => {
+    dispatch({ type: 'SET_MATCHED_GUIDE', payload: null });
+    navigation.replace('Matching', { skipGuideId: guide.id });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.found}>Guide found</Text>
-        </View>
-
         <View style={styles.profileSection}>
           <Avatar name={guide.name} size={72} />
           <Text style={styles.name}>{guide.name}</Text>
           <View style={styles.ratingRow}>
-            <StarRating rating={Math.round(guide.rating)} size={18} />
+            <StarRating rating={Math.round(guide.rating)} size={16} />
             <Text style={styles.ratingText}>
               {guide.rating} ({guide.sessions} sessions)
             </Text>
@@ -59,7 +60,7 @@ export default function GuideFoundScreen({ navigation }) {
         </Card>
 
         <Card style={{ marginBottom: spacing.md }}>
-          <Text style={styles.label}>Matching Topics</Text>
+          <Text style={styles.label}>Topics</Text>
           <View style={styles.topicRow}>
             {topicOverlap.map((t) => (
               <View key={t} style={styles.topicChip}>
@@ -79,10 +80,10 @@ export default function GuideFoundScreen({ navigation }) {
               <Text style={styles.label}>Mode</Text>
               <Text style={styles.price}>
                 {state.sessionMode === 'chat'
-                  ? '\u{1F4AC} Chat'
+                  ? 'Chat'
                   : state.sessionMode === 'voice'
-                  ? '\u{1F3A4} Voice'
-                  : '\u{1F4F9} Video'}
+                  ? 'Voice'
+                  : 'Video'}
               </Text>
             </View>
             <View>
@@ -94,12 +95,12 @@ export default function GuideFoundScreen({ navigation }) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button title="Start Session" onPress={startSession} />
+        <Button title="Start session" onPress={startSession} />
         <Button
-          title="Choose someone else"
-          variant="ghost"
+          title="Find someone else"
+          variant="outline"
           size="md"
-          onPress={() => navigation.goBack()}
+          onPress={findSomeoneElse}
           style={{ marginTop: spacing.sm }}
         />
       </View>
@@ -114,18 +115,10 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
     paddingBottom: 160,
   },
-  header: { alignItems: 'center', marginBottom: spacing.lg },
-  found: {
-    fontSize: font.sm,
-    fontWeight: '700',
-    color: colors.success,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
   profileSection: { alignItems: 'center', marginBottom: spacing.lg },
   name: {
     fontSize: font.xl,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.text,
     marginTop: spacing.md,
   },
@@ -155,19 +148,19 @@ const styles = StyleSheet.create({
   badgeRow: { flexDirection: 'row', flexWrap: 'wrap' },
   topicRow: { flexDirection: 'row', flexWrap: 'wrap' },
   topicChip: {
-    backgroundColor: colors.primary + '22',
+    backgroundColor: colors.surfaceLight,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginRight: 6,
     marginBottom: 6,
   },
-  topicText: { color: colors.primaryLight, fontSize: font.xs, fontWeight: '600' },
+  topicText: { color: colors.textSecondary, fontSize: font.xs, fontWeight: '500' },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  price: { fontSize: font.lg, fontWeight: '700', color: colors.text },
+  price: { fontSize: font.lg, fontWeight: '600', color: colors.text },
   footer: {
     position: 'absolute',
     bottom: 0,

@@ -13,9 +13,9 @@ export default function RoleSelectScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>How do you{'\n'}want to use feelya?</Text>
+      <Text style={styles.title}>Welcome to feelya</Text>
       <Text style={styles.subtitle}>
-        Peer guidance & coaching — not therapy.
+        On-demand peer guidance and coaching.
       </Text>
 
       <TouchableOpacity
@@ -23,7 +23,6 @@ export default function RoleSelectScreen({ navigation }) {
         activeOpacity={0.8}
         onPress={() => select('user')}
       >
-        <Text style={styles.cardEmoji}>{'\u{1F64B}'}</Text>
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>I need guidance</Text>
           <Text style={styles.cardDesc}>
@@ -38,7 +37,6 @@ export default function RoleSelectScreen({ navigation }) {
         activeOpacity={0.8}
         onPress={() => select('guide')}
       >
-        <Text style={styles.cardEmoji}>{'\u{1F9ED}'}</Text>
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>I want to guide</Text>
           <Text style={styles.cardDesc}>
@@ -56,14 +54,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg,
     paddingHorizontal: spacing.lg,
-    paddingTop: 100,
+    paddingTop: 140,
   },
   title: {
-    fontSize: font.hero,
-    fontWeight: '800',
+    fontSize: font.xxl,
+    fontWeight: '700',
     color: colors.text,
-    lineHeight: 42,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
   },
   subtitle: {
     fontSize: font.md,
@@ -80,27 +77,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  cardEmoji: {
-    fontSize: 32,
-    marginRight: spacing.md,
-  },
   cardContent: {
     flex: 1,
   },
   cardTitle: {
     fontSize: font.lg,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
     marginBottom: 4,
   },
   cardDesc: {
     fontSize: font.sm,
     color: colors.textSecondary,
-    lineHeight: 18,
+    lineHeight: 19,
   },
   arrow: {
-    fontSize: 28,
+    fontSize: 24,
     color: colors.textMuted,
-    marginLeft: spacing.sm,
+    marginLeft: spacing.md,
   },
 });

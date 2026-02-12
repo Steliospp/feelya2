@@ -91,8 +91,7 @@ const styles = StyleSheet.create({
   totalCard: {
     alignItems: 'center',
     marginBottom: spacing.md,
-    backgroundColor: colors.success + '12',
-    borderColor: colors.success + '33',
+    backgroundColor: colors.surfaceLight,
   },
   totalLabel: { fontSize: font.sm, color: colors.textMuted },
   totalValue: {

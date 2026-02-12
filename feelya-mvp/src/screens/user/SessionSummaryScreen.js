@@ -6,7 +6,7 @@ import { useApp } from '../../store/AppContext';
 
 export default function SessionSummaryScreen({ navigation }) {
   const { state } = useApp();
-  const session = state.userSessions[0]; // most recent session
+  const session = state.userSessions[0];
   const [paid, setPaid] = useState(false);
 
   if (!session) {
@@ -17,8 +17,8 @@ export default function SessionSummaryScreen({ navigation }) {
   const handlePay = () => {
     setPaid(true);
     Alert.alert(
-      'Payment Successful',
-      `$${session.total.toFixed(2)} charged (simulated). Thanks for using Feelya!`,
+      'Payment successful',
+      `$${session.total.toFixed(2)} charged (simulated).`,
       [{ text: 'OK' }]
     );
   };
@@ -29,7 +29,7 @@ export default function SessionSummaryScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Session{'\n'}Summary</Text>
+      <Text style={styles.title}>Session summary</Text>
 
       <Card style={{ marginBottom: spacing.md }}>
         <View style={styles.row}>
@@ -45,19 +45,13 @@ export default function SessionSummaryScreen({ navigation }) {
         <View style={styles.row}>
           <Text style={styles.label}>Mode</Text>
           <Text style={styles.value}>
-            {session.mode === 'chat'
-              ? '\u{1F4AC} Chat'
-              : session.mode === 'voice'
-              ? '\u{1F3A4} Voice'
-              : '\u{1F4F9} Video'}
+            {session.mode === 'chat' ? 'Chat' : session.mode === 'voice' ? 'Voice' : 'Video'}
           </Text>
         </View>
         <Divider />
         <View style={styles.row}>
           <Text style={styles.label}>Duration</Text>
-          <Text style={styles.value}>
-            {session.minutes} min{session.minutes > 1 ? 's' : ''}
-          </Text>
+          <Text style={styles.value}>{session.minutes} min{session.minutes > 1 ? 's' : ''}</Text>
         </View>
         <Divider />
         <View style={styles.row}>
@@ -90,10 +84,9 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xxl + spacing.lg,
   },
   title: {
-    fontSize: font.hero,
-    fontWeight: '800',
+    fontSize: font.xxl,
+    fontWeight: '700',
     color: colors.text,
-    lineHeight: 42,
     marginBottom: spacing.lg,
   },
   row: {
@@ -105,7 +98,7 @@ const styles = StyleSheet.create({
   value: {
     fontSize: font.md,
     color: colors.text,
-    fontWeight: '600',
+    fontWeight: '500',
     flex: 1,
     textAlign: 'right',
   },
@@ -114,16 +107,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.md,
-    backgroundColor: colors.primary + '15',
-    borderColor: colors.primary + '33',
+    backgroundColor: colors.surfaceLight,
+    borderColor: colors.border,
   },
-  totalLabel: { fontSize: font.lg, fontWeight: '700', color: colors.text },
-  totalValue: { fontSize: font.xxl, fontWeight: '800', color: colors.primary },
+  totalLabel: { fontSize: font.lg, fontWeight: '600', color: colors.text },
+  totalValue: { fontSize: font.xxl, fontWeight: '700', color: colors.text },
   footer: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: 0, left: 0, right: 0,
     padding: spacing.lg,
     paddingBottom: spacing.xxl,
   },

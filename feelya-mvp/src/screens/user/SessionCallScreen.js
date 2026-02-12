@@ -36,39 +36,35 @@ export default function SessionCallScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Fake video / voice background */}
       <View style={styles.callArea}>
         {isVideo && (
           <View style={styles.videoBg}>
             <Text style={styles.videoPlaceholder}>Video feed (simulated)</Text>
           </View>
         )}
-        <Avatar name={session?.guideName} size={100} />
+        <Avatar name={session?.guideName} size={96} />
         <Text style={styles.name}>{session?.guideName}</Text>
         <Text style={styles.mode}>
-          {isVideo ? '\u{1F4F9} Video Call' : '\u{1F3A4} Voice Call'}
+          {isVideo ? 'Video Call' : 'Voice Call'}
         </Text>
         <Text style={styles.timer}>{formatTime(session?.durationSec || 0)}</Text>
         <Text style={styles.rate}>${session?.ratePerMin?.toFixed(2)}/min</Text>
       </View>
 
-      {/* Controls */}
       <View style={styles.controls}>
         <TouchableOpacity
           style={[styles.controlBtn, muted && styles.controlBtnActive]}
           onPress={() => setMuted((m) => !m)}
         >
-          <Text style={styles.controlIcon}>{muted ? '\u{1F507}' : '\u{1F50A}'}</Text>
           <Text style={styles.controlLabel}>{muted ? 'Unmute' : 'Mute'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.endCallBtn} onPress={endSession}>
-          <Text style={styles.endCallIcon}>{'\u{1F4DE}'}</Text>
+          <Text style={styles.endCallLabel}>End</Text>
         </TouchableOpacity>
 
         {isVideo && (
           <TouchableOpacity style={styles.controlBtn}>
-            <Text style={styles.controlIcon}>{'\u{1F4F7}'}</Text>
             <Text style={styles.controlLabel}>Flip</Text>
           </TouchableOpacity>
         )}
@@ -78,7 +74,7 @@ export default function SessionCallScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0A14' },
+  container: { flex: 1, backgroundColor: colors.bg },
   callArea: {
     flex: 1,
     alignItems: 'center',
@@ -86,21 +82,15 @@ const styles = StyleSheet.create({
   },
   videoBg: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#12121F',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: colors.surfaceLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  videoPlaceholder: {
-    color: colors.textMuted,
-    fontSize: font.xs,
-  },
+  videoPlaceholder: { color: colors.textMuted, fontSize: font.xs },
   name: {
     fontSize: font.xl,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.text,
     marginTop: spacing.lg,
   },
@@ -118,7 +108,7 @@ const styles = StyleSheet.create({
   },
   rate: {
     fontSize: font.sm,
-    color: colors.primary,
+    color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   controls: {
@@ -137,11 +127,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceLight,
     marginHorizontal: spacing.lg,
   },
-  controlBtnActive: {
-    backgroundColor: colors.primary + '33',
-  },
-  controlIcon: { fontSize: 24 },
-  controlLabel: { fontSize: font.xs, color: colors.textSecondary, marginTop: 4 },
+  controlBtnActive: { backgroundColor: colors.border },
+  controlLabel: { fontSize: font.sm, color: colors.text, fontWeight: '500' },
   endCallBtn: {
     width: 72,
     height: 72,
@@ -150,5 +137,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  endCallIcon: { fontSize: 32 },
+  endCallLabel: { fontSize: font.lg, color: colors.white, fontWeight: '600' },
 });

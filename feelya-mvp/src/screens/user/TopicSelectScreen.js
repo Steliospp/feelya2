@@ -5,7 +5,7 @@ import { Button, Pill, SafetyBanner } from '../../components/UI';
 import { useApp, ALL_TOPICS, SENSITIVE_TOPICS } from '../../store/AppContext';
 
 export default function TopicSelectScreen({ navigation }) {
-  const { state, dispatch } = useApp();
+  const { dispatch } = useApp();
   const [selected, setSelected] = useState([]);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
 
@@ -34,9 +34,9 @@ export default function TopicSelectScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>What's on{'\n'}your mind?</Text>
+        <Text style={styles.title}>What's on your mind?</Text>
         <Text style={styles.subtitle}>
-          Pick one or more topics — we'll match you with the right guide.
+          Pick one or more topics and we'll match you with the right guide.
         </Text>
 
         <View style={styles.pills}>
@@ -46,7 +46,6 @@ export default function TopicSelectScreen({ navigation }) {
               label={t}
               selected={selected.includes(t)}
               onPress={() => toggle(t)}
-              color={SENSITIVE_TOPICS.includes(t) ? colors.accent : undefined}
             />
           ))}
         </View>
@@ -57,13 +56,12 @@ export default function TopicSelectScreen({ navigation }) {
           {selected.length} topic{selected.length !== 1 ? 's' : ''} selected
         </Text>
         <Button
-          title="Find a Guide"
+          title="Find a guide"
           onPress={proceed}
           disabled={selected.length === 0}
         />
       </View>
 
-      {/* Sensitive-topic safety modal */}
       <Modal visible={showSafetyModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
@@ -72,14 +70,11 @@ export default function TopicSelectScreen({ navigation }) {
             <Text style={styles.modalBody}>
               The topics you selected touch on sensitive areas. Feelya guides
               offer peer support and coaching — they are not licensed therapists
-              or counselors.{'\n\n'}If you're in crisis, please reach out to the{' '}
-              <Text style={{ fontWeight: '700', color: colors.accent }}>
-                988 Suicide & Crisis Lifeline
-              </Text>{' '}
-              (call or text 988).
+              or counselors.{'\n\n'}If you need immediate help, call or text{' '}
+              <Text style={{ fontWeight: '600' }}>988</Text> (Suicide & Crisis Lifeline).
             </Text>
             <Button
-              title="I understand — continue"
+              title="I understand, continue"
               onPress={confirmAndContinue}
               style={{ marginBottom: spacing.sm }}
             />
@@ -99,14 +94,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   scroll: {
     padding: spacing.lg,
-    paddingTop: spacing.xxl,
+    paddingTop: spacing.lg,
     paddingBottom: 160,
   },
   title: {
-    fontSize: font.hero,
-    fontWeight: '800',
+    fontSize: font.xxl,
+    fontWeight: '700',
     color: colors.text,
-    lineHeight: 42,
     marginBottom: spacing.sm,
   },
   subtitle: {
@@ -114,10 +108,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.xl,
   },
-  pills: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
+  pills: { flexDirection: 'row', flexWrap: 'wrap' },
   footer: {
     position: 'absolute',
     bottom: 0,
@@ -145,12 +136,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   modalTitle: {
     fontSize: font.xl,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
     marginBottom: spacing.md,
   },

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, font } from '../../theme';
+import { colors, spacing, font, radius } from '../../theme';
 import { Button } from '../../components/UI';
 import { useApp, matchGuide } from '../../store/AppContext';
 
-export default function MatchingScreen({ navigation }) {
+export default function MatchingScreen({ navigation, route }) {
   const { state, dispatch } = useApp();
   const [eta, setEta] = useState(null);
   const [dots, setDots] = useState('');
+  const skipId = route.params?.skipGuideId ?? null;
 
   // Dot animation
   useEffect(() => {
@@ -17,10 +18,9 @@ export default function MatchingScreen({ navigation }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Matching logic
   useEffect(() => {
     dispatch({ type: 'SET_MATCHING', payload: true });
-    const guide = matchGuide(state.selectedTopics);
+    const guide = matchGuide(state.selectedTopics, skipId);
     if (!guide) {
       navigation.goBack();
       return;
@@ -32,7 +32,6 @@ export default function MatchingScreen({ navigation }) {
       dispatch({ type: 'SET_MATCHED_GUIDE', payload: guide });
       navigation.replace('GuideFound');
     }, delay);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -45,12 +44,12 @@ export default function MatchingScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.center}>
         <View style={styles.orb}>
-          <Text style={styles.orbIcon}>{'\u{1F50D}'}</Text>
+          <View style={styles.orbInner} />
         </View>
 
         <Text style={styles.title}>Finding your guide{dots}</Text>
         <Text style={styles.subtitle}>
-          Matching based on your topics & preferences
+          Matching based on your topics
         </Text>
 
         {eta != null && (
@@ -85,18 +84,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   orb: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.primary + '22',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.surfaceLight,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xl,
   },
-  orbIcon: { fontSize: 40 },
+  orbInner: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
+  },
   title: {
     fontSize: font.xl,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
     marginBottom: spacing.sm,
   },
@@ -108,7 +112,7 @@ const styles = StyleSheet.create({
   },
   etaBox: {
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     alignItems: 'center',
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   etaLabel: { fontSize: font.xs, color: colors.textMuted },
-  etaValue: { fontSize: font.xl, fontWeight: '800', color: colors.primary, marginTop: 4 },
+  etaValue: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginTop: 4 },
   topicRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -128,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    margin: 4,
+    margin: 3,
   },
   topicText: { fontSize: font.xs, color: colors.textSecondary },
   footer: {

@@ -133,21 +133,18 @@ export default function GuideHomeScreen({ navigation }) {
       {/* Bottom bar */}
       <View style={styles.bottomBar}>
         <TouchableOpacity style={[styles.tabBtn, styles.tabActive]}>
-          <Text style={styles.tabIcon}>{'\u{1F3E0}'}</Text>
-          <Text style={[styles.tabLabel, { color: colors.primary }]}>Home</Text>
+          <Text style={[styles.tabLabel, { color: colors.primary, fontWeight: '700' }]}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.tabBtn}
           onPress={() => navigation.navigate('GuideEarnings')}
         >
-          <Text style={styles.tabIcon}>{'\u{1F4B0}'}</Text>
           <Text style={styles.tabLabel}>Earnings</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.tabBtn}
           onPress={() => navigation.navigate('Settings')}
         >
-          <Text style={styles.tabIcon}>{'\u2699\uFE0F'}</Text>
           <Text style={styles.tabLabel}>Settings</Text>
         </TouchableOpacity>
       </View>
@@ -227,6 +224,5 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   tabActive: {},
-  tabIcon: { fontSize: 20 },
-  tabLabel: { fontSize: font.xs, color: colors.textMuted, marginTop: 4 },
+  tabLabel: { fontSize: font.sm, color: colors.textMuted, fontWeight: '600' },
 });

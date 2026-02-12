@@ -29,10 +29,10 @@ export default function IncomingRequestScreen({ navigation }) {
 
   const modeLabel =
     req.mode === 'chat'
-      ? '\u{1F4AC} Chat'
+      ? 'Chat'
       : req.mode === 'voice'
-      ? '\u{1F3A4} Voice'
-      : '\u{1F4F9} Video';
+      ? 'Voice'
+      : 'Video';
 
   return (
     <View style={styles.container}>
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
   },
   cardWrap: { marginBottom: spacing.lg },
   card: {
-    borderColor: colors.primary + '66',
-    borderWidth: 2,
+    borderColor: colors.border,
+    borderWidth: 1,
   },
   incoming: {
     fontSize: font.sm,
@@ -114,14 +114,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   topicChip: {
-    backgroundColor: colors.primary + '22',
+    backgroundColor: colors.surfaceLight,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginRight: 6,
     marginBottom: 6,
   },
-  topicText: { color: colors.primaryLight, fontSize: font.xs, fontWeight: '600' },
+  topicText: { color: colors.textSecondary, fontSize: font.xs, fontWeight: '600' },
   earningsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

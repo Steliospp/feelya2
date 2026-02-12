@@ -16,7 +16,7 @@ export default function SessionModeSelectScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>How do you want{'\n'}to connect?</Text>
+      <Text style={styles.title}>How do you want to connect?</Text>
       <Text style={styles.subtitle}>Choose a session format.</Text>
 
       {SESSION_MODES.map((m) => (
@@ -49,13 +49,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl,
+    paddingTop: spacing.lg,
   },
   title: {
     fontSize: font.xxl,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.text,
-    lineHeight: 34,
     marginBottom: spacing.sm,
   },
   subtitle: {
@@ -75,11 +74,11 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderColor: colors.primary,
-    backgroundColor: colors.primary + '10',
+    backgroundColor: colors.surfaceLight,
   },
-  icon: { fontSize: 28, marginRight: spacing.md },
+  icon: { fontSize: 24, marginRight: spacing.md },
   cardContent: { flex: 1 },
-  cardTitle: { fontSize: font.lg, fontWeight: '700', color: colors.text },
+  cardTitle: { fontSize: font.lg, fontWeight: '600', color: colors.text },
   cardDesc: { fontSize: font.sm, color: colors.textSecondary, marginTop: 2 },
   radio: {
     width: 22,
