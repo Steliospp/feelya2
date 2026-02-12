@@ -1,38 +1,21 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { colors, spacing, font } from '../../theme';
 
 export default function SplashScreen({ navigation }) {
-  const scale = React.useRef(new Animated.Value(0.5)).current;
-  const opacity = React.useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 700,
-        easing: Easing.out(Easing.back(1.5)),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
     const timer = setTimeout(() => {
       navigation.replace('RoleSelect');
     }, 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Animated.View style={{ transform: [{ scale }], opacity }}>
+      <View style={styles.logoBlock}>
         <Text style={styles.logo}>feelya</Text>
         <Text style={styles.tagline}>human guidance, on demand</Text>
-      </Animated.View>
+      </View>
       <Text style={styles.disclaimer}>Peer support — not therapy or medical advice</Text>
     </View>
   );
@@ -44,6 +27,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logoBlock: {
+    alignItems: 'center',
   },
   logo: {
     fontSize: 52,

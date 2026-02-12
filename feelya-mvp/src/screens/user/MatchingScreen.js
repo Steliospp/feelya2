@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { colors, spacing, font } from '../../theme';
 import { Button } from '../../components/UI';
 import { useApp, matchGuide } from '../../store/AppContext';
@@ -8,44 +8,6 @@ export default function MatchingScreen({ navigation }) {
   const { state, dispatch } = useApp();
   const [eta, setEta] = useState(null);
   const [dots, setDots] = useState('');
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
-
-  // Pulse animation
-  useEffect(() => {
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.3,
-          duration: 800,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 800,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    pulse.start();
-    return () => pulse.stop();
-  }, []);
-
-  // Rotate animation
-  useEffect(() => {
-    const spin = Animated.loop(
-      Animated.timing(rotateAnim, {
-        toValue: 1,
-        duration: 3000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    );
-    spin.start();
-    return () => spin.stop();
-  }, []);
 
   // Dot animation
   useEffect(() => {
@@ -60,13 +22,11 @@ export default function MatchingScreen({ navigation }) {
     dispatch({ type: 'SET_MATCHING', payload: true });
     const guide = matchGuide(state.selectedTopics);
     if (!guide) {
-      // No match found — go back
       navigation.goBack();
       return;
     }
     setEta(guide.responseTime);
 
-    // Simulate wait time (use 3 sec minimum for effect)
     const delay = Math.max(3000, guide.responseTime * 1000);
     const timer = setTimeout(() => {
       dispatch({ type: 'SET_MATCHED_GUIDE', payload: guide });
@@ -81,24 +41,12 @@ export default function MatchingScreen({ navigation }) {
     navigation.goBack();
   };
 
-  const spin = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
-
   return (
     <View style={styles.container}>
       <View style={styles.center}>
-        <Animated.View
-          style={[
-            styles.orb,
-            { transform: [{ scale: pulseAnim }] },
-          ]}
-        >
-          <Animated.Text style={[styles.orbIcon, { transform: [{ rotate: spin }] }]}>
-            {'\u{1F50D}'}
-          </Animated.Text>
-        </Animated.View>
+        <View style={styles.orb}>
+          <Text style={styles.orbIcon}>{'\u{1F50D}'}</Text>
+        </View>
 
         <Text style={styles.title}>Finding your guide{dots}</Text>
         <Text style={styles.subtitle}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,6 @@ import {
   ScrollView,
   Switch,
   TouchableOpacity,
-  Animated,
-  Easing,
 } from 'react-native';
 import { colors, spacing, radius, font } from '../../theme';
 import { Card, Avatar, Badge, Divider, SafetyBanner } from '../../components/UI';
@@ -18,22 +16,7 @@ const MOCK_MODES = ['chat', 'voice', 'video'];
 
 export default function GuideHomeScreen({ navigation }) {
   const { state, dispatch } = useApp();
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const requestTimeoutRef = useRef(null);
-
-  // Pulse when online
-  useEffect(() => {
-    if (state.guideOnline) {
-      const pulse = Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.15, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 1, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        ])
-      );
-      pulse.start();
-      return () => pulse.stop();
-    }
-  }, [state.guideOnline]);
+  const requestTimeoutRef = React.useRef(null);
 
   // Simulate incoming request when online
   useEffect(() => {
@@ -102,14 +85,9 @@ export default function GuideHomeScreen({ navigation }) {
             />
           </View>
           {state.guideOnline && (
-            <Animated.View
-              style={[
-                styles.onlinePulse,
-                { transform: [{ scale: pulseAnim }] },
-              ]}
-            >
+            <View style={styles.onlinePulse}>
               <View style={styles.onlineDot} />
-            </Animated.View>
+            </View>
           )}
         </Card>
 

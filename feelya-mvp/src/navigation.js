@@ -37,7 +37,7 @@ const screenOptions = {
   headerTitleStyle: { fontWeight: '700', fontSize: font.md },
   headerShadowVisible: false,
   contentStyle: { backgroundColor: colors.bg },
-  animation: 'slide_from_right',
+  animation: 'none', // avoids Fabric boolean/string crash with Animated
 };
 
 export default function AppNavigator() {
@@ -139,7 +139,6 @@ export default function AppNavigator() {
         options={{
           headerShown: false,
           gestureEnabled: false,
-          animation: 'slide_from_bottom',
         }}
       />
       <Stack.Screen
