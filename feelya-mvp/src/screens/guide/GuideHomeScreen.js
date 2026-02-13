@@ -5,10 +5,18 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
-  TouchableOpacity,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Card, Avatar, Badge, Divider, SafetyBanner } from '../../components/UI';
+import {
+  Screen,
+  Card,
+  Avatar,
+  Badge,
+  Divider,
+  SafetyBanner,
+  SecondaryButton,
+} from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 const MOCK_USER_NAMES = ['Alex', 'Casey', 'Jamie', 'Riley', 'Taylor'];
@@ -59,7 +67,7 @@ export default function GuideHomeScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <Screen>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.greeting}>Hey, {state.guideName || 'Guide'}</Text>
         <Text style={styles.tagline}>Ready to help someone today?</Text>
@@ -67,7 +75,7 @@ export default function GuideHomeScreen({ navigation }) {
         {/* Online toggle */}
         <Card style={styles.onlineCard}>
           <View style={styles.onlineRow}>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.onlineLabel}>
                 {state.guideOnline ? 'You\u2019re Online' : 'You\u2019re Offline'}
               </Text>
@@ -94,14 +102,17 @@ export default function GuideHomeScreen({ navigation }) {
         {/* Stats */}
         <View style={styles.statsRow}>
           <Card style={styles.statCard}>
+            <Ionicons name="wallet-outline" size={18} color={colors.accent} style={{ marginBottom: spacing.xs }} />
             <Text style={styles.statValue}>${state.guideEarnings.toFixed(2)}</Text>
             <Text style={styles.statLabel}>Earnings</Text>
           </Card>
           <Card style={styles.statCard}>
+            <Ionicons name="chatbubbles-outline" size={18} color={colors.accent} style={{ marginBottom: spacing.xs }} />
             <Text style={styles.statValue}>{state.guideSessions.length}</Text>
             <Text style={styles.statLabel}>Sessions</Text>
           </Card>
           <Card style={styles.statCard}>
+            <Ionicons name="pricetag-outline" size={18} color={colors.accent} style={{ marginBottom: spacing.xs }} />
             <Text style={styles.statValue}>${state.guideRate.toFixed(2)}</Text>
             <Text style={styles.statLabel}>Rate/min</Text>
           </Card>
@@ -124,49 +135,47 @@ export default function GuideHomeScreen({ navigation }) {
               <Badge key={t} label={t} />
             ))}
           </View>
-          {state.guideVerified && <Badge label="Verified" color={colors.success} />}
+          {state.guideVerified && <Badge label="Verified" color={colors.success} icon="shield-checkmark" />}
         </Card>
 
         <SafetyBanner compact />
       </ScrollView>
 
-      {/* Bottom bar */}
+      {/* Bottom bar with SecondaryButtons */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={[styles.tabBtn, styles.tabActive]}>
-          <Text style={[styles.tabLabel, { color: colors.primary, fontWeight: '700' }]}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabBtn}
+        <SecondaryButton
+          title="Earnings"
+          icon="wallet-outline"
+          variant="soft"
           onPress={() => navigation.navigate('GuideEarnings')}
-        >
-          <Text style={styles.tabLabel}>Earnings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabBtn}
+          style={styles.bottomBtn}
+        />
+        <SecondaryButton
+          title="Settings"
+          icon="settings-outline"
+          variant="ghost"
           onPress={() => navigation.navigate('Settings')}
-        >
-          <Text style={styles.tabLabel}>Settings</Text>
-        </TouchableOpacity>
+          style={styles.bottomBtn}
+        />
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
   scroll: {
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingTop: spacing.xxl + spacing.md,
     paddingBottom: 100,
   },
   greeting: {
-    fontSize: font.xxl,
+    fontSize: font.title,
     fontWeight: '800',
     color: colors.text,
     marginBottom: 4,
   },
   tagline: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.textSecondary,
     marginBottom: spacing.lg,
   },
@@ -180,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   onlineLabel: { fontSize: font.lg, fontWeight: '700', color: colors.text },
-  onlineDesc: { fontSize: font.sm, color: colors.textSecondary, marginTop: 4 },
+  onlineDesc: { fontSize: font.caption, color: colors.textSecondary, marginTop: 4 },
   onlinePulse: {
     position: 'absolute',
     top: 10,
@@ -208,21 +217,20 @@ const styles = StyleSheet.create({
   profileRow: { flexDirection: 'row', alignItems: 'center' },
   profileInfo: { flex: 1, marginLeft: spacing.md },
   profileName: { fontSize: font.lg, fontWeight: '700', color: colors.text },
-  profileBio: { fontSize: font.sm, color: colors.textSecondary, marginTop: 4 },
+  profileBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 4 },
   topicRow: { flexDirection: 'row', flexWrap: 'wrap' },
   bottomBar: {
     flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.lg,
     paddingTop: spacing.sm,
+    gap: spacing.sm,
+    backgroundColor: colors.bg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
-  tabBtn: {
+  bottomBtn: {
     flex: 1,
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
+    height: 48,
   },
-  tabActive: {},
-  tabLabel: { fontSize: font.sm, color: colors.textMuted, fontWeight: '600' },
 });

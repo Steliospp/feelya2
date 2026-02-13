@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { colors, spacing, radius, font } from '../../theme';
-import { Button } from '../../components/UI';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { Screen, Input, PrimaryButton } from '../../components/UI';
+import { colors, spacing, font } from '../../theme';
 import { useApp } from '../../store/AppContext';
 
 export default function UserOnboardingScreen({ navigation }) {
@@ -12,68 +12,71 @@ export default function UserOnboardingScreen({ navigation }) {
     if (!name.trim()) return;
     dispatch({ type: 'SET_USER_NAME', payload: name.trim() });
     dispatch({ type: 'SET_ONBOARDED' });
-    navigation.replace('UserHome');
+    navigation.replace('UserTabs');
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.content}>
-        <Text style={styles.title}>What should we call you?</Text>
-        <Text style={styles.subtitle}>
-          Just a first name or nickname — nothing formal.
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your name"
-          placeholderTextColor={colors.textMuted}
-          value={name}
-          onChangeText={setName}
-          autoFocus
-          maxLength={30}
-          returnKeyType="done"
-          onSubmitEditing={proceed}
-        />
-      </View>
-      <View style={styles.footer}>
-        <Button title="Continue" onPress={proceed} disabled={!name.trim()} />
-      </View>
-    </KeyboardAvoidingView>
+    <Screen>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.content}>
+          <Text style={styles.title}>What should we call you?</Text>
+          <Text style={styles.subtitle}>
+            Just a first name or nickname -- nothing formal.
+          </Text>
+          <Input
+            placeholder="Your name"
+            value={name}
+            onChangeText={setName}
+            autoFocus
+            maxLength={30}
+            returnKeyType="done"
+            onSubmitEditing={proceed}
+            icon="person-outline"
+            inputStyle={styles.inputText}
+          />
+        </View>
+
+        <View style={styles.footer}>
+          <PrimaryButton
+            title="Continue"
+            onPress={proceed}
+            disabled={!name.trim()}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
+  flex: {
+    flex: 1,
+  },
   content: {
     flex: 1,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
     paddingTop: 120,
   },
   title: {
-    fontSize: font.xxl,
+    fontSize: font.title,
     fontWeight: '700',
     color: colors.text,
     marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.textSecondary,
     marginBottom: spacing.xl,
   },
-  input: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.lg,
+  inputText: {
     fontSize: font.xl,
-    color: colors.text,
     fontWeight: '600',
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   footer: {
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
   },
 });

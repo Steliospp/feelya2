@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, Avatar, Card } from '../../components/UI';
+import { Screen, Avatar, Card, SecondaryButton, Pill } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function GuideSessionScreen({ navigation }) {
@@ -42,6 +43,13 @@ export default function GuideSessionScreen({ navigation }) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const modeIcon =
+    session?.mode === 'chat'
+      ? 'chatbubble-outline'
+      : session?.mode === 'voice'
+      ? 'mic-outline'
+      : 'videocam-outline';
+
   const modeLabel =
     session?.mode === 'chat'
       ? 'Chat'
@@ -54,7 +62,7 @@ export default function GuideSessionScreen({ navigation }) {
   ).toFixed(2);
 
   return (
-    <View style={styles.container}>
+    <Screen>
       <View style={styles.center}>
         <View style={styles.liveIndicator}>
           <View style={styles.liveDot} />
@@ -63,16 +71,21 @@ export default function GuideSessionScreen({ navigation }) {
 
         <Avatar name={session?.userName} size={80} />
         <Text style={styles.name}>{session?.userName}</Text>
-        <Text style={styles.mode}>{modeLabel}</Text>
+        <View style={styles.modeRow}>
+          <Ionicons name={modeIcon} size={14} color={colors.textSecondary} style={{ marginRight: spacing.xs }} />
+          <Text style={styles.mode}>{modeLabel}</Text>
+        </View>
 
         <Text style={styles.timer}>{formatTime(session?.durationSec)}</Text>
 
         <View style={styles.statsRow}>
           <Card style={styles.statCard}>
+            <Ionicons name="pricetag-outline" size={16} color={colors.textMuted} style={{ marginBottom: spacing.xs }} />
             <Text style={styles.statLabel}>Rate</Text>
             <Text style={styles.statValue}>${state.guideRate.toFixed(2)}/min</Text>
           </Card>
           <Card style={styles.statCard}>
+            <Ionicons name="wallet-outline" size={16} color={colors.success} style={{ marginBottom: spacing.xs }} />
             <Text style={styles.statLabel}>Earned</Text>
             <Text style={[styles.statValue, { color: colors.success }]}>
               ${currentEarnings}
@@ -82,27 +95,29 @@ export default function GuideSessionScreen({ navigation }) {
 
         <View style={styles.topicRow}>
           {(session?.topics || []).map((t) => (
-            <View key={t} style={styles.topicChip}>
-              <Text style={styles.topicText}>{t}</Text>
-            </View>
+            <Pill key={t} label={t} selected={false} />
           ))}
         </View>
       </View>
 
       <View style={styles.footer}>
-        <Button title="End Session" variant="danger" onPress={endSession} />
+        <SecondaryButton
+          title="End Session"
+          variant="danger"
+          onPress={endSession}
+          icon="stop-circle-outline"
+        />
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
   },
   liveIndicator: {
     flexDirection: 'row',
@@ -128,10 +143,14 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginTop: spacing.md,
   },
-  mode: {
-    fontSize: font.sm,
-    color: colors.textSecondary,
+  modeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 4,
+  },
+  mode: {
+    fontSize: font.caption,
+    color: colors.textSecondary,
   },
   timer: {
     fontSize: 56,
@@ -157,16 +176,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-  topicChip: {
-    backgroundColor: colors.surfaceLight,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    margin: 4,
-  },
-  topicText: { fontSize: font.xs, color: colors.textSecondary },
   footer: {
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
   },
 });

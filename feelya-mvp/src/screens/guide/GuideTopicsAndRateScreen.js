@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, Pill } from '../../components/UI';
+import { Screen, Header, Pill, PrimaryButton } from '../../components/UI';
 import { useApp, ALL_TOPICS } from '../../store/AppContext';
 
 export default function GuideTopicsAndRateScreen({ navigation }) {
@@ -24,7 +25,9 @@ export default function GuideTopicsAndRateScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <Screen>
+      <Header title="Your Expertise" onBack={() => navigation.goBack()} />
+
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Your expertise</Text>
         <Text style={styles.subtitle}>
@@ -47,6 +50,7 @@ export default function GuideTopicsAndRateScreen({ navigation }) {
           Rate per minute ($)
         </Text>
         <View style={styles.rateRow}>
+          <Ionicons name="cash-outline" size={20} color={colors.textMuted} style={{ marginRight: spacing.sm }} />
           <Text style={styles.dollar}>$</Text>
           <TextInput
             style={styles.rateInput}
@@ -58,7 +62,7 @@ export default function GuideTopicsAndRateScreen({ navigation }) {
           <Text style={styles.perMin}>/min</Text>
         </View>
         <Text style={styles.hint}>
-          Average guide rate: $0.79–$1.29/min
+          Average guide rate: $0.79--$1.29/min
         </Text>
       </ScrollView>
 
@@ -66,36 +70,36 @@ export default function GuideTopicsAndRateScreen({ navigation }) {
         <Text style={styles.count}>
           {topics.length} topic{topics.length !== 1 ? 's' : ''} selected
         </Text>
-        <Button
+        <PrimaryButton
           title="Continue"
           onPress={proceed}
           disabled={topics.length === 0}
+          icon="arrow-forward"
         />
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
   scroll: {
-    padding: spacing.lg,
-    paddingTop: spacing.xxl,
+    padding: spacing.screenPadding,
+    paddingTop: spacing.md,
     paddingBottom: 140,
   },
   title: {
-    fontSize: font.xxl,
+    fontSize: font.title,
     fontWeight: '800',
     color: colors.text,
     marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.textSecondary,
     marginBottom: spacing.xl,
   },
   label: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     color: colors.textMuted,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -107,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.input,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
@@ -115,13 +119,13 @@ const styles = StyleSheet.create({
   dollar: { fontSize: font.xl, color: colors.textMuted, fontWeight: '700' },
   rateInput: {
     flex: 1,
-    fontSize: font.xxl,
+    fontSize: font.title,
     color: colors.text,
     fontWeight: '800',
     paddingVertical: spacing.md,
     marginLeft: spacing.xs,
   },
-  perMin: { fontSize: font.md, color: colors.textMuted },
+  perMin: { fontSize: font.body, color: colors.textMuted },
   hint: {
     fontSize: font.xs,
     color: colors.textMuted,
@@ -132,14 +136,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
     backgroundColor: colors.bg,
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
   count: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.sm,

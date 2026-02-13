@@ -9,8 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Avatar } from '../../components/UI';
+import { Screen, Avatar } from '../../components/UI';
 import { useApp, getGuideReply } from '../../store/AppContext';
 
 export default function SessionChatScreen({ navigation }) {
@@ -134,7 +135,7 @@ export default function SessionChatScreen({ navigation }) {
           onPress={() => sendMessage(input)}
           disabled={!input.trim()}
         >
-          <Text style={styles.sendText}>{'\u2191'}</Text>
+          <Ionicons name="arrow-up" size={20} color={colors.white} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   headerInfo: { flex: 1, marginLeft: spacing.sm },
-  headerName: { color: colors.text, fontWeight: '600', fontSize: font.md },
+  headerName: { color: colors.text, fontWeight: '600', fontSize: font.body },
   headerTimer: { color: colors.textMuted, fontSize: font.xs, marginTop: 2 },
   endBtn: {
     backgroundColor: colors.surfaceLight,
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  endBtnText: { color: colors.text, fontWeight: '600', fontSize: font.sm },
+  endBtnText: { color: colors.text, fontWeight: '600', fontSize: font.caption },
   messageList: {
     padding: spacing.md,
     paddingBottom: spacing.sm,
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textAlign: 'center',
     marginTop: spacing.xxl,
-    fontSize: font.sm,
+    fontSize: font.caption,
   },
   msgRow: {
     flexDirection: 'row',
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
     marginLeft: 0,
   },
-  bubbleText: { color: colors.text, fontSize: font.md, lineHeight: 22 },
+  bubbleText: { color: colors.text, fontSize: font.body, lineHeight: 22 },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 2,
     color: colors.text,
-    fontSize: font.md,
+    fontSize: font.body,
     marginRight: spacing.sm,
   },
   sendBtn: {
@@ -225,5 +226,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendText: { color: colors.white, fontSize: 18, fontWeight: '600' },
 });
