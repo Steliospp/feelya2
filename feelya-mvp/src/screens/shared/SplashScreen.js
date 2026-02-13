@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Screen } from '../../components/UI';
 import { colors, spacing, font } from '../../theme';
 
 export default function SplashScreen({ navigation }) {
@@ -11,26 +12,25 @@ export default function SplashScreen({ navigation }) {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoBlock}>
+    <Screen style={styles.screen}>
+      <View style={styles.center}>
         <Text style={styles.logo}>feelya</Text>
         <Text style={styles.tagline}>human guidance, on demand</Text>
       </View>
+
       <Text style={styles.disclaimer}>
-        Peer support & coaching — not therapy or medical advice
+        Peer support and coaching -- not therapy or medical advice
       </Text>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
+  screen: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoBlock: {
+  center: {
     alignItems: 'center',
   },
   logo: {
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tagline: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.textMuted,
     marginTop: spacing.sm,
     textAlign: 'center',

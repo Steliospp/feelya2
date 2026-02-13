@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button } from '../../components/UI';
+import { Screen, Input, PrimaryButton } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function GuideOnboardingScreen({ navigation }) {
@@ -25,52 +19,64 @@ export default function GuideOnboardingScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.content}>
-        <Text style={styles.title}>Set up your{'\n'}guide profile</Text>
-        <Text style={styles.subtitle}>
-          People will see this when you're matched.
-        </Text>
+    <Screen>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.content}>
+          <View style={styles.iconRow}>
+            <Ionicons name="person-circle-outline" size={40} color={colors.accent} />
+          </View>
+          <Text style={styles.title}>Set up your{'\n'}guide profile</Text>
+          <Text style={styles.subtitle}>
+            People will see this when you're matched.
+          </Text>
 
-        <Text style={styles.label}>Your name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="First name or nickname"
-          placeholderTextColor={colors.textMuted}
-          value={name}
-          onChangeText={setName}
-          autoFocus
-          maxLength={30}
-        />
+          <Input
+            label="Your name"
+            placeholder="First name or nickname"
+            value={name}
+            onChangeText={setName}
+            autoFocus
+            maxLength={30}
+            icon="person-outline"
+          />
 
-        <Text style={[styles.label, { marginTop: spacing.lg }]}>Short bio</Text>
-        <TextInput
-          style={[styles.input, styles.bioInput]}
-          placeholder="A sentence or two about what you can help with..."
-          placeholderTextColor={colors.textMuted}
-          value={bio}
-          onChangeText={setBio}
-          multiline
-          maxLength={150}
-        />
-        <Text style={styles.charCount}>{bio.length}/150</Text>
-      </View>
-      <View style={styles.footer}>
-        <Button title="Continue" onPress={proceed} disabled={!name.trim()} />
-      </View>
-    </KeyboardAvoidingView>
+          <Input
+            label="Short bio"
+            placeholder="A sentence or two about what you can help with..."
+            value={bio}
+            onChangeText={setBio}
+            multiline
+            maxLength={150}
+            style={{ marginTop: spacing.lg }}
+          />
+          <Text style={styles.charCount}>{bio.length}/150</Text>
+        </View>
+
+        <View style={styles.footer}>
+          <PrimaryButton
+            title="Continue"
+            onPress={proceed}
+            disabled={!name.trim()}
+            icon="arrow-forward"
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
+  flex: { flex: 1 },
   content: {
     flex: 1,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.xxl + spacing.lg,
+  },
+  iconRow: {
+    marginBottom: spacing.md,
   },
   title: {
     fontSize: font.hero,
@@ -80,33 +86,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.textSecondary,
     marginBottom: spacing.xl,
-  },
-  label: {
-    fontSize: font.sm,
-    color: colors.textMuted,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: spacing.sm,
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    fontSize: font.lg,
-    color: colors.text,
-    fontWeight: '600',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  bioInput: {
-    minHeight: 80,
-    textAlignVertical: 'top',
-    fontSize: font.md,
-    fontWeight: '400',
   },
   charCount: {
     fontSize: font.xs,
@@ -115,7 +97,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   footer: {
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
   },
 });

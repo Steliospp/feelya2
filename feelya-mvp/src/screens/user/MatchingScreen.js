@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, font, radius } from '../../theme';
-import { Button } from '../../components/UI';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { colors, spacing, radius, font } from '../../theme';
+import { Screen, SecondaryButton, Pill } from '../../components/UI';
 import { useApp, matchGuide } from '../../store/AppContext';
 
 export default function MatchingScreen({ navigation, route }) {
@@ -9,6 +9,30 @@ export default function MatchingScreen({ navigation, route }) {
   const [eta, setEta] = useState(null);
   const [dots, setDots] = useState('');
   const skipId = route.params?.skipGuideId ?? null;
+
+  // Pulsing orb animation
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.35,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, []);
 
   // Dot animation
   useEffect(() => {
@@ -18,6 +42,7 @@ export default function MatchingScreen({ navigation, route }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Matching logic
   useEffect(() => {
     dispatch({ type: 'SET_MATCHING', payload: true });
     const guide = matchGuide(state.selectedTopics, skipId);
@@ -40,48 +65,81 @@ export default function MatchingScreen({ navigation, route }) {
     navigation.goBack();
   };
 
+  const pulseOpacity = pulseAnim.interpolate({
+    inputRange: [1, 1.35],
+    outputRange: [0.25, 0],
+  });
+
   return (
-    <View style={styles.container}>
+    <Screen>
       <View style={styles.center}>
-        <View style={styles.orb}>
-          <View style={styles.orbInner} />
+        {/* Animated pulsing orb */}
+        <View style={styles.orbContainer}>
+          <Animated.View
+            style={[
+              styles.orbRing,
+              {
+                transform: [{ scale: pulseAnim }],
+                opacity: pulseOpacity,
+              },
+            ]}
+          />
+          <View style={styles.orb}>
+            <View style={styles.orbInner} />
+          </View>
         </View>
 
         <Text style={styles.title}>Finding your guide{dots}</Text>
-        <Text style={styles.subtitle}>
-          Matching based on your topics
-        </Text>
+        <Text style={styles.subtitle}>Matching based on your topics</Text>
 
         {eta != null && (
           <View style={styles.etaBox}>
             <Text style={styles.etaLabel}>Estimated wait</Text>
-            <Text style={styles.etaValue}>~{eta} min{eta > 1 ? 's' : ''}</Text>
+            <Text style={styles.etaValue}>
+              ~{eta} min{eta > 1 ? 's' : ''}
+            </Text>
           </View>
         )}
 
         <View style={styles.topicRow}>
           {state.selectedTopics.map((t) => (
-            <View key={t} style={styles.topicChip}>
-              <Text style={styles.topicText}>{t}</Text>
-            </View>
+            <Pill key={t} label={t} selected={false} />
           ))}
         </View>
       </View>
 
       <View style={styles.footer}>
-        <Button title="Cancel" variant="outline" onPress={cancel} />
+        <SecondaryButton
+          title="Cancel"
+          variant="outline"
+          onPress={cancel}
+          icon="close-outline"
+        />
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
+  },
+  orbContainer: {
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xl,
+  },
+  orbRing: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.primary,
   },
   orb: {
     width: 80,
@@ -90,12 +148,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceLight,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.xl,
   },
   orbInner: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: colors.primary,
   },
   title: {
@@ -105,7 +162,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: font.sm,
+    fontSize: font.body,
     color: colors.textSecondary,
     marginBottom: spacing.xl,
     textAlign: 'center',
@@ -120,23 +177,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  etaLabel: { fontSize: font.xs, color: colors.textMuted },
-  etaValue: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginTop: 4 },
+  etaLabel: {
+    fontSize: font.xs,
+    color: colors.textMuted,
+  },
+  etaValue: {
+    fontSize: font.lg,
+    fontWeight: '600',
+    color: colors.text,
+    marginTop: spacing.xs,
+  },
   topicRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-  topicChip: {
-    backgroundColor: colors.surfaceLight,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    margin: 3,
-  },
-  topicText: { fontSize: font.xs, color: colors.textSecondary },
   footer: {
-    padding: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
   },
 });

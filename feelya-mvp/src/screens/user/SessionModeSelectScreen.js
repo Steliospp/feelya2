@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button } from '../../components/UI';
+import { Screen, Header, PrimaryButton, Card } from '../../components/UI';
 import { useApp, SESSION_MODES } from '../../store/AppContext';
 
 export default function SessionModeSelectScreen({ navigation }) {
@@ -15,50 +16,72 @@ export default function SessionModeSelectScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>How do you want to connect?</Text>
-      <Text style={styles.subtitle}>Choose a session format.</Text>
+    <Screen>
+      <Header title="Session Mode" onBack={() => navigation.goBack()} />
 
-      {SESSION_MODES.map((m) => (
-        <TouchableOpacity
-          key={m.id}
-          style={[styles.card, mode === m.id && styles.cardSelected]}
-          activeOpacity={0.8}
-          onPress={() => setMode(m.id)}
-        >
-          <Text style={styles.icon}>{m.icon}</Text>
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>{m.label}</Text>
-            <Text style={styles.cardDesc}>{m.desc}</Text>
-          </View>
-          <View style={[styles.radio, mode === m.id && styles.radioOn]}>
-            {mode === m.id && <View style={styles.radioDot} />}
-          </View>
-        </TouchableOpacity>
-      ))}
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>How do you want to connect?</Text>
+        <Text style={styles.subtitle}>Choose a session format.</Text>
+
+        {SESSION_MODES.map((m) => {
+          const isSelected = mode === m.id;
+          return (
+            <TouchableOpacity
+              key={m.id}
+              style={[styles.card, isSelected && styles.cardSelected]}
+              activeOpacity={0.8}
+              onPress={() => setMode(m.id)}
+            >
+              <View style={[styles.iconWrap, isSelected && styles.iconWrapSelected]}>
+                <Ionicons
+                  name={m.icon}
+                  size={24}
+                  color={isSelected ? colors.white : colors.textSecondary}
+                />
+              </View>
+
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>{m.label}</Text>
+                <Text style={styles.cardDesc}>{m.desc}</Text>
+              </View>
+
+              <View style={[styles.radio, isSelected && styles.radioOn]}>
+                {isSelected && <View style={styles.radioDot} />}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
 
       <View style={styles.footer}>
-        <Button title="Next" onPress={proceed} disabled={!mode} />
+        <PrimaryButton
+          title="Next"
+          onPress={proceed}
+          disabled={!mode}
+          icon="arrow-forward-outline"
+        />
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+  scroll: {
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
+    paddingBottom: 140,
   },
   title: {
-    fontSize: font.xxl,
+    fontSize: font.title,
     fontWeight: '700',
     color: colors.text,
     marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.textSecondary,
     marginBottom: spacing.xl,
   },
@@ -76,10 +99,29 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     backgroundColor: colors.surfaceLight,
   },
-  icon: { fontSize: 24, marginRight: spacing.md },
+  iconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surfaceLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  iconWrapSelected: {
+    backgroundColor: colors.primary,
+  },
   cardContent: { flex: 1 },
-  cardTitle: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  cardDesc: { fontSize: font.sm, color: colors.textSecondary, marginTop: 2 },
+  cardTitle: {
+    fontSize: font.lg,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  cardDesc: {
+    fontSize: font.caption,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
   radio: {
     width: 22,
     height: 22,
@@ -89,7 +131,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  radioOn: { borderColor: colors.primary },
+  radioOn: {
+    borderColor: colors.primary,
+  },
   radioDot: {
     width: 12,
     height: 12,
@@ -101,7 +145,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
+    backgroundColor: colors.bg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
 });

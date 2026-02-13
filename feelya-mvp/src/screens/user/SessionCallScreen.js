@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Avatar } from '../../components/UI';
+import { Screen, Avatar } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function SessionCallScreen({ navigation }) {
@@ -35,7 +36,7 @@ export default function SessionCallScreen({ navigation }) {
   const isVideo = session?.mode === 'video';
 
   return (
-    <View style={styles.container}>
+    <Screen style={styles.container}>
       <View style={styles.callArea}>
         {isVideo && (
           <View style={styles.videoBg}>
@@ -56,20 +57,26 @@ export default function SessionCallScreen({ navigation }) {
           style={[styles.controlBtn, muted && styles.controlBtnActive]}
           onPress={() => setMuted((m) => !m)}
         >
+          <Ionicons
+            name={muted ? 'mic-off-outline' : 'mic-outline'}
+            size={28}
+            color={colors.text}
+          />
           <Text style={styles.controlLabel}>{muted ? 'Unmute' : 'Mute'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.endCallBtn} onPress={endSession}>
-          <Text style={styles.endCallLabel}>End</Text>
+          <Ionicons name="call" size={28} color={colors.white} style={{ transform: [{ rotate: '135deg' }] }} />
         </TouchableOpacity>
 
         {isVideo && (
           <TouchableOpacity style={styles.controlBtn}>
+            <Ionicons name="camera-reverse-outline" size={28} color={colors.text} />
             <Text style={styles.controlLabel}>Flip</Text>
           </TouchableOpacity>
         )}
       </View>
-    </View>
+    </Screen>
   );
 }
 
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   mode: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
@@ -107,7 +114,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   rate: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
@@ -128,7 +135,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.lg,
   },
   controlBtnActive: { backgroundColor: colors.border },
-  controlLabel: { fontSize: font.sm, color: colors.text, fontWeight: '500' },
+  controlLabel: { fontSize: font.xs, color: colors.text, fontWeight: '500', marginTop: 2 },
   endCallBtn: {
     width: 72,
     height: 72,
@@ -137,5 +144,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  endCallLabel: { fontSize: font.lg, color: colors.white, fontWeight: '600' },
 });

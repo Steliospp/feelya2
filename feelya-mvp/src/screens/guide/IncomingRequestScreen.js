@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Vibration } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, Card, Avatar } from '../../components/UI';
+import { Screen, Card, Avatar, Pill, PrimaryButton, SecondaryButton } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function IncomingRequestScreen({ navigation }) {
@@ -9,7 +11,9 @@ export default function IncomingRequestScreen({ navigation }) {
   const req = state.guideIncomingRequest;
 
   useEffect(() => {
-    try { Vibration.vibrate([0, 300, 200, 300]); } catch (_) {}
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    } catch (_) {}
   }, []);
 
   if (!req) {
@@ -27,6 +31,13 @@ export default function IncomingRequestScreen({ navigation }) {
     navigation.goBack();
   };
 
+  const modeIcon =
+    req.mode === 'chat'
+      ? 'chatbubble-outline'
+      : req.mode === 'voice'
+      ? 'mic-outline'
+      : 'videocam-outline';
+
   const modeLabel =
     req.mode === 'chat'
       ? 'Chat'
@@ -35,70 +46,89 @@ export default function IncomingRequestScreen({ navigation }) {
       : 'Video';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cardWrap}>
-        <Card style={styles.card}>
-          <Text style={styles.incoming}>Incoming Request</Text>
-
-          <View style={styles.userRow}>
-            <Avatar name={req.userName} size={56} />
-            <View style={styles.userInfo}>
-              <Text style={styles.userName}>{req.userName}</Text>
-              <Text style={styles.userMode}>{modeLabel}</Text>
+    <Screen>
+      <View style={styles.center}>
+        <View style={styles.cardWrap}>
+          <Card style={styles.card}>
+            <View style={styles.incomingRow}>
+              <Ionicons name="notifications-outline" size={16} color={colors.primary} style={{ marginRight: spacing.xs }} />
+              <Text style={styles.incoming}>Incoming Request</Text>
             </View>
-          </View>
 
-          <View style={styles.topicRow}>
-            {req.topics.map((t) => (
-              <View key={t} style={styles.topicChip}>
-                <Text style={styles.topicText}>{t}</Text>
+            <View style={styles.userRow}>
+              <Avatar name={req.userName} size={56} />
+              <View style={styles.userInfo}>
+                <Text style={styles.userName}>{req.userName}</Text>
+                <View style={styles.modeRow}>
+                  <Ionicons name={modeIcon} size={14} color={colors.textSecondary} style={{ marginRight: spacing.xs }} />
+                  <Text style={styles.userMode}>{modeLabel}</Text>
+                </View>
               </View>
-            ))}
-          </View>
-
-          <View style={styles.earningsRow}>
-            <View>
-              <Text style={styles.earningsLabel}>Est. Duration</Text>
-              <Text style={styles.earningsValue}>~{req.estimatedMins} min</Text>
             </View>
-            <View style={styles.earningsRight}>
-              <Text style={styles.earningsLabel}>Est. Earnings</Text>
-              <Text style={[styles.earningsValue, { color: colors.success }]}>
-                ${req.estimatedEarnings.toFixed(2)}
-              </Text>
-            </View>
-          </View>
-        </Card>
-      </View>
 
-      <View style={styles.footer}>
-        <Button title="Accept" onPress={accept} style={{ marginBottom: spacing.sm }} />
-        <Button title="Decline" variant="outline" onPress={decline} />
+            <View style={styles.topicRow}>
+              {req.topics.map((t) => (
+                <Pill key={t} label={t} selected={false} />
+              ))}
+            </View>
+
+            <View style={styles.earningsRow}>
+              <View>
+                <Text style={styles.earningsLabel}>Est. Duration</Text>
+                <Text style={styles.earningsValue}>~{req.estimatedMins} min</Text>
+              </View>
+              <View style={styles.earningsRight}>
+                <Text style={styles.earningsLabel}>Est. Earnings</Text>
+                <Text style={[styles.earningsValue, { color: colors.success }]}>
+                  ${req.estimatedEarnings.toFixed(2)}
+                </Text>
+              </View>
+            </View>
+          </Card>
+        </View>
+
+        <View style={styles.footer}>
+          <PrimaryButton
+            title="Accept"
+            onPress={accept}
+            icon="checkmark-circle-outline"
+            style={{ marginBottom: spacing.sm }}
+          />
+          <SecondaryButton
+            title="Decline"
+            variant="outline"
+            onPress={decline}
+            icon="close-circle-outline"
+          />
+        </View>
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  center: {
     flex: 1,
-    backgroundColor: colors.bg,
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
   },
   cardWrap: { marginBottom: spacing.lg },
   card: {
     borderColor: colors.border,
     borderWidth: 1,
   },
+  incomingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+  },
   incoming: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     fontWeight: '700',
     color: colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 1,
-    marginBottom: spacing.lg,
-    textAlign: 'center',
   },
   userRow: {
     flexDirection: 'row',
@@ -107,21 +137,17 @@ const styles = StyleSheet.create({
   },
   userInfo: { marginLeft: spacing.md },
   userName: { fontSize: font.xl, fontWeight: '800', color: colors.text },
-  userMode: { fontSize: font.sm, color: colors.textSecondary, marginTop: 4 },
+  modeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  userMode: { fontSize: font.caption, color: colors.textSecondary },
   topicRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: spacing.lg,
   },
-  topicChip: {
-    backgroundColor: colors.surfaceLight,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 6,
-    marginBottom: 6,
-  },
-  topicText: { color: colors.textSecondary, fontSize: font.xs, fontWeight: '600' },
   earningsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

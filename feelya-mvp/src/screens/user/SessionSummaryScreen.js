@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, Card, Divider } from '../../components/UI';
+import { Screen, Header, PrimaryButton, Card, Divider } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function SessionSummaryScreen({ navigation }) {
@@ -28,75 +28,80 @@ export default function SessionSummaryScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Session summary</Text>
+    <Screen>
+      <Header title="Session summary" />
 
-      <Card style={{ marginBottom: spacing.md }}>
-        <View style={styles.row}>
-          <Text style={styles.label}>Guide</Text>
-          <Text style={styles.value}>{session.guideName}</Text>
-        </View>
-        <Divider />
-        <View style={styles.row}>
-          <Text style={styles.label}>Topics</Text>
-          <Text style={styles.value}>{session.topics.join(', ')}</Text>
-        </View>
-        <Divider />
-        <View style={styles.row}>
-          <Text style={styles.label}>Mode</Text>
-          <Text style={styles.value}>
-            {session.mode === 'chat' ? 'Chat' : session.mode === 'voice' ? 'Voice' : 'Video'}
-          </Text>
-        </View>
-        <Divider />
-        <View style={styles.row}>
-          <Text style={styles.label}>Duration</Text>
-          <Text style={styles.value}>{session.minutes} min{session.minutes > 1 ? 's' : ''}</Text>
-        </View>
-        <Divider />
-        <View style={styles.row}>
-          <Text style={styles.label}>Rate</Text>
-          <Text style={styles.value}>${session.ratePerMin.toFixed(2)}/min</Text>
-        </View>
-      </Card>
+      <View style={styles.content}>
+        <Card style={styles.summaryCard}>
+          <View style={styles.row}>
+            <Text style={styles.label}>Guide</Text>
+            <Text style={styles.value}>{session.guideName}</Text>
+          </View>
+          <Divider />
+          <View style={styles.row}>
+            <Text style={styles.label}>Topics</Text>
+            <Text style={styles.value}>{session.topics.join(', ')}</Text>
+          </View>
+          <Divider />
+          <View style={styles.row}>
+            <Text style={styles.label}>Mode</Text>
+            <Text style={styles.value}>
+              {session.mode === 'chat' ? 'Chat' : session.mode === 'voice' ? 'Voice' : 'Video'}
+            </Text>
+          </View>
+          <Divider />
+          <View style={styles.row}>
+            <Text style={styles.label}>Duration</Text>
+            <Text style={styles.value}>{session.minutes} min{session.minutes > 1 ? 's' : ''}</Text>
+          </View>
+          <Divider />
+          <View style={styles.row}>
+            <Text style={styles.label}>Rate</Text>
+            <Text style={styles.value}>${session.ratePerMin.toFixed(2)}/min</Text>
+          </View>
+        </Card>
 
-      <Card style={styles.totalCard}>
-        <Text style={styles.totalLabel}>Total</Text>
-        <Text style={styles.totalValue}>${session.total.toFixed(2)}</Text>
-      </Card>
+        <Card style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Total</Text>
+          <Text style={styles.totalValue}>${session.total.toFixed(2)}</Text>
+        </Card>
+      </View>
 
       <View style={styles.footer}>
         {!paid ? (
-          <Button title={`Pay $${session.total.toFixed(2)}`} onPress={handlePay} />
+          <PrimaryButton
+            title={`Pay $${session.total.toFixed(2)}`}
+            onPress={handlePay}
+            icon="card-outline"
+          />
         ) : (
-          <Button title="Rate your guide" onPress={proceed} />
+          <PrimaryButton
+            title="Rate your guide"
+            onPress={proceed}
+            icon="star-outline"
+          />
         )}
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  content: {
     flex: 1,
-    backgroundColor: colors.bg,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl + spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
   },
-  title: {
-    fontSize: font.xxl,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: spacing.lg,
+  summaryCard: {
+    marginBottom: spacing.md,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  label: { fontSize: font.sm, color: colors.textMuted },
+  label: { fontSize: font.caption, color: colors.textMuted },
   value: {
-    fontSize: font.md,
+    fontSize: font.body,
     color: colors.text,
     fontWeight: '500',
     flex: 1,
@@ -111,11 +116,9 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   totalLabel: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  totalValue: { fontSize: font.xxl, fontWeight: '700', color: colors.text },
+  totalValue: { fontSize: font.title, fontWeight: '700', color: colors.text },
   footer: {
-    position: 'absolute',
-    bottom: 0, left: 0, right: 0,
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
   },
 });

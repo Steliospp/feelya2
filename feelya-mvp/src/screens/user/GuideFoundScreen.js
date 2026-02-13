@@ -1,8 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, Avatar, Badge, StarRating, Card } from '../../components/UI';
+import {
+  Screen,
+  PrimaryButton,
+  SecondaryButton,
+  Avatar,
+  Badge,
+  StarRating,
+  Card,
+  Pill,
+  Divider,
+} from '../../components/UI';
 import { useApp } from '../../store/AppContext';
+
+const BADGE_ICONS = {
+  'Top Rated': 'trophy-outline',
+  'Fast Responder': 'flash-outline',
+  Empathetic: 'heart-outline',
+  'Relationship Pro': 'people-outline',
+  'Active Lifestyle': 'fitness-outline',
+  'Lived Experience': 'ribbon-outline',
+  Verified: 'shield-checkmark-outline',
+};
 
 export default function GuideFoundScreen({ navigation }) {
   const { state, dispatch } = useApp();
@@ -14,7 +35,7 @@ export default function GuideFoundScreen({ navigation }) {
   }
 
   const topicOverlap = guide.topics.filter((t) =>
-    state.selectedTopics.includes(t)
+    state.selectedTopics.includes(t),
   );
 
   const startSession = () => {
@@ -31,91 +52,120 @@ export default function GuideFoundScreen({ navigation }) {
     navigation.replace('Matching', { skipGuideId: guide.id });
   };
 
+  const modeLabel =
+    state.sessionMode === 'chat'
+      ? 'Chat'
+      : state.sessionMode === 'voice'
+      ? 'Voice'
+      : 'Video';
+
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+    <Screen>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile header */}
         <View style={styles.profileSection}>
-          <Avatar name={guide.name} size={72} />
+          <Avatar name={guide.name} size={80} />
           <Text style={styles.name}>{guide.name}</Text>
           <View style={styles.ratingRow}>
-            <StarRating rating={Math.round(guide.rating)} size={16} />
+            <Ionicons name="star" size={14} color={colors.warning} />
             <Text style={styles.ratingText}>
               {guide.rating} ({guide.sessions} sessions)
             </Text>
           </View>
         </View>
 
+        {/* Bio */}
         <Card style={{ marginBottom: spacing.md }}>
+          <Text style={styles.sectionLabel}>About</Text>
           <Text style={styles.bio}>{guide.bio}</Text>
         </Card>
 
+        {/* Badges */}
         <Card style={{ marginBottom: spacing.md }}>
-          <Text style={styles.label}>Badges</Text>
+          <Text style={styles.sectionLabel}>Badges</Text>
           <View style={styles.badgeRow}>
             {guide.badges.map((b) => (
-              <Badge key={b} label={b} />
+              <Badge
+                key={b}
+                label={b}
+                icon={BADGE_ICONS[b] || 'ribbon-outline'}
+              />
             ))}
-            {guide.verified && <Badge label="Verified" color={colors.success} />}
+            {guide.verified && (
+              <Badge
+                label="Verified"
+                color={colors.success}
+                icon={BADGE_ICONS.Verified}
+              />
+            )}
           </View>
         </Card>
 
+        {/* Topics */}
         <Card style={{ marginBottom: spacing.md }}>
-          <Text style={styles.label}>Topics</Text>
+          <Text style={styles.sectionLabel}>Matching topics</Text>
           <View style={styles.topicRow}>
             {topicOverlap.map((t) => (
-              <View key={t} style={styles.topicChip}>
-                <Text style={styles.topicText}>{t}</Text>
-              </View>
+              <Pill key={t} label={t} selected />
             ))}
           </View>
         </Card>
 
+        {/* Price / Mode / Response */}
         <Card style={{ marginBottom: spacing.md }}>
-          <View style={styles.priceRow}>
-            <View>
-              <Text style={styles.label}>Rate</Text>
-              <Text style={styles.price}>${guide.ratePerMin.toFixed(2)}/min</Text>
-            </View>
-            <View>
-              <Text style={styles.label}>Mode</Text>
-              <Text style={styles.price}>
-                {state.sessionMode === 'chat'
-                  ? 'Chat'
-                  : state.sessionMode === 'voice'
-                  ? 'Voice'
-                  : 'Video'}
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Text style={styles.sectionLabel}>Rate</Text>
+              <Text style={styles.statValue}>
+                ${guide.ratePerMin.toFixed(2)}/min
               </Text>
             </View>
-            <View>
-              <Text style={styles.label}>Response</Text>
-              <Text style={styles.price}>~{guide.responseTime}m</Text>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.sectionLabel}>Mode</Text>
+              <Text style={styles.statValue}>{modeLabel}</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.sectionLabel}>Response</Text>
+              <Text style={styles.statValue}>~{guide.responseTime}m</Text>
             </View>
           </View>
         </Card>
       </ScrollView>
 
+      {/* Footer */}
       <View style={styles.footer}>
-        <Button title="Start session" onPress={startSession} />
-        <Button
+        <PrimaryButton
+          title="Start session"
+          onPress={startSession}
+          icon="chatbubble-ellipses-outline"
+        />
+        <SecondaryButton
           title="Find someone else"
           variant="outline"
-          size="md"
           onPress={findSomeoneElse}
+          icon="refresh-outline"
           style={{ marginTop: spacing.sm }}
         />
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
   scroll: {
-    padding: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.xl,
-    paddingBottom: 160,
+    paddingBottom: 180,
   },
-  profileSection: { alignItems: 'center', marginBottom: spacing.lg },
+  profileSection: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
   name: {
     fontSize: font.xl,
     fontWeight: '700',
@@ -128,16 +178,11 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   ratingText: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     color: colors.textSecondary,
-    marginLeft: spacing.sm,
+    marginLeft: spacing.xs,
   },
-  bio: {
-    fontSize: font.md,
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-  label: {
+  sectionLabel: {
     fontSize: font.xs,
     color: colors.textMuted,
     fontWeight: '600',
@@ -145,28 +190,44 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: spacing.sm,
   },
-  badgeRow: { flexDirection: 'row', flexWrap: 'wrap' },
-  topicRow: { flexDirection: 'row', flexWrap: 'wrap' },
-  topicChip: {
-    backgroundColor: colors.surfaceLight,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 6,
-    marginBottom: 6,
+  bio: {
+    fontSize: font.body,
+    color: colors.textSecondary,
+    lineHeight: 22,
   },
-  topicText: { color: colors.textSecondary, fontSize: font.xs, fontWeight: '500' },
-  priceRow: {
+  badgeRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
   },
-  price: { fontSize: font.lg, fontWeight: '600', color: colors.text },
+  topicRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statDivider: {
+    width: 1,
+    height: 36,
+    backgroundColor: colors.border,
+  },
+  statValue: {
+    fontSize: font.lg,
+    fontWeight: '600',
+    color: colors.text,
+  },
   footer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    padding: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
     backgroundColor: colors.bg,
     borderTopWidth: 1,

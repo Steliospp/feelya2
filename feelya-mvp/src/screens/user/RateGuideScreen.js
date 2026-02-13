@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { colors, spacing, radius, font } from '../../theme';
-import { Button, Avatar, StarRating } from '../../components/UI';
+import { Screen, Header, PrimaryButton, SecondaryButton, Avatar, StarRating } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
 export default function RateGuideScreen({ navigation }) {
@@ -22,11 +22,13 @@ export default function RateGuideScreen({ navigation }) {
         payload: { sessionId: session.id, rating, note: note.trim() },
       });
     }
-    navigation.replace('UserHome');
+    navigation.popToTop();
   };
 
   return (
-    <View style={styles.container}>
+    <Screen>
+      <Header title="Rate Session" />
+
       <View style={styles.center}>
         <Avatar name={session.guideName} size={72} />
         <Text style={styles.title}>How was your session{'\n'}with {session.guideName}?</Text>
@@ -55,23 +57,22 @@ export default function RateGuideScreen({ navigation }) {
       </View>
 
       <View style={styles.footer}>
-        <Button
-          title={rating > 0 ? 'Submit' : 'Skip'}
-          variant={rating > 0 ? 'primary' : 'outline'}
-          onPress={submit}
-        />
+        {rating > 0 ? (
+          <PrimaryButton title="Submit" onPress={submit} icon="checkmark-circle-outline" />
+        ) : (
+          <SecondaryButton title="Skip" onPress={submit} variant="outline" />
+        )}
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.screenPadding,
   },
   title: {
     fontSize: font.xl,
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
     lineHeight: 30,
   },
   hint: {
-    fontSize: font.sm,
+    fontSize: font.caption,
     color: colors.textMuted,
     marginTop: spacing.md,
     marginBottom: spacing.lg,
@@ -93,14 +94,14 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     color: colors.text,
-    fontSize: font.md,
+    fontSize: font.body,
     minHeight: 80,
     textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: colors.border,
   },
   footer: {
-    padding: spacing.lg,
+    padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
   },
 });
