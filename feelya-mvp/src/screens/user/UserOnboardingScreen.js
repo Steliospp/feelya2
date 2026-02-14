@@ -17,15 +17,13 @@ export default function UserOnboardingScreen({ navigation }) {
 
   return (
     <Screen>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.content}>
+          <View style={styles.iconCircle}>
+            <Text style={styles.iconText}>Hi</Text>
+          </View>
           <Text style={styles.title}>What should we call you?</Text>
-          <Text style={styles.subtitle}>
-            Just a first name or nickname -- nothing formal.
-          </Text>
+          <Text style={styles.subtitle}>Just a first name or nickname -- nothing formal.</Text>
           <Input
             placeholder="Your name"
             value={name}
@@ -38,13 +36,8 @@ export default function UserOnboardingScreen({ navigation }) {
             inputStyle={styles.inputText}
           />
         </View>
-
         <View style={styles.footer}>
-          <PrimaryButton
-            title="Continue"
-            onPress={proceed}
-            disabled={!name.trim()}
-          />
+          <PrimaryButton title="Continue" onPress={proceed} disabled={!name.trim()} />
         </View>
       </KeyboardAvoidingView>
     </Screen>
@@ -52,31 +45,16 @@ export default function UserOnboardingScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
+  flex: { flex: 1 },
+  content: { flex: 1, paddingHorizontal: spacing.screenPadding, paddingTop: 100 },
+  iconCircle: {
+    width: 64, height: 64, borderRadius: 32,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: 120,
-  },
-  title: {
-    fontSize: font.title,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    fontSize: font.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.xl,
-  },
-  inputText: {
-    fontSize: font.xl,
-    fontWeight: '600',
-  },
-  footer: {
-    padding: spacing.screenPadding,
-    paddingBottom: spacing.xxl,
-  },
+  iconText: { fontSize: 24, fontWeight: '700', color: colors.primary },
+  title: { fontSize: font.title, fontWeight: '700', color: colors.text, marginBottom: spacing.sm },
+  subtitle: { fontSize: font.body, color: colors.textSecondary, marginBottom: spacing.xl },
+  inputText: { fontSize: font.xl, fontWeight: '600' },
+  footer: { padding: spacing.screenPadding, paddingBottom: spacing.xxl },
 });

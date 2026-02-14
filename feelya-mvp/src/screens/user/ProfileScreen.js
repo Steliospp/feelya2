@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen, Card, Avatar, ListRow, Divider, SafetyBanner,
   SecondaryButton, BottomSheet, SectionTitle,
@@ -88,8 +88,8 @@ export default function ProfileScreen({ navigation }) {
 
       <BottomSheet visible={showAbout} onClose={() => setShowAbout(false)} title="About Feelya">
         <Text style={s.aboutText}>
-          Feelya connects you with peer guides for on-demand coaching and support.
-          This is not therapy, counseling, or medical advice. Guides are not licensed clinicians.
+          Feelya connects you with peer support for on-demand coaching and encouragement.
+          This is not therapy, counseling, or medical advice.
         </Text>
         <Divider />
         <Text style={s.aboutVersion}>Version 1.0.0 (MVP)</Text>
@@ -105,7 +105,7 @@ const s = StyleSheet.create({
   userRow: { flexDirection: 'row', alignItems: 'center' },
   userInfo: { marginLeft: spacing.md },
   userName: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  userRole: { fontSize: font.caption, color: colors.textSecondary, marginTop: 2 },
+  userRole: { fontSize: font.caption, color: colors.primary, fontWeight: '500', marginTop: 2 },
   menuCard: { marginBottom: spacing.lg, paddingHorizontal: 0, paddingVertical: 0 },
   version: { fontSize: font.xs, color: colors.textMuted, textAlign: 'center', marginTop: spacing.lg },
   resourceSection: { marginTop: spacing.md },

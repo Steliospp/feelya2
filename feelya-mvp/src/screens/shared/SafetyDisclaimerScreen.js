@@ -1,92 +1,50 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, PrimaryButton } from '../../components/UI';
+import { Screen, PrimaryButton, Card } from '../../components/UI';
 import { colors, spacing, radius, font } from '../../theme';
 import { useApp } from '../../store/AppContext';
 
 export default function SafetyDisclaimerScreen({ navigation }) {
-  const { state, dispatch } = useApp();
+  const { dispatch } = useApp();
 
   const acknowledge = () => {
+    dispatch({ type: 'SET_ROLE', payload: 'user' });
     dispatch({ type: 'SET_SAFETY_ACK' });
-    if (state.role === 'user') {
-      navigation.replace('UserOnboarding');
-    } else {
-      navigation.replace('GuideOnboarding');
-    }
+    navigation.replace('UserOnboarding');
   };
 
   return (
     <Screen>
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.iconCircle}>
+          <Ionicons name="shield-checkmark" size={32} color={colors.primary} />
+        </View>
         <Text style={styles.title}>Before you begin</Text>
-        <Text style={styles.intro}>
-          A few things to know about Feelya before you get started.
-        </Text>
+        <Text style={styles.intro}>A few things to know about Feelya.</Text>
 
-        <View style={styles.section}>
+        <Card style={styles.card}>
           <Text style={styles.sectionTitle}>What Feelya is</Text>
-          <BulletItem
-            icon="checkmark-circle-outline"
-            iconColor={colors.success}
-            text="Peer-to-peer guidance and coaching"
-          />
-          <BulletItem
-            icon="checkmark-circle-outline"
-            iconColor={colors.success}
-            text="Real conversations with real people"
-          />
-          <BulletItem
-            icon="checkmark-circle-outline"
-            iconColor={colors.success}
-            text="Supportive, non-judgmental space"
-          />
-          <BulletItem
-            icon="checkmark-circle-outline"
-            iconColor={colors.success}
-            text="On-demand -- connect in minutes"
-          />
-        </View>
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Peer-to-peer guidance and coaching" />
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Real conversations with real people" />
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Supportive, non-judgmental space" />
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="On-demand -- connect in minutes" />
+        </Card>
 
-        <View style={styles.section}>
+        <Card style={styles.card}>
           <Text style={styles.sectionTitle}>What Feelya is not</Text>
-          <BulletItem
-            icon="close-circle-outline"
-            iconColor={colors.danger}
-            text="Not therapy, counseling, or medical treatment"
-            muted
-          />
-          <BulletItem
-            icon="close-circle-outline"
-            iconColor={colors.danger}
-            text="Not a substitute for professional mental health care"
-            muted
-          />
-          <BulletItem
-            icon="close-circle-outline"
-            iconColor={colors.danger}
-            text="Not staffed by licensed clinicians"
-            muted
-          />
-        </View>
+          <BulletItem icon="close-circle" iconColor={colors.danger} text="Not therapy, counseling, or medical treatment" />
+          <BulletItem icon="close-circle" iconColor={colors.danger} text="Not a substitute for professional care" />
+          <BulletItem icon="close-circle" iconColor={colors.danger} text="Not staffed by licensed clinicians" />
+        </Card>
 
         <View style={styles.infoBox}>
           <View style={styles.infoHeader}>
-            <Ionicons
-              name="call-outline"
-              size={18}
-              color={colors.textSecondary}
-              style={{ marginRight: spacing.sm }}
-            />
+            <View style={styles.infoIconCircle}>
+              <Ionicons name="call" size={16} color={colors.primary} />
+            </View>
             <Text style={styles.infoTitle}>Need immediate support?</Text>
           </View>
-          <Text style={styles.infoText}>
-            If you or someone you know needs immediate help, please contact:
-          </Text>
           <Text style={styles.infoNumber}>988 Suicide & Crisis Lifeline</Text>
           <Text style={styles.infoSubtext}>Call or text 988 -- available 24/7</Text>
         </View>
@@ -99,105 +57,40 @@ export default function SafetyDisclaimerScreen({ navigation }) {
   );
 }
 
-function BulletItem({ icon, iconColor, text, muted }) {
+function BulletItem({ icon, iconColor, text }) {
   return (
     <View style={styles.bullet}>
-      <Ionicons
-        name={icon}
-        size={20}
-        color={iconColor}
-        style={styles.bulletIcon}
-      />
-      <Text style={[styles.bulletText, muted && { color: colors.textMuted }]}>
-        {text}
-      </Text>
+      <Ionicons name={icon} size={18} color={iconColor} style={styles.bulletIcon} />
+      <Text style={styles.bulletText}>{text}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    padding: spacing.screenPadding,
-    paddingTop: 80,
-    paddingBottom: 120,
+  scroll: { padding: spacing.screenPadding, paddingTop: 60, paddingBottom: 120 },
+  iconCircle: {
+    width: 64, height: 64, borderRadius: 32,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg,
   },
-  title: {
-    fontSize: font.title,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: spacing.sm,
+  title: { fontSize: font.title, fontWeight: '700', color: colors.text, marginBottom: spacing.sm },
+  intro: { fontSize: font.body, color: colors.textSecondary, marginBottom: spacing.xl, lineHeight: 22 },
+  card: { marginBottom: spacing.md },
+  sectionTitle: { fontSize: font.section, fontWeight: '600', color: colors.text, marginBottom: spacing.md },
+  bullet: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.sm + 2 },
+  bulletIcon: { marginRight: spacing.sm + 2, marginTop: 1 },
+  bulletText: { color: colors.textSecondary, fontSize: font.body, flex: 1, lineHeight: 22 },
+  infoBox: { backgroundColor: colors.primaryLight, borderRadius: radius.lg, padding: spacing.lg, marginTop: spacing.sm },
+  infoHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
+  infoIconCircle: {
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', marginRight: spacing.sm,
   },
-  intro: {
-    fontSize: font.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.xl,
-    lineHeight: 22,
-  },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: font.section,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  bullet: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: spacing.sm + 2,
-  },
-  bulletIcon: {
-    marginRight: spacing.sm + 2,
-    marginTop: 1,
-  },
-  bulletText: {
-    color: colors.textSecondary,
-    fontSize: font.body,
-    flex: 1,
-    lineHeight: 22,
-  },
-  infoBox: {
-    backgroundColor: colors.surfaceLight,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    marginTop: spacing.sm,
-  },
-  infoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  infoTitle: {
-    fontSize: font.section,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  infoText: {
-    fontSize: font.caption,
-    color: colors.textMuted,
-    lineHeight: 20,
-    marginBottom: spacing.sm,
-  },
-  infoNumber: {
-    fontSize: font.lg,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 2,
-  },
-  infoSubtext: {
-    fontSize: font.caption,
-    color: colors.textMuted,
-  },
+  infoTitle: { fontSize: font.section, fontWeight: '600', color: colors.text },
+  infoNumber: { fontSize: font.lg, fontWeight: '600', color: colors.primary, marginBottom: 2 },
+  infoSubtext: { fontSize: font.caption, color: colors.textMuted },
   footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: spacing.screenPadding,
-    paddingBottom: spacing.xxl,
-    backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    position: 'absolute', bottom: 0, left: 0, right: 0,
+    padding: spacing.screenPadding, paddingBottom: spacing.xxl, backgroundColor: colors.bg,
   },
 });

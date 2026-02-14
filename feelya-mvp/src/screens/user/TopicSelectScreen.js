@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen,
   Header,
@@ -81,7 +81,9 @@ export default function TopicSelectScreen({ navigation }) {
         <Pressable style={styles.modalOverlay} onPress={() => setShowSafetyModal(false)}>
           <Pressable style={styles.modalCard}>
             <View style={styles.modalHeader}>
-              <Ionicons name="alert-circle-outline" size={24} color={colors.warning} />
+              <View style={styles.modalIconWrap}>
+                <Ionicons name="alert-circle-outline" size={22} color={colors.primary} />
+              </View>
               <Text style={styles.modalTitle}>A quick note</Text>
             </View>
 
@@ -142,9 +144,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
-    backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    ...shadow.card,
   },
   count: {
     fontSize: font.caption,
@@ -162,11 +164,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.lg,
+    ...shadow.cardHover,
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.md,
+  },
+  modalIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalTitle: {
     fontSize: font.xl,

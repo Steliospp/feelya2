@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Avatar } from '../../components/UI';
 import { useApp, getGuideReply } from '../../store/AppContext';
 
@@ -151,19 +151,18 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingTop: spacing.xxl + spacing.md,
     backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    ...shadow.card,
   },
   headerInfo: { flex: 1, marginLeft: spacing.sm },
   headerName: { color: colors.text, fontWeight: '600', fontSize: font.body },
   headerTimer: { color: colors.textMuted, fontSize: font.xs, marginTop: 2 },
   endBtn: {
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  endBtnText: { color: colors.text, fontWeight: '600', fontSize: font.caption },
+  endBtnText: { color: colors.primary, fontWeight: '600', fontSize: font.caption },
   messageList: {
     padding: spacing.md,
     paddingBottom: spacing.sm,
@@ -189,9 +188,8 @@ const styles = StyleSheet.create({
   },
   bubbleGuide: {
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
     borderBottomLeftRadius: 4,
+    ...shadow.card,
   },
   bubbleUser: {
     backgroundColor: colors.primary,
@@ -205,12 +203,11 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     paddingBottom: spacing.lg,
     backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    ...shadow.tab,
   },
   input: {
     flex: 1,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.bg,
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 2,

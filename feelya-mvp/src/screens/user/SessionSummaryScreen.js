@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Header, PrimaryButton, Card, Divider } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
@@ -112,11 +112,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.md,
-    backgroundColor: colors.surfaceLight,
-    borderColor: colors.border,
+    backgroundColor: colors.primaryLight,
   },
-  totalLabel: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  totalValue: { fontSize: font.title, fontWeight: '700', color: colors.text },
+  totalLabel: { fontSize: font.lg, fontWeight: '600', color: colors.primary },
+  totalValue: { fontSize: font.title, fontWeight: '700', color: colors.primary },
   footer: {
     padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,

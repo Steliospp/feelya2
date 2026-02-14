@@ -1,22 +1,33 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Screen } from '../../components/UI';
 import { colors, spacing, font } from '../../theme';
 
 export default function SplashScreen({ navigation }) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+
   useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, tension: 60, friction: 8 }),
+    ]).start();
+
     const timer = setTimeout(() => {
-      navigation.replace('RoleSelect');
-    }, 2000);
+      navigation.replace('SafetyDisclaimer');
+    }, 2200);
     return () => clearTimeout(timer);
   }, [navigation]);
 
   return (
     <Screen style={styles.screen}>
-      <View style={styles.center}>
+      <Animated.View style={[styles.center, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+        <View style={styles.logoCircle}>
+          <Text style={styles.logoIcon}>f</Text>
+        </View>
         <Text style={styles.logo}>feelya</Text>
         <Text style={styles.tagline}>human guidance, on demand</Text>
-      </View>
+      </Animated.View>
 
       <Text style={styles.disclaimer}>
         Peer support and coaching -- not therapy or medical advice
@@ -33,8 +44,23 @@ const styles = StyleSheet.create({
   center: {
     alignItems: 'center',
   },
+  logoCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+  },
+  logoIcon: {
+    fontSize: 36,
+    fontWeight: '700',
+    color: colors.white,
+    marginTop: -2,
+  },
   logo: {
-    fontSize: 48,
+    fontSize: 44,
     fontWeight: '700',
     color: colors.text,
     letterSpacing: -1.5,

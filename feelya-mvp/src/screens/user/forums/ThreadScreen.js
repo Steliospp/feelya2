@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../../theme';
+import { colors, spacing, radius, font, shadow } from '../../../theme';
 import { Screen, Header, Card, Pill, Input, Avatar } from '../../../components/UI';
 import { useApp } from '../../../store/AppContext';
 
@@ -110,12 +110,12 @@ export default function ThreadScreen({ navigation, route }) {
                 <Ionicons
                   name={isUpvoted ? 'arrow-up' : 'arrow-up-outline'}
                   size={18}
-                  color={isUpvoted ? colors.accent : colors.textSecondary}
+                  color={isUpvoted ? colors.primary : colors.textSecondary}
                 />
                 <Text
                   style={[
                     styles.actionCount,
-                    isUpvoted && { color: colors.accent },
+                    isUpvoted && { color: colors.primary },
                   ]}
                 >
                   {thread.upvotes}
@@ -134,7 +134,7 @@ export default function ThreadScreen({ navigation, route }) {
                 <Ionicons
                   name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
                   size={17}
-                  color={isBookmarked ? colors.accent : colors.textSecondary}
+                  color={isBookmarked ? colors.primary : colors.textSecondary}
                 />
               </TouchableOpacity>
             </View>
@@ -172,13 +172,13 @@ export default function ThreadScreen({ navigation, route }) {
                       name={replyUpvoted ? 'arrow-up' : 'arrow-up-outline'}
                       size={16}
                       color={
-                        replyUpvoted ? colors.accent : colors.textSecondary
+                        replyUpvoted ? colors.primary : colors.textSecondary
                       }
                     />
                     <Text
                       style={[
                         styles.replyUpvoteCount,
-                        replyUpvoted && { color: colors.accent },
+                        replyUpvoted && { color: colors.primary },
                       ]}
                     >
                       {reply.upvotes}
@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
   },
   postCard: {
     marginBottom: spacing.md,
+    ...shadow.card,
   },
   postHeader: {
     flexDirection: 'row',
@@ -289,9 +290,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.cardPadding,
-    borderWidth: 1,
-    borderColor: colors.border,
     marginBottom: spacing.sm,
+    ...shadow.card,
   },
   replyHeader: {
     flexDirection: 'row',
@@ -327,11 +327,10 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   composer: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
     backgroundColor: colors.surface,
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.sm,
+    ...shadow.tab,
   },
   composerInner: {
     flexDirection: 'row',

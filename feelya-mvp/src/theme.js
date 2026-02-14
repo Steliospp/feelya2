@@ -1,23 +1,25 @@
-// Feelya Design System — 8pt grid, warm lifestyle aesthetic
+// Feelya Design System — Modern blue, clean & minimal
 
 export const colors = {
-  bg: '#FAF8F5',
+  bg: '#F6F7FB',
   surface: '#FFFFFF',
-  surfaceLight: '#F3F0EB',
-  border: '#E8E3DB',
-  primary: '#1A1A1A',
-  primaryLight: '#3D3D3D',
-  accent: '#B8956A',
-  success: '#6B9E82',
-  warning: '#CDA658',
-  text: '#1A1A1A',
-  textSecondary: '#7A756E',
-  textMuted: '#ADA89F',
+  surfaceLight: '#EEF1F8',
+  border: '#E4E8F0',
+  primary: '#4B7BF5',
+  primaryDark: '#3A62D1',
+  primaryLight: '#E8EEFF',
+  accent: '#FF8C42',
+  success: '#34C759',
+  warning: '#FFBE0B',
+  text: '#1C1E2B',
+  textSecondary: '#6B7280',
+  textMuted: '#9CA3AF',
   white: '#FFFFFF',
-  black: '#1A1A1A',
-  overlay: 'rgba(0,0,0,0.35)',
-  info: '#8A9AA5',
-  danger: '#C07A6E',
+  black: '#1C1E2B',
+  overlay: 'rgba(0,0,0,0.4)',
+  info: '#4B7BF5',
+  danger: '#EF4444',
+  cardShadow: '#000',
 };
 
 // 8pt grid
@@ -34,14 +36,14 @@ export const spacing = {
 
 export const radius = {
   sm: 10,
-  input: 12,
-  md: 14,       // buttons
-  lg: 18,       // cards
+  input: 14,
+  md: 16,
+  lg: 20,
   xl: 28,
   full: 999,
 };
 
-// Type scale per spec
+// Type scale
 export const font = {
   xs: 11,
   caption: 13,
@@ -51,4 +53,36 @@ export const font = {
   xl: 22,
   title: 28,
   hero: 36,
+};
+
+// Shadow presets
+export const shadow = {
+  card: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  cardHover: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 5,
+  },
+  tab: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  fab: {
+    shadowColor: '#4B7BF5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
+  },
 };

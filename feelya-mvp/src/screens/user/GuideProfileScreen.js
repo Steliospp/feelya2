@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen, Header, PrimaryButton, SecondaryButton, Card,
   Pill, Divider, Badge, Avatar, StarRating, BottomSheet, SectionTitle,
@@ -232,10 +232,12 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     marginRight: spacing.sm,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...shadow.card,
   },
-  dayBtnSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
+  dayBtnSelected: {
+    backgroundColor: colors.primary,
+    ...shadow.fab,
+  },
   dayName: { fontSize: font.xs, color: colors.textSecondary, fontWeight: '500' },
   dayNum: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginTop: 2 },
   dayTextSelected: { color: colors.white },
@@ -245,12 +247,14 @@ const s = StyleSheet.create({
     paddingVertical: spacing.sm + 2,
     borderRadius: radius.md,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
     marginRight: spacing.sm,
     marginBottom: spacing.sm,
+    ...shadow.card,
   },
-  slotBtnSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
+  slotBtnSelected: {
+    backgroundColor: colors.primary,
+    ...shadow.fab,
+  },
   slotText: { fontSize: font.caption, fontWeight: '500', color: colors.text },
   slotTextSelected: { color: colors.white },
   noSlots: { fontSize: font.caption, color: colors.textMuted, padding: spacing.md },
@@ -262,8 +266,7 @@ const s = StyleSheet.create({
     padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
     backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    ...shadow.tab,
   },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyText: { fontSize: font.body, color: colors.textMuted },
@@ -272,7 +275,12 @@ const s = StyleSheet.create({
   confirmDate: { fontSize: font.caption, color: colors.textSecondary, marginTop: 2 },
   confirmLabel: { fontSize: font.caption, fontWeight: '600', color: colors.textSecondary, marginBottom: spacing.sm, marginTop: spacing.sm },
   modePills: { flexDirection: 'row', marginBottom: spacing.sm },
-  confirmDetails: { backgroundColor: colors.surfaceLight, borderRadius: radius.lg, padding: spacing.cardPadding, marginTop: spacing.sm },
+  confirmDetails: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.lg,
+    padding: spacing.cardPadding,
+    marginTop: spacing.sm,
+  },
   confirmDetailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
   confirmDetailLabel: { fontSize: font.caption, color: colors.textSecondary },
   confirmDetailValue: { fontSize: font.caption, fontWeight: '600', color: colors.text },

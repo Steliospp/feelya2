@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { colors, spacing, font } from '../../../theme';
+import { colors, spacing, font, shadow } from '../../../theme';
 import {
   Screen, Header, PrimaryButton, Input, Pill,
 } from '../../../components/UI';
@@ -118,7 +118,6 @@ const s = StyleSheet.create({
     padding: spacing.screenPadding,
     paddingBottom: spacing.xxl,
     backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    ...shadow.tab,
   },
 });
