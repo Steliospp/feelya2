@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../../theme';
+import { colors, spacing, radius, font, shadow } from '../../../theme';
 import {
   Screen, Card, Avatar, Badge, SectionTitle, EmptyState, Pill,
 } from '../../../components/UI';
@@ -16,7 +16,7 @@ export default function BookingsScreen({ navigation }) {
     m === 'chat' ? 'chatbubble-outline' : m === 'voice' ? 'mic-outline' : 'videocam-outline';
 
   const statusColor = (st) =>
-    st === 'upcoming' ? colors.success : st === 'completed' ? colors.textSecondary : colors.danger;
+    st === 'upcoming' ? colors.primary : st === 'completed' ? colors.textSecondary : colors.danger;
 
   return (
     <Screen>
@@ -52,11 +52,11 @@ export default function BookingsScreen({ navigation }) {
                     </View>
                     <View style={s.metaRow}>
                       <View style={s.modePill}>
-                        <Ionicons name={modeIcon(b.mode)} size={14} color={colors.textSecondary} />
+                        <Ionicons name={modeIcon(b.mode)} size={14} color={colors.primary} />
                         <Text style={s.modeText}>{b.mode}</Text>
                       </View>
                       <Text style={s.price}>${b.price.toFixed(2)}</Text>
-                      <Badge label="Upcoming" color={colors.success} />
+                      <Badge label="Upcoming" color={colors.primary} />
                     </View>
                   </Card>
                 ))}
@@ -84,7 +84,7 @@ export default function BookingsScreen({ navigation }) {
                     </View>
                     <View style={s.metaRow}>
                       <View style={s.modePill}>
-                        <Ionicons name={modeIcon(b.mode)} size={14} color={colors.textSecondary} />
+                        <Ionicons name={modeIcon(b.mode)} size={14} color={colors.primary} />
                         <Text style={s.modeText}>{b.mode}</Text>
                       </View>
                       <Text style={s.price}>${b.price.toFixed(2)}</Text>
@@ -109,7 +109,7 @@ function formatDate(dateStr) {
 const s = StyleSheet.create({
   scroll: { padding: spacing.screenPadding, paddingTop: spacing.xxl },
   title: { fontSize: font.title, fontWeight: '600', color: colors.text, marginBottom: spacing.lg },
-  card: { marginBottom: spacing.sm },
+  card: { marginBottom: spacing.sm, ...shadow.card },
   row: { flexDirection: 'row', alignItems: 'center' },
   info: { flex: 1, marginLeft: 12 },
   name: { fontSize: font.body, fontWeight: '600', color: colors.text },
@@ -118,12 +118,12 @@ const s = StyleSheet.create({
   modePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: radius.full,
     paddingHorizontal: 10,
     paddingVertical: 4,
     marginRight: spacing.sm,
   },
-  modeText: { fontSize: font.xs, color: colors.textSecondary, marginLeft: 4, fontWeight: '500' },
+  modeText: { fontSize: font.xs, color: colors.primary, marginLeft: 4, fontWeight: '500' },
   price: { fontSize: font.caption, fontWeight: '600', color: colors.text, marginRight: spacing.sm, flex: 1 },
 });

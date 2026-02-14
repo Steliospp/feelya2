@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../../theme';
+import { colors, spacing, radius, font, shadow } from '../../../theme';
 import {
   Screen, Header, PrimaryButton, SecondaryButton, Card,
   Avatar, Badge, Divider, BottomSheet, Pill,
@@ -36,7 +36,7 @@ export default function BookingDetailScreen({ navigation, route }) {
 
   const isUpcoming = booking.status === 'upcoming';
   const modeIcon = booking.mode === 'chat' ? 'chatbubble-outline' : booking.mode === 'voice' ? 'mic-outline' : 'videocam-outline';
-  const statusColor = booking.status === 'upcoming' ? colors.success : booking.status === 'completed' ? colors.textSecondary : colors.danger;
+  const statusColor = booking.status === 'upcoming' ? colors.primary : booking.status === 'completed' ? colors.textSecondary : colors.danger;
 
   const handleCancel = () => {
     dispatch({ type: 'CANCEL_BOOKING', payload: bookingId });
@@ -152,7 +152,7 @@ function DetailRow({ label, value, icon }) {
     <View style={s.detailRow}>
       <Text style={s.detailLabel}>{label}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {icon && <Ionicons name={icon} size={16} color={colors.textSecondary} style={{ marginRight: 4 }} />}
+        {icon && <Ionicons name={icon} size={16} color={colors.primary} style={{ marginRight: 4 }} />}
         <Text style={s.detailValue}>{value}</Text>
       </View>
     </View>
@@ -170,7 +170,7 @@ const s = StyleSheet.create({
   guideName: { fontSize: font.xl, fontWeight: '700', color: colors.text, marginTop: spacing.sm },
   ratingRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs },
   ratingText: { fontSize: font.caption, color: colors.textSecondary, marginLeft: 4 },
-  detailCard: { marginBottom: spacing.md },
+  detailCard: { marginBottom: spacing.md, ...shadow.card },
   detailRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   detailLabel: { fontSize: font.caption, color: colors.textMuted },
   detailValue: { fontSize: font.body, fontWeight: '500', color: colors.text },
@@ -179,10 +179,11 @@ const s = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.lg,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
+    ...shadow.card,
   },
   priceLabel: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  priceValue: { fontSize: font.title, fontWeight: '700', color: colors.text },
+  priceValue: { fontSize: font.title, fontWeight: '700', color: colors.primary },
   actions: { marginBottom: spacing.sm },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyText: { fontSize: font.body, color: colors.textMuted },

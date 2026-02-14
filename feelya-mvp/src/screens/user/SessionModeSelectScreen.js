@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Header, PrimaryButton, Card } from '../../components/UI';
 import { useApp, SESSION_MODES } from '../../store/AppContext';
 
@@ -39,7 +39,7 @@ export default function SessionModeSelectScreen({ navigation }) {
                 <Ionicons
                   name={m.icon}
                   size={24}
-                  color={isSelected ? colors.white : colors.textSecondary}
+                  color={isSelected ? colors.white : colors.primary}
                 />
               </View>
 
@@ -92,18 +92,17 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    ...shadow.card,
   },
   cardSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
+    ...shadow.cardHover,
   },
   iconWrap: {
     width: 48,
     height: 48,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surfaceLight,
+    borderRadius: radius.md,
+    backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
@@ -148,8 +147,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
-    backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    ...shadow.card,
   },
 });

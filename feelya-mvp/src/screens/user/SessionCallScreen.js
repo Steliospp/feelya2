@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Avatar } from '../../components/UI';
 import { useApp } from '../../store/AppContext';
 
@@ -60,9 +60,11 @@ export default function SessionCallScreen({ navigation }) {
           <Ionicons
             name={muted ? 'mic-off-outline' : 'mic-outline'}
             size={28}
-            color={colors.text}
+            color={muted ? colors.white : colors.primary}
           />
-          <Text style={styles.controlLabel}>{muted ? 'Unmute' : 'Mute'}</Text>
+          <Text style={[styles.controlLabel, muted && styles.controlLabelActive]}>
+            {muted ? 'Unmute' : 'Mute'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.endCallBtn} onPress={endSession}>
@@ -71,7 +73,7 @@ export default function SessionCallScreen({ navigation }) {
 
         {isVideo && (
           <TouchableOpacity style={styles.controlBtn}>
-            <Ionicons name="camera-reverse-outline" size={28} color={colors.text} />
+            <Ionicons name="camera-reverse-outline" size={28} color={colors.primary} />
             <Text style={styles.controlLabel}>Flip</Text>
           </TouchableOpacity>
         )}
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
   videoBg: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -103,7 +105,8 @@ const styles = StyleSheet.create({
   },
   mode: {
     fontSize: font.caption,
-    color: colors.textSecondary,
+    color: colors.primary,
+    fontWeight: '500',
     marginTop: spacing.xs,
   },
   timer: {
@@ -131,11 +134,13 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.surface,
     marginHorizontal: spacing.lg,
+    ...shadow.card,
   },
-  controlBtnActive: { backgroundColor: colors.border },
+  controlBtnActive: { backgroundColor: colors.primary },
   controlLabel: { fontSize: font.xs, color: colors.text, fontWeight: '500', marginTop: 2 },
+  controlLabelActive: { color: colors.white },
   endCallBtn: {
     width: 72,
     height: 72,
@@ -143,5 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.danger,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.fab,
+    shadowColor: colors.danger,
   },
 });

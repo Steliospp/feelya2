@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, SecondaryButton, Pill } from '../../components/UI';
 import { useApp, matchGuide } from '../../store/AppContext';
 
@@ -145,9 +145,10 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.card,
   },
   orbInner: {
     width: 28,
@@ -174,8 +175,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     alignItems: 'center',
     marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...shadow.card,
   },
   etaLabel: {
     fontSize: font.xs,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   etaValue: {
     fontSize: font.lg,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.primary,
     marginTop: spacing.xs,
   },
   topicRow: {

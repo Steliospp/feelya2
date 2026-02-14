@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../../theme';
-import { Screen, Card, Input, Pill } from '../../../components/UI';
+import { colors, spacing, radius, font, shadow } from '../../../theme';
+import { Screen, Card, SearchBar, Pill } from '../../../components/UI';
 import { useApp, FORUM_CATEGORIES } from '../../../store/AppContext';
 
 function timeAgo(timestamp) {
@@ -51,14 +51,14 @@ export default function ForumsHomeScreen({ navigation }) {
         <TouchableOpacity
           hitSlop={12}
           onPress={() => navigation.navigate('CreatePost')}
+          style={styles.addBtn}
         >
-          <Ionicons name="add-outline" size={26} color={colors.text} />
+          <Ionicons name="add-outline" size={22} color={colors.primary} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.searchWrap}>
-        <Input
-          icon="search-outline"
+        <SearchBar
           placeholder="Search discussions..."
           value={search}
           onChangeText={setSearch}
@@ -129,12 +129,12 @@ export default function ForumsHomeScreen({ navigation }) {
                     <Ionicons
                       name={isUpvoted ? 'arrow-up' : 'arrow-up-outline'}
                       size={16}
-                      color={isUpvoted ? colors.accent : colors.textSecondary}
+                      color={isUpvoted ? colors.primary : colors.textSecondary}
                     />
                     <Text
                       style={[
                         styles.metaCount,
-                        isUpvoted && { color: colors.accent },
+                        isUpvoted && { color: colors.primary },
                       ]}
                     >
                       {thread.upvotes}
@@ -162,7 +162,7 @@ export default function ForumsHomeScreen({ navigation }) {
                       name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
                       size={15}
                       color={
-                        isBookmarked ? colors.accent : colors.textSecondary
+                        isBookmarked ? colors.primary : colors.textSecondary
                       }
                     />
                   </TouchableOpacity>
@@ -189,6 +189,14 @@ const styles = StyleSheet.create({
     fontSize: font.title,
     fontWeight: '600',
     color: colors.text,
+  },
+  addBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   searchWrap: {
     paddingHorizontal: spacing.screenPadding,

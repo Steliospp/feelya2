@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../theme';
+import { colors, spacing, radius, font, shadow } from '../theme';
 
 /* ───── Screen (safe-area wrapper) ───── */
 export function Screen({ children, style }) {
@@ -39,7 +39,9 @@ export function Header({ title, onBack, rightAction, rightIcon, style }) {
       <View style={screenStyles.headerLeft}>
         {onBack ? (
           <TouchableOpacity onPress={onBack} hitSlop={12} style={screenStyles.headerBackBtn}>
-            <Ionicons name="chevron-back" size={24} color={colors.text} />
+            <View style={screenStyles.headerBackCircle}>
+              <Ionicons name="chevron-back" size={20} color={colors.text} />
+            </View>
           </TouchableOpacity>
         ) : (
           <View style={{ width: 40 }} />
@@ -51,13 +53,65 @@ export function Header({ title, onBack, rightAction, rightIcon, style }) {
       <View style={screenStyles.headerRight}>
         {rightAction ? (
           <TouchableOpacity onPress={rightAction} hitSlop={12}>
-            <Ionicons name={rightIcon || 'ellipsis-horizontal'} size={22} color={colors.text} />
+            <View style={screenStyles.headerBackCircle}>
+              <Ionicons name={rightIcon || 'ellipsis-horizontal'} size={20} color={colors.text} />
+            </View>
           </TouchableOpacity>
         ) : (
           <View style={{ width: 40 }} />
         )}
       </View>
     </View>
+  );
+}
+
+/* ───── SearchBar ───── */
+export function SearchBar({ placeholder, value, onChangeText, style }) {
+  return (
+    <View style={[searchStyles.container, style]}>
+      <Ionicons name="search-outline" size={18} color={colors.textMuted} style={{ marginRight: spacing.sm }} />
+      <RNTextInput
+        style={searchStyles.input}
+        placeholder={placeholder || 'Search...'}
+        placeholderTextColor={colors.textMuted}
+        value={value}
+        onChangeText={onChangeText}
+      />
+    </View>
+  );
+}
+
+/* ───── CategoryIcon ───── */
+export function CategoryIcon({ icon, label, color, onPress, size = 56 }) {
+  return (
+    <TouchableOpacity style={catStyles.container} onPress={onPress} activeOpacity={0.7}>
+      <View style={[catStyles.circle, { width: size, height: size, borderRadius: size / 2, backgroundColor: color + '18' }]}>
+        <Ionicons name={icon} size={size * 0.42} color={color} />
+      </View>
+      <Text style={catStyles.label} numberOfLines={1}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+/* ───── FeatureCard (gradient-like promo card) ───── */
+export function FeatureCard({ title, subtitle, icon, onPress, style }) {
+  return (
+    <TouchableOpacity
+      style={[featStyles.card, style]}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
+      <View style={featStyles.content}>
+        <Text style={featStyles.title}>{title}</Text>
+        <Text style={featStyles.subtitle}>{subtitle}</Text>
+        <View style={featStyles.arrowBtn}>
+          <Ionicons name="arrow-forward" size={16} color={colors.white} />
+        </View>
+      </View>
+      <View style={featStyles.iconWrap}>
+        <Ionicons name={icon || 'sparkles'} size={48} color={colors.white + '30'} />
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -151,7 +205,7 @@ export function SecondaryButton({
   );
 }
 
-/* ───── Card ───── */
+/* ───── Card (shadow-based) ───── */
 export function Card({ children, style, onPress }) {
   const Wrapper = onPress ? TouchableOpacity : View;
   const extra = onPress ? { onPress, activeOpacity: 0.85 } : {};
@@ -241,7 +295,7 @@ export function ListRow({ icon, title, subtitle, right, onPress, showChevron = t
     >
       {icon && (
         <View style={listStyles.icon}>
-          <Ionicons name={icon} size={20} color={colors.textSecondary} />
+          <Ionicons name={icon} size={20} color={colors.primary} />
         </View>
       )}
       <View style={listStyles.content}>
@@ -361,15 +415,20 @@ export function StarRating({ rating, setRating, size = 32 }) {
 }
 
 /* ───── SectionTitle ───── */
-export function SectionTitle({ children, style }) {
-  return <Text style={[miscStyles.sectionTitle, style]}>{children}</Text>;
+export function SectionTitle({ children, style, right }) {
+  return (
+    <View style={miscStyles.sectionTitleRow}>
+      <Text style={[miscStyles.sectionTitle, style]}>{children}</Text>
+      {right && right}
+    </View>
+  );
 }
 
 /* ───── Badge ───── */
 export function Badge({ label, color, icon }) {
-  const c = color || colors.textSecondary;
+  const c = color || colors.primary;
   return (
-    <View style={[miscStyles.badge, { backgroundColor: c + '12', borderColor: c + '30' }]}>
+    <View style={[miscStyles.badge, { backgroundColor: c + '14', borderColor: c + '30' }]}>
       {icon && <Ionicons name={icon} size={12} color={c} style={{ marginRight: 3 }} />}
       <Text style={[miscStyles.badgeText, { color: c }]}>{label}</Text>
     </View>
@@ -386,7 +445,7 @@ export function SafetyBanner({ compact }) {
   return (
     <View style={[miscStyles.safetyBanner, compact && { paddingVertical: spacing.sm + 2 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: compact ? 0 : 2 }}>
-        <Ionicons name="shield-checkmark-outline" size={16} color={colors.textSecondary} style={{ marginRight: 6 }} />
+        <Ionicons name="shield-checkmark-outline" size={16} color={colors.primary} style={{ marginRight: 6 }} />
         <Text style={miscStyles.safetyTitle}>Peer guidance -- not therapy or medical advice</Text>
       </View>
       {!compact && (
@@ -404,10 +463,42 @@ export function SafetyBanner({ compact }) {
 export function EmptyState({ icon, title, subtitle }) {
   return (
     <View style={miscStyles.emptyState}>
-      {icon && <Ionicons name={icon} size={48} color={colors.textMuted} style={{ marginBottom: spacing.md }} />}
+      {icon && (
+        <View style={miscStyles.emptyIconCircle}>
+          <Ionicons name={icon} size={32} color={colors.primary} />
+        </View>
+      )}
       <Text style={miscStyles.emptyTitle}>{title}</Text>
       {subtitle && <Text style={miscStyles.emptySubtitle}>{subtitle}</Text>}
     </View>
+  );
+}
+
+/* ───── GuideCard (horizontal scroll card) ───── */
+export function GuideCard({ name, rating, sessions, topics, onPress, style }) {
+  const initials = (name || '?')
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+  return (
+    <TouchableOpacity style={[guideCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
+      <View style={guideCardStyles.avatarBg}>
+        <Text style={guideCardStyles.avatarText}>{initials}</Text>
+      </View>
+      <View style={guideCardStyles.info}>
+        <Text style={guideCardStyles.name} numberOfLines={1}>{name}</Text>
+        <View style={guideCardStyles.ratingRow}>
+          <Ionicons name="star" size={12} color={colors.warning} />
+          <Text style={guideCardStyles.rating}>{rating}</Text>
+          <Text style={guideCardStyles.sessions}> ({sessions})</Text>
+        </View>
+        <Text style={guideCardStyles.topics} numberOfLines={1}>
+          {topics?.slice(0, 2).join(' / ')}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -424,8 +515,91 @@ const screenStyles = StyleSheet.create({
   },
   headerLeft: { width: 40 },
   headerBackBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  headerBackCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadow.card,
+  },
   headerTitle: { flex: 1, fontSize: font.section, fontWeight: '600', color: colors.text, textAlign: 'center' },
   headerRight: { width: 40, alignItems: 'flex-end' },
+});
+
+const searchStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radius.input,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 14,
+    ...shadow.card,
+  },
+  input: {
+    flex: 1,
+    fontSize: font.body,
+    color: colors.text,
+    padding: 0,
+  },
+});
+
+const catStyles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    marginRight: spacing.lg,
+  },
+  circle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
+  label: {
+    fontSize: font.xs,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+});
+
+const featStyles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  content: { flex: 1 },
+  title: {
+    fontSize: font.lg,
+    fontWeight: '700',
+    color: colors.white,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    fontSize: font.caption,
+    color: colors.white + 'CC',
+    lineHeight: 19,
+    marginBottom: spacing.md,
+  },
+  arrowBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.white + '25',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+  },
+  iconWrap: {
+    position: 'absolute',
+    right: -8,
+    bottom: -8,
+  },
 });
 
 const btnStyles = StyleSheet.create({
@@ -455,8 +629,7 @@ const cardStyles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.cardPadding,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...shadow.card,
   },
 });
 
@@ -502,7 +675,7 @@ const listStyles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -526,11 +699,63 @@ const sheetStyles = StyleSheet.create({
   title: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginBottom: spacing.md },
 });
 
+const guideCardStyles = StyleSheet.create({
+  card: {
+    width: 160,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginRight: spacing.md,
+    ...shadow.card,
+  },
+  avatarBg: {
+    width: '100%',
+    height: 80,
+    borderRadius: radius.sm,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
+  avatarText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  info: {},
+  name: {
+    fontSize: font.body,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 2,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  rating: {
+    fontSize: font.xs,
+    fontWeight: '600',
+    color: colors.text,
+    marginLeft: 3,
+  },
+  sessions: {
+    fontSize: font.xs,
+    color: colors.textMuted,
+  },
+  topics: {
+    fontSize: font.xs,
+    color: colors.textSecondary,
+  },
+});
+
 const miscStyles = StyleSheet.create({
-  avatar: { backgroundColor: colors.surfaceLight, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { color: colors.textSecondary, fontWeight: '600' },
+  avatar: { backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { color: colors.primary, fontWeight: '600' },
   starRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  sectionTitle: { color: colors.text, fontSize: font.section, fontWeight: '600', marginBottom: spacing.md },
+  sectionTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
+  sectionTitle: { color: colors.text, fontSize: font.section, fontWeight: '600' },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -543,10 +768,19 @@ const miscStyles = StyleSheet.create({
   },
   badgeText: { fontSize: font.xs, fontWeight: '600' },
   divider: { height: 1, backgroundColor: colors.border, marginVertical: spacing.md },
-  safetyBanner: { backgroundColor: colors.surfaceLight, padding: spacing.cardPadding, borderRadius: radius.md },
+  safetyBanner: { backgroundColor: colors.primaryLight, padding: spacing.cardPadding, borderRadius: radius.md },
   safetyTitle: { color: colors.textSecondary, fontWeight: '500', fontSize: font.caption },
   safetyBody: { color: colors.textMuted, fontSize: font.xs, lineHeight: 18, marginTop: spacing.xs, marginLeft: 22 },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.xxl, paddingHorizontal: spacing.lg },
+  emptyIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
   emptyTitle: { fontSize: font.body, fontWeight: '600', color: colors.textSecondary, textAlign: 'center' },
   emptySubtitle: { fontSize: font.caption, color: colors.textMuted, textAlign: 'center', marginTop: spacing.sm },
 });

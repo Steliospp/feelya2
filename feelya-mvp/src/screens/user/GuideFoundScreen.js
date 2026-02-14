@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, font } from '../../theme';
+import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen,
   PrimaryButton,
@@ -78,13 +78,13 @@ export default function GuideFoundScreen({ navigation }) {
         </View>
 
         {/* Bio */}
-        <Card style={{ marginBottom: spacing.md }}>
+        <View style={styles.card}>
           <Text style={styles.sectionLabel}>About</Text>
           <Text style={styles.bio}>{guide.bio}</Text>
-        </Card>
+        </View>
 
         {/* Badges */}
-        <Card style={{ marginBottom: spacing.md }}>
+        <View style={styles.card}>
           <Text style={styles.sectionLabel}>Badges</Text>
           <View style={styles.badgeRow}>
             {guide.badges.map((b) => (
@@ -102,20 +102,20 @@ export default function GuideFoundScreen({ navigation }) {
               />
             )}
           </View>
-        </Card>
+        </View>
 
         {/* Topics */}
-        <Card style={{ marginBottom: spacing.md }}>
+        <View style={styles.card}>
           <Text style={styles.sectionLabel}>Matching topics</Text>
           <View style={styles.topicRow}>
             {topicOverlap.map((t) => (
               <Pill key={t} label={t} selected />
             ))}
           </View>
-        </Card>
+        </View>
 
         {/* Price / Mode / Response */}
-        <Card style={{ marginBottom: spacing.md }}>
+        <View style={styles.card}>
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <Text style={styles.sectionLabel}>Rate</Text>
@@ -134,7 +134,7 @@ export default function GuideFoundScreen({ navigation }) {
               <Text style={styles.statValue}>~{guide.responseTime}m</Text>
             </View>
           </View>
-        </Card>
+        </View>
       </ScrollView>
 
       {/* Footer */}
@@ -182,6 +182,13 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginLeft: spacing.xs,
   },
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    ...shadow.card,
+  },
   sectionLabel: {
     fontSize: font.xs,
     color: colors.textMuted,
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: font.lg,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.primary,
   },
   footer: {
     position: 'absolute',
@@ -229,8 +236,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
-    backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    ...shadow.card,
   },
 });
