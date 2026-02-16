@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Modal, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
@@ -9,22 +9,20 @@ import {
   PrimaryButton,
   SecondaryButton,
   Pill,
-  CategoryTile,
   SafetyBanner,
 } from '../../components/UI';
 import {
   useApp,
   ALL_TOPICS,
   SENSITIVE_TOPICS,
-  QUICK_PICK_TOPICS,
-  TOPIC_CATEGORIES,
 } from '../../store/AppContext';
 
-export default function TopicSelectScreen({ navigation, route }) {
+export default function AllTopicsScreen({ navigation, route }) {
   const { dispatch } = useApp();
-  const preselect = route.params?.preselect;
+  const preselected = route.params?.preselect ? [route.params.preselect] : [];
+  const fromHub = route.params?.fromHub || false;
   const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState(preselect ? [preselect] : []);
+  const [selected, setSelected] = useState(preselected);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
 
   const toggle = (topic) => {
@@ -49,24 +47,20 @@ export default function TopicSelectScreen({ navigation, route }) {
     navigation.navigate('SessionModeSelect');
   };
 
-  // Filter topics by search
-  const searchResults = useMemo(() => {
-    if (!search.trim()) return [];
+  const visibleTopics = useMemo(() => {
+    if (!search.trim()) return ALL_TOPICS;
     const q = search.trim().toLowerCase();
     return ALL_TOPICS.filter((t) => t.toLowerCase().includes(q));
   }, [search]);
 
-  const isSearching = search.trim().length > 0;
-
   return (
     <Screen>
-      <Header title="What's on your mind?" onBack={() => navigation.goBack()} />
+      <Header
+        title={fromHub ? 'Anything else to talk about?' : 'Browse all topics'}
+        onBack={() => navigation.goBack()}
+      />
 
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Search */}
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.searchWrap}>
           <SearchBar
             placeholder="Search topics..."
@@ -75,70 +69,33 @@ export default function TopicSelectScreen({ navigation, route }) {
           />
         </View>
 
-        {isSearching ? (
-          /* Search results */
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Results</Text>
-            <View style={styles.pills}>
-              {searchResults.length === 0 ? (
-                <Text style={styles.emptyText}>No topics found</Text>
-              ) : (
-                searchResults.map((t) => (
-                  <Pill
-                    key={t}
-                    label={t}
-                    selected={selected.includes(t)}
-                    onPress={() => toggle(t)}
-                  />
-                ))
-              )}
-            </View>
+        {/* Pre-selected indicator */}
+        {preselected.length > 0 && !search.trim() && (
+          <View style={styles.preselectedWrap}>
+            <Ionicons name="checkmark-circle" size={16} color={colors.success} />
+            <Text style={styles.preselectedText}>
+              {preselected[0]} is already selected
+            </Text>
           </View>
-        ) : (
-          <>
-            {/* Quick Picks */}
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>Quick picks</Text>
-              <View style={styles.pills}>
-                {QUICK_PICK_TOPICS.map((t) => (
-                  <Pill
-                    key={t}
-                    label={t}
-                    selected={selected.includes(t)}
-                    onPress={() => toggle(t)}
-                  />
-                ))}
-              </View>
-              <TouchableOpacity
-                style={styles.viewMoreBtn}
-                onPress={() => navigation.navigate('AllTopics')}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.viewMoreText}>View more topics</Text>
-                <Ionicons name="arrow-forward" size={16} color={colors.primary} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Category Tiles */}
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>Explore by category</Text>
-              <View style={styles.tilesGrid}>
-                {TOPIC_CATEGORIES.map((cat) => (
-                  <CategoryTile
-                    key={cat.id}
-                    label={cat.label}
-                    icon={cat.icon}
-                    color={cat.color}
-                    onPress={() => navigation.navigate('TopicHub', { topic: cat.topics[0], categoryId: cat.id })}
-                  />
-                ))}
-              </View>
-            </View>
-          </>
         )}
+
+        <View style={styles.pills}>
+          {visibleTopics.length === 0 ? (
+            <Text style={styles.emptyText}>No topics found</Text>
+          ) : (
+            visibleTopics.map((t) => (
+              <Pill
+                key={t}
+                label={t}
+                selected={selected.includes(t)}
+                onPress={() => toggle(t)}
+              />
+            ))
+          )}
+        </View>
       </ScrollView>
 
-      {/* Footer with selection count + button */}
+      {/* Footer */}
       {selected.length > 0 && (
         <View style={styles.footer}>
           <Text style={styles.count}>
@@ -152,7 +109,7 @@ export default function TopicSelectScreen({ navigation, route }) {
         </View>
       )}
 
-      {/* Sensitive-topic safety modal */}
+      {/* Safety modal */}
       <Modal visible={showSafetyModal} transparent animationType="fade">
         <Pressable style={styles.modalOverlay} onPress={() => setShowSafetyModal(false)}>
           <Pressable style={styles.modalCard}>
@@ -197,37 +154,27 @@ const styles = StyleSheet.create({
     paddingBottom: 180,
   },
   searchWrap: {
-    marginBottom: spacing.lg,
-  },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  sectionLabel: {
-    fontSize: font.section,
-    fontWeight: '600',
-    color: colors.text,
     marginBottom: spacing.md,
+  },
+  preselectedWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.md,
+    alignSelf: 'flex-start',
+  },
+  preselectedText: {
+    fontSize: font.caption,
+    fontWeight: '500',
+    color: colors.primary,
+    marginLeft: 6,
   },
   pills: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-  },
-  viewMoreBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginTop: spacing.sm,
-  },
-  viewMoreText: {
-    fontSize: font.caption,
-    fontWeight: '600',
-    color: colors.primary,
-    marginRight: 4,
-  },
-  tilesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
   },
   emptyText: {
     fontSize: font.body,

@@ -100,7 +100,7 @@ export default function TopicHubScreen({ navigation, route }) {
           title="Find a guide"
           subtitle={`Talk to someone about ${topic.toLowerCase()}`}
           onPress={() => {
-            navigation.navigate('TopicSelect', { preselect: topic });
+            navigation.navigate('AllTopics', { preselect: topic, fromHub: true });
           }}
           style={s.findGuideCta}
         />
