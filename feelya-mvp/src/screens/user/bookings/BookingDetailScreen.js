@@ -26,9 +26,9 @@ export default function BookingDetailScreen({ navigation, route }) {
   if (!booking) {
     return (
       <Screen>
-        <Header title="Booking" onBack={() => navigation.goBack()} />
+        <Header title="Chat Details" onBack={() => navigation.goBack()} />
         <View style={s.empty}>
-          <Text style={s.emptyText}>Booking not found</Text>
+          <Text style={s.emptyText}>Conversation not found</Text>
         </View>
       </Screen>
     );
@@ -48,7 +48,7 @@ export default function BookingDetailScreen({ navigation, route }) {
 
   return (
     <Screen>
-      <Header title="Booking Details" onBack={() => navigation.goBack()} />
+      <Header title="Chat Details" onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <View style={s.guideSection}>
           <Avatar name={booking.guideName} size={64} />
@@ -56,7 +56,7 @@ export default function BookingDetailScreen({ navigation, route }) {
           {guide && (
             <View style={s.ratingRow}>
               <Ionicons name="star" size={14} color={colors.warning} />
-              <Text style={s.ratingText}>{guide.rating} ({guide.sessions} sessions)</Text>
+              <Text style={s.ratingText}>{guide.rating} ({guide.conversations || guide.sessions} conversations)</Text>
             </View>
           )}
         </View>
@@ -89,7 +89,7 @@ export default function BookingDetailScreen({ navigation, route }) {
               title="Reschedule"
               icon="calendar-outline"
               onPress={() =>
-                navigation.navigate('GuideProfileBooking', {
+                navigation.navigate('CompanionProfileChats', {
                   guideId: booking.guideId,
                   bookingId: booking.id,
                 })
@@ -108,27 +108,27 @@ export default function BookingDetailScreen({ navigation, route }) {
         {booking.status === 'completed' && (
           <View style={s.actions}>
             <PrimaryButton
-              title="Rebook"
-              icon="refresh-outline"
+              title="Chat again"
+              icon="chatbubble-outline"
               onPress={() =>
-                navigation.navigate('GuideProfileBooking', { guideId: booking.guideId })
+                navigation.navigate('CompanionProfileChats', { guideId: booking.guideId, mode: 'booking' })
               }
             />
           </View>
         )}
 
         <SecondaryButton
-          title="View Guide Profile"
+          title="View profile"
           variant="soft"
           icon="person-outline"
           onPress={() =>
-            navigation.navigate('GuideProfileBooking', { guideId: booking.guideId })
+            navigation.navigate('CompanionProfileChats', { guideId: booking.guideId })
           }
           style={{ marginTop: spacing.sm }}
         />
       </ScrollView>
 
-      <BottomSheet visible={showCancel} onClose={() => setShowCancel(false)} title="Cancel Booking">
+      <BottomSheet visible={showCancel} onClose={() => setShowCancel(false)} title="Cancel Chat">
         <Text style={s.cancelSubtitle}>Why are you cancelling?</Text>
         <View style={s.reasonPills}>
           {CANCEL_REASONS.map((r) => (

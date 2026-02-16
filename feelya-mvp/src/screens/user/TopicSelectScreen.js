@@ -49,7 +49,7 @@ export default function TopicSelectScreen({ navigation }) {
       >
         <Text style={styles.title}>What's on your mind?</Text>
         <Text style={styles.subtitle}>
-          Pick one or more topics and we'll match you with the right guide.
+          Pick one or more topics and we'll match you with the right companion.
         </Text>
 
         <View style={styles.pills}>
@@ -69,7 +69,7 @@ export default function TopicSelectScreen({ navigation }) {
           {selected.length} topic{selected.length !== 1 ? 's' : ''} selected
         </Text>
         <PrimaryButton
-          title="Find a guide"
+          title="Find a companion"
           onPress={proceed}
           disabled={selected.length === 0}
           icon="search-outline"
@@ -90,8 +90,8 @@ export default function TopicSelectScreen({ navigation }) {
             <SafetyBanner />
 
             <Text style={styles.modalBody}>
-              The topics you selected touch on sensitive areas. Feelya guides offer
-              peer support and coaching -- they are not licensed therapists or
+              The topics you selected touch on sensitive areas. Feelya companions offer
+              peer support and conversation -- they are not licensed therapists or
               counselors.{'\n\n'}If you need immediate help, call or text{' '}
               <Text style={{ fontWeight: '700' }}>988</Text> (Suicide & Crisis
               Lifeline).

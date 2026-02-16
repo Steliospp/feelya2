@@ -21,13 +21,13 @@ export default function BookingsScreen({ navigation }) {
   return (
     <Screen>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={s.title}>Bookings</Text>
+        <Text style={s.title}>Chats</Text>
 
         {state.bookings.length === 0 ? (
           <EmptyState
             icon="calendar-outline"
             title="No bookings yet"
-            subtitle="Book a session with a guide to get started"
+            subtitle="Start a conversation to connect with a companion"
           />
         ) : (
           <>

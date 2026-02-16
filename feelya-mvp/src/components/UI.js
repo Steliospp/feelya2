@@ -446,11 +446,11 @@ export function SafetyBanner({ compact }) {
     <View style={[miscStyles.safetyBanner, compact && { paddingVertical: spacing.sm + 2 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: compact ? 0 : 2 }}>
         <Ionicons name="shield-checkmark-outline" size={16} color={colors.primary} style={{ marginRight: 6 }} />
-        <Text style={miscStyles.safetyTitle}>Peer guidance -- not therapy or medical advice</Text>
+        <Text style={miscStyles.safetyTitle}>This is a place to talk things through -- not therapy</Text>
       </View>
       {!compact && (
         <Text style={miscStyles.safetyBody}>
-          Feelya connects you with peer guides for coaching and support.
+          Feelya connects you with companions for support and conversation.
           {'\n'}If you need immediate help, call or text{' '}
           <Text style={{ fontWeight: '600' }}>988</Text> (Suicide & Crisis Lifeline).
         </Text>
@@ -474,8 +474,8 @@ export function EmptyState({ icon, title, subtitle }) {
   );
 }
 
-/* ───── GuideCard (horizontal scroll card) ───── */
-export function GuideCard({ name, rating, sessions, topics, onPress, style }) {
+/* ───── CompanionCard (horizontal scroll card) ───── */
+export function CompanionCard({ name, rating, conversations, topics, onPress, style }) {
   const initials = (name || '?')
     .split(' ')
     .map((w) => w[0])
@@ -483,20 +483,39 @@ export function GuideCard({ name, rating, sessions, topics, onPress, style }) {
     .toUpperCase()
     .slice(0, 2);
   return (
-    <TouchableOpacity style={[guideCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
-      <View style={guideCardStyles.avatarBg}>
-        <Text style={guideCardStyles.avatarText}>{initials}</Text>
+    <TouchableOpacity style={[companionCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
+      <View style={companionCardStyles.avatarBg}>
+        <Text style={companionCardStyles.avatarText}>{initials}</Text>
       </View>
-      <View style={guideCardStyles.info}>
-        <Text style={guideCardStyles.name} numberOfLines={1}>{name}</Text>
-        <View style={guideCardStyles.ratingRow}>
+      <View style={companionCardStyles.info}>
+        <Text style={companionCardStyles.name} numberOfLines={1}>{name}</Text>
+        <View style={companionCardStyles.ratingRow}>
           <Ionicons name="star" size={12} color={colors.warning} />
-          <Text style={guideCardStyles.rating}>{rating}</Text>
-          <Text style={guideCardStyles.sessions}> ({sessions})</Text>
+          <Text style={companionCardStyles.rating}>{rating}</Text>
+          <Text style={companionCardStyles.conversations}> ({conversations})</Text>
         </View>
-        <Text style={guideCardStyles.topics} numberOfLines={1}>
+        <Text style={companionCardStyles.topics} numberOfLines={1}>
           {topics?.slice(0, 2).join(' / ')}
         </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+// Backward-compat alias
+export const GuideCard = CompanionCard;
+
+/* ───── ResourceCard (blog/article preview) ───── */
+export function ResourceCard({ title, description, readTime, onPress, style }) {
+  return (
+    <TouchableOpacity style={[resourceCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
+      <View style={resourceCardStyles.imagePlaceholder}>
+        <Ionicons name="document-text-outline" size={24} color={colors.primary} />
+      </View>
+      <View style={resourceCardStyles.content}>
+        <Text style={resourceCardStyles.title} numberOfLines={2}>{title}</Text>
+        <Text style={resourceCardStyles.description} numberOfLines={2}>{description}</Text>
+        {readTime && <Text style={resourceCardStyles.readTime}>{readTime}</Text>}
       </View>
     </TouchableOpacity>
   );
@@ -699,7 +718,7 @@ const sheetStyles = StyleSheet.create({
   title: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginBottom: spacing.md },
 });
 
-const guideCardStyles = StyleSheet.create({
+const companionCardStyles = StyleSheet.create({
   card: {
     width: 160,
     backgroundColor: colors.surface,
@@ -740,13 +759,50 @@ const guideCardStyles = StyleSheet.create({
     color: colors.text,
     marginLeft: 3,
   },
-  sessions: {
+  conversations: {
     fontSize: font.xs,
     color: colors.textMuted,
   },
   topics: {
     fontSize: font.xs,
     color: colors.textSecondary,
+  },
+});
+
+const resourceCardStyles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sm,
+    ...shadow.card,
+  },
+  imagePlaceholder: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.sm,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  content: { flex: 1 },
+  title: {
+    fontSize: font.body,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  description: {
+    fontSize: font.caption,
+    color: colors.textSecondary,
+    lineHeight: 18,
+  },
+  readTime: {
+    fontSize: font.xs,
+    color: colors.textMuted,
+    marginTop: spacing.xs,
   },
 });
 

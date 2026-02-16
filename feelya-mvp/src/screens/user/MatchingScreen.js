@@ -89,7 +89,7 @@ export default function MatchingScreen({ navigation, route }) {
           </View>
         </View>
 
-        <Text style={styles.title}>Finding your guide{dots}</Text>
+        <Text style={styles.title}>Finding your companion{dots}</Text>
         <Text style={styles.subtitle}>Matching based on your topics</Text>
 
         {eta != null && (

@@ -72,7 +72,7 @@ export default function GuideFoundScreen({ navigation }) {
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={14} color={colors.warning} />
             <Text style={styles.ratingText}>
-              {guide.rating} ({guide.sessions} sessions)
+              {guide.rating} ({guide.conversations || guide.sessions} conversations)
             </Text>
           </View>
         </View>

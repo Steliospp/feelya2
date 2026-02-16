@@ -116,7 +116,7 @@ export default function SessionChatScreen({ navigation }) {
         contentContainerStyle={styles.messageList}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Your guide will message shortly...</Text>
+          <Text style={styles.emptyText}>Your companion will message shortly...</Text>
         }
       />
 

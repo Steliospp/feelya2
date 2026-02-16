@@ -2,29 +2,74 @@ import React, { createContext, useContext, useReducer } from 'react';
 
 /* ═══════════════════════  CONSTANTS  ═══════════════════════ */
 export const ALL_TOPICS = [
-  'Anxiety', 'Depression', 'Confidence', 'Mindset', 'Loneliness',
-  'Public Speaking', 'Dating', 'Friendships', 'Family', 'Fitness',
-  'Sports', 'Career', 'College Stress', 'Motivation', 'Habits',
-  'Breakups', 'Sleep', 'Productivity', 'Self-esteem',
+  // Emotional wellbeing
+  'Anxiety', 'Depression', 'Stress', 'Overwhelm', 'Panic Attacks',
+  'Emotional Regulation', 'Anger Management', 'Grief', 'Sadness', 'Fear',
+  // Confidence & identity
+  'Confidence', 'Self-esteem', 'Self-worth', 'Body Image', 'Identity',
+  'Imposter Syndrome', 'Perfectionism', 'Self-compassion', 'Assertiveness', 'Vulnerability',
+  // Relationships
+  'Dating', 'Breakups', 'Friendships', 'Family', 'Boundaries',
+  'Conflict Resolution', 'Trust Issues', 'Attachment', 'Codependency', 'Communication',
+  // Social
+  'Loneliness', 'Social Anxiety', 'Social Skills', 'Making Friends', 'Fitting In',
+  'People Pleasing', 'Rejection', 'Public Speaking', 'Networking', 'Small Talk',
+  // Career & purpose
+  'Career', 'Job Search', 'Career Change', 'Work-Life Balance', 'Workplace Stress',
+  'Leadership', 'Entrepreneurship', 'Side Hustle', 'Purpose', 'Meaning',
+  // Mindset & growth
+  'Mindset', 'Motivation', 'Goal Setting', 'Discipline', 'Procrastination',
+  'Decision Making', 'Overthinking', 'Rumination', 'Growth Mindset', 'Resilience',
+  // Lifestyle & habits
+  'Habits', 'Productivity', 'Time Management', 'Sleep', 'Fitness',
+  'Nutrition', 'Morning Routine', 'Digital Detox', 'Minimalism', 'Journaling',
+  // Life transitions
+  'College Stress', 'Graduation', 'Moving', 'Starting Over', 'Adulting',
+  'Quarter-life Crisis', 'Midlife Transition', 'Retirement', 'Empty Nest', 'New Parent',
+  // Mental health
+  'Burnout', 'Compassion Fatigue', 'Trauma', 'PTSD', 'OCD',
+  'ADHD', 'Neurodivergence', 'Addiction', 'Recovery', 'Coping Skills',
+  // Spirituality & meaning
+  'Spirituality', 'Mindfulness', 'Meditation', 'Gratitude', 'Self-discovery',
+  'Values', 'Authenticity', 'Forgiveness', 'Letting Go', 'Inner Peace',
+  // Sports & performance
+  'Sports', 'Athletic Performance', 'Competition Anxiety', 'Team Dynamics', 'Coaching',
 ];
 
-export const SENSITIVE_TOPICS = ['Anxiety', 'Depression', 'Loneliness', 'Self-esteem', 'Breakups'];
+export const SENSITIVE_TOPICS = [
+  'Anxiety', 'Depression', 'Loneliness', 'Self-esteem', 'Breakups',
+  'Grief', 'Trauma', 'PTSD', 'Addiction', 'Recovery',
+  'Panic Attacks', 'Sadness', 'Self-worth', 'Burnout',
+];
+
+export const TOPIC_CATEGORIES = [
+  { id: 'emotional', label: 'Emotional', icon: 'heart-outline', color: '#EF4444', topics: ['Anxiety', 'Depression', 'Stress', 'Overwhelm', 'Panic Attacks', 'Emotional Regulation', 'Anger Management', 'Grief', 'Sadness', 'Fear'] },
+  { id: 'confidence', label: 'Confidence', icon: 'trending-up-outline', color: '#F59E0B', topics: ['Confidence', 'Self-esteem', 'Self-worth', 'Body Image', 'Identity', 'Imposter Syndrome', 'Perfectionism', 'Self-compassion', 'Assertiveness', 'Vulnerability'] },
+  { id: 'relationships', label: 'Relationships', icon: 'people-outline', color: '#8B5CF6', topics: ['Dating', 'Breakups', 'Friendships', 'Family', 'Boundaries', 'Conflict Resolution', 'Trust Issues', 'Attachment', 'Codependency', 'Communication'] },
+  { id: 'social', label: 'Social', icon: 'chatbubbles-outline', color: '#06B6D4', topics: ['Loneliness', 'Social Anxiety', 'Social Skills', 'Making Friends', 'Fitting In', 'People Pleasing', 'Rejection', 'Public Speaking', 'Networking', 'Small Talk'] },
+  { id: 'career', label: 'Career', icon: 'briefcase-outline', color: '#4B7BF5', topics: ['Career', 'Job Search', 'Career Change', 'Work-Life Balance', 'Workplace Stress', 'Leadership', 'Entrepreneurship', 'Side Hustle', 'Purpose', 'Meaning'] },
+  { id: 'mindset', label: 'Mindset', icon: 'bulb-outline', color: '#10B981', topics: ['Mindset', 'Motivation', 'Goal Setting', 'Discipline', 'Procrastination', 'Decision Making', 'Overthinking', 'Rumination', 'Growth Mindset', 'Resilience'] },
+  { id: 'lifestyle', label: 'Lifestyle', icon: 'leaf-outline', color: '#14B8A6', topics: ['Habits', 'Productivity', 'Time Management', 'Sleep', 'Fitness', 'Nutrition', 'Morning Routine', 'Digital Detox', 'Minimalism', 'Journaling'] },
+  { id: 'transitions', label: 'Life Changes', icon: 'swap-horizontal-outline', color: '#F97316', topics: ['College Stress', 'Graduation', 'Moving', 'Starting Over', 'Adulting', 'Quarter-life Crisis', 'Midlife Transition', 'Retirement', 'Empty Nest', 'New Parent'] },
+  { id: 'mentalhealth', label: 'Mental Health', icon: 'medkit-outline', color: '#EC4899', topics: ['Burnout', 'Compassion Fatigue', 'Trauma', 'PTSD', 'OCD', 'ADHD', 'Neurodivergence', 'Addiction', 'Recovery', 'Coping Skills'] },
+  { id: 'spirituality', label: 'Inner Growth', icon: 'sparkles-outline', color: '#A855F7', topics: ['Spirituality', 'Mindfulness', 'Meditation', 'Gratitude', 'Self-discovery', 'Values', 'Authenticity', 'Forgiveness', 'Letting Go', 'Inner Peace'] },
+];
 
 export const SESSION_MODES = [
-  { id: 'chat', label: 'Chat', icon: 'chatbubble-outline', desc: 'Text-based guidance' },
+  { id: 'chat', label: 'Chat', icon: 'chatbubble-outline', desc: 'Text-based conversation' },
   { id: 'voice', label: 'Voice', icon: 'mic-outline', desc: 'Audio call' },
   { id: 'video', label: 'Video', icon: 'videocam-outline', desc: 'Face-to-face' },
 ];
 
-/* ═══════════════  MOCK GUIDES  ═══════════════ */
-export const MOCK_GUIDES = [
+/* ═══════════════  MOCK COMPANIONS  ═══════════════ */
+export const MOCK_COMPANIONS = [
   {
     id: 'g1',
     name: 'Maya Chen',
-    bio: 'Life coach specialising in mindset shifts & confidence building.',
+    bio: 'I help people find their confidence and build the mindset to go after what they want. Let\'s figure it out together.',
     topics: ['Confidence', 'Mindset', 'Career', 'Public Speaking', 'Motivation'],
     rating: 4.9,
-    sessions: 342,
+    conversations: 342,
     badges: ['Top Rated', 'Fast Responder'],
     responseTime: 1,
     ratePerMin: 0.99,
@@ -33,10 +78,10 @@ export const MOCK_GUIDES = [
   {
     id: 'g2',
     name: 'Jordan Ellis',
-    bio: 'Peer wellness guide -- real talk about anxiety, sleep & college life.',
+    bio: 'Real talk about anxiety, sleep, and figuring out college life. No judgment, just honest conversation.',
     topics: ['Anxiety', 'Sleep', 'College Stress', 'Habits', 'Productivity'],
     rating: 4.7,
-    sessions: 189,
+    conversations: 189,
     badges: ['Empathetic'],
     responseTime: 2,
     ratePerMin: 0.79,
@@ -45,10 +90,10 @@ export const MOCK_GUIDES = [
   {
     id: 'g3',
     name: 'Priya Sharma',
-    bio: 'Relationship & social dynamics coach. No judgement, just vibes.',
+    bio: 'Relationships, friendships, dating -- I\'ve been through it all. Let\'s talk it through.',
     topics: ['Dating', 'Breakups', 'Friendships', 'Family', 'Loneliness', 'Self-esteem'],
     rating: 4.8,
-    sessions: 256,
+    conversations: 256,
     badges: ['Relationship Pro', 'Top Rated'],
     responseTime: 3,
     ratePerMin: 1.29,
@@ -57,10 +102,10 @@ export const MOCK_GUIDES = [
   {
     id: 'g4',
     name: 'Kai Williams',
-    bio: 'Fitness mindset + sports performance peer guide.',
+    bio: 'Fitness, sports, and the mindset behind both. Let\'s push through together.',
     topics: ['Fitness', 'Sports', 'Motivation', 'Confidence', 'Habits'],
     rating: 4.5,
-    sessions: 97,
+    conversations: 97,
     badges: ['Active Lifestyle'],
     responseTime: 4,
     ratePerMin: 0.69,
@@ -69,14 +114,56 @@ export const MOCK_GUIDES = [
   {
     id: 'g5',
     name: 'Sam Rivera',
-    bio: 'Been through it all -- depression, anxiety, career pivots. Here to listen.',
+    bio: 'Been through depression, anxiety, career pivots. I get it. Here to listen and share what helped me.',
     topics: ['Depression', 'Anxiety', 'Career', 'Mindset', 'Self-esteem', 'Loneliness'],
     rating: 4.6,
-    sessions: 214,
+    conversations: 214,
     badges: ['Lived Experience'],
     responseTime: 2,
     ratePerMin: 0.89,
     verified: true,
+  },
+];
+
+// Keep backward-compat alias
+export const MOCK_GUIDES = MOCK_COMPANIONS;
+
+/* ═══════════════  MOCK BLOG RESOURCES  ═══════════════ */
+export const BLOG_RESOURCES = [
+  {
+    id: 'blog1',
+    title: '5 ways to calm your mind before bed',
+    description: 'Simple techniques that actually work for quieting racing thoughts at night.',
+    topics: ['Sleep', 'Anxiety', 'Habits'],
+    readTime: '4 min read',
+  },
+  {
+    id: 'blog2',
+    title: 'Setting boundaries without guilt',
+    description: 'How to protect your energy while keeping relationships healthy.',
+    topics: ['Boundaries', 'Family', 'Self-esteem'],
+    readTime: '5 min read',
+  },
+  {
+    id: 'blog3',
+    title: 'The overthinking trap and how to escape it',
+    description: 'Why your brain loops on the same thoughts and what to do about it.',
+    topics: ['Overthinking', 'Anxiety', 'Mindset'],
+    readTime: '3 min read',
+  },
+  {
+    id: 'blog4',
+    title: 'Starting over after a breakup',
+    description: 'Practical steps for rebuilding when everything feels uncertain.',
+    topics: ['Breakups', 'Self-esteem', 'Starting Over'],
+    readTime: '6 min read',
+  },
+  {
+    id: 'blog5',
+    title: 'Finding motivation when nothing excites you',
+    description: 'What to do when passion and drive feel completely absent.',
+    topics: ['Motivation', 'Burnout', 'Purpose'],
+    readTime: '4 min read',
   },
 ];
 
@@ -103,15 +190,20 @@ export function generateAvailability(guideId) {
   return slots;
 }
 
-/* ═══════════════  FORUM DATA  ═══════════════ */
-export const FORUM_CATEGORIES = [
+/* ═══════════════  COMMUNITY DATA  ═══════════════ */
+export const COMMUNITY_CATEGORIES = [
   { id: 'all', label: 'All' },
   { id: 'anxiety', label: 'Anxiety' },
   { id: 'confidence', label: 'Confidence' },
   { id: 'relationships', label: 'Relationships' },
   { id: 'career', label: 'Career' },
   { id: 'wellness', label: 'Wellness' },
+  { id: 'mindset', label: 'Mindset' },
+  { id: 'lifestyle', label: 'Lifestyle' },
 ];
+
+// Keep backward-compat alias
+export const FORUM_CATEGORIES = COMMUNITY_CATEGORIES;
 
 const INITIAL_THREADS = [
   {
@@ -198,7 +290,7 @@ const INITIAL_REPLIES = {
 
 /* ═══════════════  MATCHING LOGIC  ═══════════════ */
 export function matchGuide(userTopics, skipId) {
-  const pool = skipId ? MOCK_GUIDES.filter((g) => g.id !== skipId) : MOCK_GUIDES;
+  const pool = skipId ? MOCK_COMPANIONS.filter((g) => g.id !== skipId) : MOCK_COMPANIONS;
   const scored = pool.map((g) => {
     const overlap = g.topics.filter((t) => userTopics.includes(t)).length;
     return { guide: g, overlap, rating: g.rating };
@@ -207,20 +299,23 @@ export function matchGuide(userTopics, skipId) {
   return scored[0]?.guide ?? null;
 }
 
+// Alias
+export const matchCompanion = matchGuide;
+
 /* ═══════════════  MOCK CHAT REPLIES  ═══════════════ */
-const GUIDE_REPLIES = [
+const COMPANION_REPLIES = [
   "Hey, thanks for reaching out. What's on your mind today?",
   "I hear you. That sounds really tough -- want to walk me through it?",
   "You're not alone in feeling that way. A lot of people I talk to go through something similar.",
   "Let's break that down together. What feels most urgent right now?",
   "That's a great insight. How does it feel to say that out loud?",
   "I appreciate you sharing that. It takes courage.",
-  "Here's what's worked for some people I've guided -- want to try it?",
+  "Here's what's worked for some people I've chatted with -- want to try it?",
   "Take your time. There's no rush here.",
 ];
 
 export function getGuideReply(index) {
-  return GUIDE_REPLIES[index % GUIDE_REPLIES.length];
+  return COMPANION_REPLIES[index % COMPANION_REPLIES.length];
 }
 
 export const QUICK_REPLIES = [
@@ -238,6 +333,7 @@ const initialState = {
   safetyAcknowledged: false,
 
   userName: '',
+  userBio: '',
   selectedTopics: [],
   sessionMode: null,
 
@@ -258,7 +354,7 @@ const initialState = {
   guideEarnings: 0,
   guideSessions: [],
 
-  // Bookings
+  // Bookings / Chats
   bookings: [
     {
       id: 'b1',
@@ -301,7 +397,7 @@ const initialState = {
     },
   ],
 
-  // Forums
+  // Community
   threads: INITIAL_THREADS,
   replies: INITIAL_REPLIES,
   upvotedThreads: [],
@@ -322,6 +418,8 @@ function reducer(state, action) {
       return { ...state, safetyAcknowledged: true };
     case 'SET_USER_NAME':
       return { ...state, userName: action.payload };
+    case 'SET_USER_BIO':
+      return { ...state, userBio: action.payload };
     case 'SET_SELECTED_TOPICS':
       return { ...state, selectedTopics: action.payload };
     case 'SET_SESSION_MODE':
@@ -470,7 +568,7 @@ function reducer(state, action) {
       };
     }
 
-    // Forums
+    // Community
     case 'ADD_THREAD': {
       const thread = { id: 't_' + Date.now(), ...action.payload, createdAt: Date.now(), upvotes: 0, replyCount: 0, bookmarked: false };
       return { ...state, threads: [thread, ...state.threads] };

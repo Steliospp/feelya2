@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen, Card, Avatar, ListRow, Divider, SafetyBanner,
-  SecondaryButton, BottomSheet, SectionTitle,
+  SecondaryButton, BottomSheet, SectionTitle, Input,
 } from '../../components/UI';
-import { useApp } from '../../store/AppContext';
+import { useApp, MOCK_COMPANIONS } from '../../store/AppContext';
 
 export default function ProfileScreen({ navigation }) {
   const { state, dispatch } = useApp();
   const [showSafety, setShowSafety] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [editingBio, setEditingBio] = useState(false);
+  const [bioText, setBioText] = useState(state.userBio || '');
 
   const resetApp = () => {
     Alert.alert('Reset App', 'This will clear all data and return to the start screen.', [
@@ -29,27 +32,109 @@ export default function ProfileScreen({ navigation }) {
     ]);
   };
 
+  const saveBio = () => {
+    dispatch({ type: 'SET_USER_BIO', payload: bioText });
+    setEditingBio(false);
+  };
+
+  // Compute stats
+  const conversationsStarted = state.userSessions.length + state.bookings.length;
+  const conversationsCompleted = state.userSessions.length + state.bookings.filter((b) => b.status === 'completed').length;
+  const totalMinutes = state.userSessions.reduce((sum, s) => sum + (s.minutes || 0), 0);
+  const hoursSpent = (totalMinutes / 60).toFixed(1);
+  const communityPosts = state.threads.filter((t) => t.author === state.userName).length;
+
+  // Get unique companions user has chatted with
+  const chattedGuideIds = [
+    ...new Set([
+      ...state.userSessions.map((s) => s.guideId),
+      ...state.bookings.map((b) => b.guideId),
+    ]),
+  ];
+  const myCompanions = MOCK_COMPANIONS.filter((g) => chattedGuideIds.includes(g.id));
+
   return (
     <Screen>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <Text style={s.title}>Profile</Text>
 
+        {/* Profile card */}
         <Card style={s.userCard}>
           <View style={s.userRow}>
-            <Avatar name={state.userName} size={56} />
+            <Avatar name={state.userName} size={64} />
             <View style={s.userInfo}>
               <Text style={s.userName}>{state.userName || 'User'}</Text>
-              <Text style={s.userRole}>Seeker</Text>
+              {state.userBio ? (
+                <Text style={s.userBio} numberOfLines={2}>{state.userBio}</Text>
+              ) : (
+                <TouchableOpacity onPress={() => setEditingBio(true)}>
+                  <Text style={s.addBio}>Add a bio</Text>
+                </TouchableOpacity>
+              )}
+              <Text style={s.joinedDate}>Joined {new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text>
             </View>
+          </View>
+          {state.userBio ? (
+            <TouchableOpacity onPress={() => setEditingBio(true)} style={s.editBioBtn}>
+              <Ionicons name="create-outline" size={16} color={colors.primary} />
+              <Text style={s.editBioText}>Edit bio</Text>
+            </TouchableOpacity>
+          ) : null}
+        </Card>
+
+        {/* Stats */}
+        <Card style={s.statsCard}>
+          <View style={s.statsGrid}>
+            <StatItem label="Conversations" value={conversationsStarted} />
+            <StatItem label="Completed" value={conversationsCompleted} />
+            <StatItem label="Hours" value={hoursSpent} />
+            <StatItem label="Posts" value={communityPosts} />
           </View>
         </Card>
 
+        {/* My Companions */}
+        {myCompanions.length > 0 && (
+          <>
+            <SectionTitle>My Companions</SectionTitle>
+            {myCompanions.map((companion) => (
+              <Card
+                key={companion.id}
+                style={s.companionCard}
+                onPress={() => navigation.navigate('Home', { screen: 'CompanionProfile', params: { guideId: companion.id } })}
+              >
+                <View style={s.companionRow}>
+                  <Avatar name={companion.name} size={44} />
+                  <View style={s.companionInfo}>
+                    <Text style={s.companionName}>{companion.name}</Text>
+                    <Text style={s.companionBio} numberOfLines={1}>{companion.bio}</Text>
+                    <View style={s.companionRating}>
+                      <Ionicons name="star" size={12} color={colors.warning} />
+                      <Text style={s.companionRatingText}>{companion.rating}</Text>
+                      <Text style={s.companionConvos}> -- {companion.conversations} conversations</Text>
+                    </View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                </View>
+              </Card>
+            ))}
+          </>
+        )}
+
+        {/* Settings */}
+        <SectionTitle style={{ marginTop: spacing.sm }}>Settings</SectionTitle>
         <Card style={s.menuCard}>
           <ListRow
             icon="shield-checkmark-outline"
             title="Safety & Resources"
             subtitle="Crisis lines and support info"
             onPress={() => setShowSafety(true)}
+          />
+          <Divider style={{ marginVertical: 0 }} />
+          <ListRow
+            icon="notifications-outline"
+            title="Notifications"
+            subtitle="Manage your notification preferences"
+            onPress={() => {}}
           />
           <Divider style={{ marginVertical: 0 }} />
           <ListRow
@@ -60,17 +145,16 @@ export default function ProfileScreen({ navigation }) {
           />
         </Card>
 
-        <SafetyBanner />
-
         <SecondaryButton
           title="Reset App"
           onPress={resetApp}
           style={{ marginTop: spacing.lg }}
         />
 
-        <Text style={s.version}>v1.0.0</Text>
+        <Text style={s.version}>v2.0.0</Text>
       </ScrollView>
 
+      {/* Safety Bottom Sheet */}
       <BottomSheet visible={showSafety} onClose={() => setShowSafety(false)} title="Safety & Resources">
         <SafetyBanner />
         <View style={s.resourceSection}>
@@ -86,31 +170,93 @@ export default function ProfileScreen({ navigation }) {
         </View>
       </BottomSheet>
 
+      {/* About Bottom Sheet */}
       <BottomSheet visible={showAbout} onClose={() => setShowAbout(false)} title="About Feelya">
         <Text style={s.aboutText}>
-          Feelya connects you with peer support for on-demand coaching and encouragement.
+          Feelya is a place to talk things through with real people.
           This is not therapy, counseling, or medical advice.
         </Text>
         <Divider />
-        <Text style={s.aboutVersion}>Version 1.0.0 (MVP)</Text>
+        <Text style={s.aboutVersion}>Version 2.0.0</Text>
+      </BottomSheet>
+
+      {/* Edit Bio Bottom Sheet */}
+      <BottomSheet visible={editingBio} onClose={() => setEditingBio(false)} title="Edit Bio">
+        <Input
+          placeholder="Tell others a bit about yourself..."
+          value={bioText}
+          onChangeText={setBioText}
+          multiline
+          maxLength={160}
+          autoFocus
+        />
+        <Text style={s.charCount}>{bioText.length}/160</Text>
+        <SecondaryButton
+          title="Save"
+          variant="soft"
+          onPress={saveBio}
+          style={{ marginTop: spacing.md }}
+        />
       </BottomSheet>
     </Screen>
   );
 }
 
+function StatItem({ label, value }) {
+  return (
+    <View style={s.statItem}>
+      <Text style={s.statValue}>{value}</Text>
+      <Text style={s.statLabel}>{label}</Text>
+    </View>
+  );
+}
+
 const s = StyleSheet.create({
-  scroll: { padding: spacing.screenPadding, paddingTop: spacing.xxl },
+  scroll: { padding: spacing.screenPadding, paddingTop: spacing.xxl, paddingBottom: 100 },
   title: { fontSize: font.title, fontWeight: '600', color: colors.text, marginBottom: spacing.lg },
+
+  /* User card */
   userCard: { marginBottom: spacing.md },
   userRow: { flexDirection: 'row', alignItems: 'center' },
-  userInfo: { marginLeft: spacing.md },
+  userInfo: { flex: 1, marginLeft: spacing.md },
   userName: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  userRole: { fontSize: font.caption, color: colors.primary, fontWeight: '500', marginTop: 2 },
-  menuCard: { marginBottom: spacing.lg, paddingHorizontal: 0, paddingVertical: 0 },
+  userBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 2, lineHeight: 18 },
+  addBio: { fontSize: font.caption, color: colors.primary, fontWeight: '500', marginTop: 2 },
+  joinedDate: { fontSize: font.xs, color: colors.textMuted, marginTop: 4 },
+  editBioBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    alignSelf: 'flex-start',
+  },
+  editBioText: { fontSize: font.caption, color: colors.primary, fontWeight: '500', marginLeft: 4 },
+
+  /* Stats */
+  statsCard: { marginBottom: spacing.lg },
+  statsGrid: { flexDirection: 'row', justifyContent: 'space-around' },
+  statItem: { alignItems: 'center' },
+  statValue: { fontSize: font.xl, fontWeight: '700', color: colors.text },
+  statLabel: { fontSize: font.xs, color: colors.textMuted, marginTop: 2 },
+
+  /* Companions */
+  companionCard: { marginBottom: spacing.sm },
+  companionRow: { flexDirection: 'row', alignItems: 'center' },
+  companionInfo: { flex: 1, marginLeft: 12 },
+  companionName: { fontSize: font.body, fontWeight: '600', color: colors.text },
+  companionBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 1 },
+  companionRating: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  companionRatingText: { fontSize: font.xs, fontWeight: '600', color: colors.text, marginLeft: 3 },
+  companionConvos: { fontSize: font.xs, color: colors.textMuted },
+
+  /* Settings */
+  menuCard: { marginBottom: spacing.sm, paddingHorizontal: 0, paddingVertical: 0 },
   version: { fontSize: font.xs, color: colors.textMuted, textAlign: 'center', marginTop: spacing.lg },
+
+  /* Bottom sheets */
   resourceSection: { marginTop: spacing.md },
   resourceTitle: { fontSize: font.section, fontWeight: '600', color: colors.text, marginBottom: spacing.sm },
   resourceText: { fontSize: font.caption, color: colors.textSecondary, lineHeight: 22 },
   aboutText: { fontSize: font.body, color: colors.textSecondary, lineHeight: 22 },
   aboutVersion: { fontSize: font.caption, color: colors.textMuted },
+  charCount: { fontSize: font.xs, color: colors.textMuted, textAlign: 'right', marginTop: spacing.xs },
 });
