@@ -15,6 +15,7 @@ import {
   GuideCard,
   ResourceCard,
   Pill,
+  PrimaryCTA,
 } from '../../components/UI';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import { useApp, MOCK_GUIDES, TOPIC_CATEGORIES, BLOG_RESOURCES } from '../../store/AppContext';
@@ -93,6 +94,16 @@ export default function TopicHubScreen({ navigation, route }) {
             Explore conversations, resources, and guides for {topic.toLowerCase()}.
           </Text>
         </View>
+
+        {/* Find a guide CTA */}
+        <PrimaryCTA
+          title="Find a guide"
+          subtitle={`Talk to someone about ${topic.toLowerCase()}`}
+          onPress={() => {
+            navigation.navigate('TopicSelect', { preselect: topic });
+          }}
+          style={s.findGuideCta}
+        />
 
         {/* Prompt Questions */}
         <SectionTitle>Questions to explore</SectionTitle>
@@ -219,6 +230,9 @@ const s = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
+  },
+  findGuideCta: {
+    marginBottom: spacing.lg,
   },
   promptCard: {
     marginBottom: spacing.sm,

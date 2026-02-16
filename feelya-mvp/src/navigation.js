@@ -24,6 +24,8 @@ import SessionSummaryScreen from './screens/user/SessionSummaryScreen';
 import RateGuideScreen from './screens/user/RateGuideScreen';
 import GuideProfileScreen from './screens/user/GuideProfileScreen';
 import ProfileScreen from './screens/user/ProfileScreen';
+import MyGuidesScreen from './screens/user/MyGuidesScreen';
+import SavedDiscussionsScreen from './screens/user/SavedDiscussionsScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
 
 // Bookings
@@ -80,6 +82,8 @@ function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+      <Stack.Screen name="MyGuides" component={MyGuidesScreen} />
+      <Stack.Screen name="SavedDiscussions" component={SavedDiscussionsScreen} />
     </Stack.Navigator>
   );
 }

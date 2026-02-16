@@ -92,33 +92,22 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </Card>
 
-        {/* My Guides */}
-        {myGuides.length > 0 && (
-          <>
-            <SectionTitle>My Guides</SectionTitle>
-            {myGuides.map((guide) => (
-              <Card
-                key={guide.id}
-                style={s.guideCard}
-                onPress={() => navigation.navigate('Home', { screen: 'GuideProfile', params: { guideId: guide.id } })}
-              >
-                <View style={s.guideRow}>
-                  <Avatar name={guide.name} size={44} />
-                  <View style={s.guideInfo}>
-                    <Text style={s.guideName}>{guide.name}</Text>
-                    <Text style={s.guideBio} numberOfLines={1}>{guide.bio}</Text>
-                    <View style={s.guideRating}>
-                      <Ionicons name="star" size={12} color={colors.warning} />
-                      <Text style={s.guideRatingText}>{guide.rating}</Text>
-                      <Text style={s.guideConvos}> -- {guide.conversations} conversations</Text>
-                    </View>
-                  </View>
-                  <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-                </View>
-              </Card>
-            ))}
-          </>
-        )}
+        {/* My Stuff */}
+        <Card style={s.menuCard}>
+          <ListRow
+            icon="people-outline"
+            title="My Guides"
+            subtitle={`${myGuides.length} guide${myGuides.length !== 1 ? 's' : ''}`}
+            onPress={() => navigation.navigate('MyGuides')}
+          />
+          <Divider style={{ marginVertical: 0 }} />
+          <ListRow
+            icon="bookmark-outline"
+            title="Saved Discussions"
+            subtitle={`${state.bookmarkedThreads.length} saved`}
+            onPress={() => navigation.navigate('SavedDiscussions')}
+          />
+        </Card>
 
         {/* Settings */}
         <SectionTitle style={{ marginTop: spacing.sm }}>Settings</SectionTitle>
@@ -237,16 +226,6 @@ const s = StyleSheet.create({
   statItem: { alignItems: 'center' },
   statValue: { fontSize: font.xl, fontWeight: '700', color: colors.text },
   statLabel: { fontSize: font.xs, color: colors.textMuted, marginTop: 2 },
-
-  /* Guides */
-  guideCard: { marginBottom: spacing.sm },
-  guideRow: { flexDirection: 'row', alignItems: 'center' },
-  guideInfo: { flex: 1, marginLeft: 12 },
-  guideName: { fontSize: font.body, fontWeight: '600', color: colors.text },
-  guideBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 1 },
-  guideRating: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  guideRatingText: { fontSize: font.xs, fontWeight: '600', color: colors.text, marginLeft: 3 },
-  guideConvos: { fontSize: font.xs, color: colors.textMuted },
 
   /* Settings */
   menuCard: { marginBottom: spacing.sm, paddingHorizontal: 0, paddingVertical: 0 },

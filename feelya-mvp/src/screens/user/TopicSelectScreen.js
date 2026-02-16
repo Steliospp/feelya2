@@ -20,10 +20,11 @@ import {
   TOPIC_CATEGORIES,
 } from '../../store/AppContext';
 
-export default function TopicSelectScreen({ navigation }) {
+export default function TopicSelectScreen({ navigation, route }) {
   const { dispatch } = useApp();
+  const preselect = route.params?.preselect;
   const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(preselect ? [preselect] : []);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
 
   const toggle = (topic) => {
