@@ -14,9 +14,10 @@ import {
   ResumeCard,
   GuideCard,
   SectionTitle,
+  ResourceCard,
 } from '../../components/UI';
 import { colors, spacing, radius, font } from '../../theme';
-import { useApp, MOCK_GUIDES, getDailyQuote } from '../../store/AppContext';
+import { useApp, MOCK_GUIDES, BLOG_RESOURCES, getDailyQuote } from '../../store/AppContext';
 
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
@@ -118,6 +119,32 @@ export default function UserHomeScreen({ navigation }) {
           ))}
         </ScrollView>
 
+        {/* Resources carousel */}
+        <SectionTitle
+          right={
+            <TouchableOpacity onPress={() => navigation.navigate('Community', { screen: 'CommunityMain', params: { tab: 'resources' } })}>
+              <Text style={styles.seeAll}>See all</Text>
+            </TouchableOpacity>
+          }
+        >
+          Worth a read
+        </SectionTitle>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.resourcesRow}
+        >
+          {BLOG_RESOURCES.map((r) => (
+            <ResourceCard
+              key={r.id}
+              title={r.title}
+              description={r.description}
+              readTime={r.readTime}
+              style={styles.resourceCardHorizontal}
+            />
+          ))}
+        </ScrollView>
+
         {/* Safety pill */}
         <TouchableOpacity style={styles.safetyPill} activeOpacity={0.7}>
           <Ionicons name="shield-checkmark-outline" size={16} color={colors.primary} />
@@ -173,7 +200,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   guidesRow: {
+    paddingBottom: spacing.md,
+  },
+  resourcesRow: {
     paddingBottom: spacing.sm,
+  },
+  resourceCardHorizontal: {
+    width: 240,
+    marginRight: spacing.md,
+    marginBottom: 0,
   },
   safetyPill: {
     flexDirection: 'row',
