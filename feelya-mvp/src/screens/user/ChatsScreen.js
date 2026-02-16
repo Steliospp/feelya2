@@ -18,7 +18,7 @@ export default function ChatsScreen({ navigation }) {
   return (
     <Screen>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={s.title}>Chats</Text>
+        <Text style={s.title}>Activity</Text>
 
         {state.bookings.length === 0 && state.userSessions.length === 0 ? (
           <EmptyState

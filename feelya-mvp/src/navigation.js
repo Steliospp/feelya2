@@ -143,7 +143,7 @@ function UserTabs() {
             Home: focused ? 'home' : 'home-outline',
             Community: focused ? 'people' : 'people-outline',
             StartChat: 'add',
-            Chats: focused ? 'chatbubbles' : 'chatbubbles-outline',
+            Chats: focused ? 'pulse' : 'pulse-outline',
             Profile: focused ? 'person' : 'person-outline',
           };
           return <Ionicons name={iconMap[route.name]} size={22} color={color} />;
@@ -172,7 +172,7 @@ function UserTabs() {
           },
         })}
       />
-      <Tab.Screen name="Chats" component={ChatsStack} />
+      <Tab.Screen name="Chats" component={ChatsStack} options={{ tabBarLabel: 'Activity' }} />
       <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>
   );
