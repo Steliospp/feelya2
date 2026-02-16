@@ -5,7 +5,7 @@ import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen, Card, Avatar, Badge, SectionTitle, EmptyState,
 } from '../../components/UI';
-import { useApp, MOCK_COMPANIONS } from '../../store/AppContext';
+import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
 export default function ChatsScreen({ navigation }) {
   const { state } = useApp();
@@ -24,7 +24,7 @@ export default function ChatsScreen({ navigation }) {
           <EmptyState
             icon="chatbubbles-outline"
             title="No conversations yet"
-            subtitle="Start a conversation to connect with a companion"
+            subtitle="Start a conversation to connect with a guide"
           />
         ) : (
           <>
@@ -33,7 +33,7 @@ export default function ChatsScreen({ navigation }) {
               <>
                 <SectionTitle>Scheduled</SectionTitle>
                 {upcoming.map((b) => {
-                  const companion = MOCK_COMPANIONS.find((g) => g.id === b.guideId);
+                  const guide = MOCK_GUIDES.find((g) => g.id === b.guideId);
                   return (
                     <Card
                       key={b.id}
@@ -44,8 +44,8 @@ export default function ChatsScreen({ navigation }) {
                         <Avatar name={b.guideName} size={48} />
                         <View style={s.info}>
                           <Text style={s.name}>{b.guideName}</Text>
-                          {companion && (
-                            <Text style={s.bio} numberOfLines={1}>{companion.bio}</Text>
+                          {guide && (
+                            <Text style={s.bio} numberOfLines={1}>{guide.bio}</Text>
                           )}
                           <View style={s.timeRow}>
                             <Ionicons name="time-outline" size={13} color={colors.textMuted} />
@@ -79,7 +79,7 @@ export default function ChatsScreen({ navigation }) {
               <>
                 <SectionTitle style={{ marginTop: spacing.lg }}>Past</SectionTitle>
                 {past.map((b) => {
-                  const companion = MOCK_COMPANIONS.find((g) => g.id === b.guideId);
+                  const guide = MOCK_GUIDES.find((g) => g.id === b.guideId);
                   return (
                     <Card
                       key={b.id}
@@ -90,8 +90,8 @@ export default function ChatsScreen({ navigation }) {
                         <Avatar name={b.guideName} size={48} />
                         <View style={s.info}>
                           <Text style={s.name}>{b.guideName}</Text>
-                          {companion && (
-                            <Text style={s.bio} numberOfLines={1}>{companion.bio}</Text>
+                          {guide && (
+                            <Text style={s.bio} numberOfLines={1}>{guide.bio}</Text>
                           )}
                           <Text style={s.dateText}>
                             {formatDate(b.date)}

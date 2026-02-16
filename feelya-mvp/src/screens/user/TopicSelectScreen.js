@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen,
   Header,
+  SearchBar,
   PrimaryButton,
   SecondaryButton,
   Pill,
+  CategoryTile,
   SafetyBanner,
 } from '../../components/UI';
-import { useApp, ALL_TOPICS, SENSITIVE_TOPICS } from '../../store/AppContext';
+import {
+  useApp,
+  ALL_TOPICS,
+  SENSITIVE_TOPICS,
+  QUICK_PICK_TOPICS,
+  TOPIC_CATEGORIES,
+} from '../../store/AppContext';
 
 export default function TopicSelectScreen({ navigation }) {
   const { dispatch } = useApp();
+  const [search, setSearch] = useState('');
   const [selected, setSelected] = useState([]);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
 
@@ -39,42 +48,100 @@ export default function TopicSelectScreen({ navigation }) {
     navigation.navigate('SessionModeSelect');
   };
 
+  // Filter topics by search
+  const searchResults = useMemo(() => {
+    if (!search.trim()) return [];
+    const q = search.trim().toLowerCase();
+    return ALL_TOPICS.filter((t) => t.toLowerCase().includes(q));
+  }, [search]);
+
+  const isSearching = search.trim().length > 0;
+
   return (
     <Screen>
-      <Header title="Topics" onBack={() => navigation.goBack()} />
+      <Header title="What's on your mind?" onBack={() => navigation.goBack()} />
 
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>What's on your mind?</Text>
-        <Text style={styles.subtitle}>
-          Pick one or more topics and we'll match you with the right companion.
-        </Text>
-
-        <View style={styles.pills}>
-          {ALL_TOPICS.map((t) => (
-            <Pill
-              key={t}
-              label={t}
-              selected={selected.includes(t)}
-              onPress={() => toggle(t)}
-            />
-          ))}
+        {/* Search */}
+        <View style={styles.searchWrap}>
+          <SearchBar
+            placeholder="Search topics..."
+            value={search}
+            onChangeText={setSearch}
+          />
         </View>
+
+        {isSearching ? (
+          /* Search results */
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Results</Text>
+            <View style={styles.pills}>
+              {searchResults.length === 0 ? (
+                <Text style={styles.emptyText}>No topics found</Text>
+              ) : (
+                searchResults.map((t) => (
+                  <Pill
+                    key={t}
+                    label={t}
+                    selected={selected.includes(t)}
+                    onPress={() => toggle(t)}
+                  />
+                ))
+              )}
+            </View>
+          </View>
+        ) : (
+          <>
+            {/* Quick Picks */}
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>Quick picks</Text>
+              <View style={styles.pills}>
+                {QUICK_PICK_TOPICS.map((t) => (
+                  <Pill
+                    key={t}
+                    label={t}
+                    selected={selected.includes(t)}
+                    onPress={() => toggle(t)}
+                  />
+                ))}
+              </View>
+            </View>
+
+            {/* Category Tiles */}
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>Explore by category</Text>
+              <View style={styles.tilesGrid}>
+                {TOPIC_CATEGORIES.map((cat) => (
+                  <CategoryTile
+                    key={cat.id}
+                    label={cat.label}
+                    icon={cat.icon}
+                    color={cat.color}
+                    onPress={() => navigation.navigate('TopicHub', { topic: cat.topics[0], categoryId: cat.id })}
+                  />
+                ))}
+              </View>
+            </View>
+          </>
+        )}
       </ScrollView>
 
-      <View style={styles.footer}>
-        <Text style={styles.count}>
-          {selected.length} topic{selected.length !== 1 ? 's' : ''} selected
-        </Text>
-        <PrimaryButton
-          title="Find a companion"
-          onPress={proceed}
-          disabled={selected.length === 0}
-          icon="search-outline"
-        />
-      </View>
+      {/* Footer with selection count + button */}
+      {selected.length > 0 && (
+        <View style={styles.footer}>
+          <Text style={styles.count}>
+            {selected.length} topic{selected.length !== 1 ? 's' : ''} selected
+          </Text>
+          <PrimaryButton
+            title="Find a guide"
+            onPress={proceed}
+            icon="search-outline"
+          />
+        </View>
+      )}
 
       {/* Sensitive-topic safety modal */}
       <Modal visible={showSafetyModal} transparent animationType="fade">
@@ -90,7 +157,7 @@ export default function TopicSelectScreen({ navigation }) {
             <SafetyBanner />
 
             <Text style={styles.modalBody}>
-              The topics you selected touch on sensitive areas. Feelya companions offer
+              The topics you selected touch on sensitive areas. Feelya guides offer
               peer support and conversation -- they are not licensed therapists or
               counselors.{'\n\n'}If you need immediate help, call or text{' '}
               <Text style={{ fontWeight: '700' }}>988</Text> (Suicide & Crisis
@@ -117,24 +184,34 @@ export default function TopicSelectScreen({ navigation }) {
 const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.md,
+    paddingTop: spacing.sm,
     paddingBottom: 180,
   },
-  title: {
-    fontSize: font.title,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: spacing.sm,
+  searchWrap: {
+    marginBottom: spacing.lg,
   },
-  subtitle: {
-    fontSize: font.body,
-    color: colors.textSecondary,
-    lineHeight: 22,
-    marginBottom: spacing.xl,
+  section: {
+    marginBottom: spacing.lg,
+  },
+  sectionLabel: {
+    fontSize: font.section,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: spacing.md,
   },
   pills: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  tilesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  emptyText: {
+    fontSize: font.body,
+    color: colors.textMuted,
+    paddingVertical: spacing.md,
   },
   footer: {
     position: 'absolute',
@@ -145,8 +222,9 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    ...shadow.card,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    ...shadow.tab,
   },
   count: {
     fontSize: font.caption,

@@ -36,7 +36,7 @@ export default function SettingsScreen({ navigation }) {
         <Card style={styles.card}>
           <Text style={styles.label}>Role</Text>
           <Text style={styles.value}>
-            {state.role === 'user' ? 'Member' : 'Companion'}
+            {state.role === 'user' ? 'Member' : 'Guide'}
           </Text>
           {state.role === 'user' && state.userName ? (
             <>

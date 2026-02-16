@@ -22,7 +22,7 @@ import SessionChatScreen from './screens/user/SessionChatScreen';
 import SessionCallScreen from './screens/user/SessionCallScreen';
 import SessionSummaryScreen from './screens/user/SessionSummaryScreen';
 import RateGuideScreen from './screens/user/RateGuideScreen';
-import CompanionProfileScreen from './screens/user/CompanionProfileScreen';
+import GuideProfileScreen from './screens/user/GuideProfileScreen';
 import ProfileScreen from './screens/user/ProfileScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
 
@@ -51,7 +51,7 @@ function HomeStack() {
       <Stack.Screen name="SessionCall" component={SessionCallScreen} />
       <Stack.Screen name="SessionSummary" component={SessionSummaryScreen} />
       <Stack.Screen name="RateGuide" component={RateGuideScreen} />
-      <Stack.Screen name="CompanionProfile" component={CompanionProfileScreen} />
+      <Stack.Screen name="GuideProfile" component={GuideProfileScreen} />
     </Stack.Navigator>
   );
 }
@@ -71,7 +71,7 @@ function ChatsStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ChatsMain" component={ChatsScreen} />
       <Stack.Screen name="ChatDetail" component={BookingDetailScreen} />
-      <Stack.Screen name="CompanionProfileChats" component={CompanionProfileScreen} />
+      <Stack.Screen name="GuideProfileChats" component={GuideProfileScreen} />
     </Stack.Navigator>
   );
 }

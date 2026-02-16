@@ -61,8 +61,57 @@ export const SESSION_MODES = [
   { id: 'video', label: 'Video', icon: 'videocam-outline', desc: 'Face-to-face' },
 ];
 
-/* ═══════════════  MOCK COMPANIONS  ═══════════════ */
-export const MOCK_COMPANIONS = [
+/* ═══════════════  QUICK PICK TOPICS  ═══════════════ */
+export const QUICK_PICK_TOPICS = [
+  'Anxiety', 'Stress', 'Confidence', 'Relationships',
+  'Loneliness', 'Burnout', 'Overthinking', 'Career',
+  'Self-esteem', 'Motivation', 'Boundaries', 'Sleep',
+];
+
+/* ═══════════════  DAILY QUOTES  ═══════════════ */
+export const DAILY_QUOTES = [
+  { text: 'You don\'t have to have it all figured out to move forward.', author: 'Unknown' },
+  { text: 'Be gentle with yourself. You\'re doing the best you can.', author: 'Unknown' },
+  { text: 'It\'s okay to not be okay. What matters is you\'re here.', author: 'Unknown' },
+  { text: 'Small steps still count. Progress isn\'t always loud.', author: 'Unknown' },
+  { text: 'You are allowed to take up space and ask for help.', author: 'Unknown' },
+  { text: 'Healing isn\'t linear. Some days are harder than others.', author: 'Unknown' },
+  { text: 'Your feelings are valid, even if others don\'t understand them.', author: 'Unknown' },
+  { text: 'The fact that you\'re trying is enough.', author: 'Unknown' },
+  { text: 'Rest is not a reward. It\'s a requirement.', author: 'Unknown' },
+  { text: 'You don\'t have to carry everything alone.', author: 'Unknown' },
+  { text: 'Growth happens in the moments you choose to keep going.', author: 'Unknown' },
+  { text: 'It\'s brave to ask for what you need.', author: 'Unknown' },
+  { text: 'You are more resilient than you think.', author: 'Unknown' },
+  { text: 'One conversation can change everything.', author: 'Unknown' },
+  { text: 'Let go of the idea that it has to be perfect.', author: 'Unknown' },
+  { text: 'Your mental health matters just as much as your physical health.', author: 'Unknown' },
+  { text: 'Boundaries are a form of self-respect.', author: 'Unknown' },
+  { text: 'You\'re not behind. You\'re on your own timeline.', author: 'Unknown' },
+  { text: 'Showing up for yourself is the first step.', author: 'Unknown' },
+  { text: 'It\'s okay to outgrow people, places, and patterns.', author: 'Unknown' },
+  { text: 'Vulnerability is not weakness. It\'s courage.', author: 'Brene Brown' },
+  { text: 'The only way out is through.', author: 'Robert Frost' },
+  { text: 'What we achieve inwardly will change outer reality.', author: 'Plutarch' },
+  { text: 'Almost everything will work again if you unplug it for a while.', author: 'Anne Lamott' },
+  { text: 'You are not your thoughts. You are the one who notices them.', author: 'Eckhart Tolle' },
+  { text: 'Start where you are. Use what you have. Do what you can.', author: 'Arthur Ashe' },
+  { text: 'Connection is why we\'re here. It gives purpose and meaning.', author: 'Brene Brown' },
+  { text: 'You don\'t have to see the whole staircase. Just take the first step.', author: 'Martin Luther King Jr.' },
+  { text: 'The greatest glory is not in never falling, but in rising every time we fall.', author: 'Confucius' },
+  { text: 'Talk to yourself like someone you love.', author: 'Brene Brown' },
+];
+
+export function getDailyQuote() {
+  const today = new Date();
+  const dayOfYear = Math.floor(
+    (today - new Date(today.getFullYear(), 0, 0)) / 86400000
+  );
+  return DAILY_QUOTES[dayOfYear % DAILY_QUOTES.length];
+}
+
+/* ═══════════════  MOCK GUIDES  ═══════════════ */
+export const MOCK_GUIDES = [
   {
     id: 'g1',
     name: 'Maya Chen',
@@ -125,8 +174,8 @@ export const MOCK_COMPANIONS = [
   },
 ];
 
-// Keep backward-compat alias
-export const MOCK_GUIDES = MOCK_COMPANIONS;
+// Backward-compat alias
+export const MOCK_COMPANIONS = MOCK_GUIDES;
 
 /* ═══════════════  MOCK BLOG RESOURCES  ═══════════════ */
 export const BLOG_RESOURCES = [
@@ -290,7 +339,7 @@ const INITIAL_REPLIES = {
 
 /* ═══════════════  MATCHING LOGIC  ═══════════════ */
 export function matchGuide(userTopics, skipId) {
-  const pool = skipId ? MOCK_COMPANIONS.filter((g) => g.id !== skipId) : MOCK_COMPANIONS;
+  const pool = skipId ? MOCK_GUIDES.filter((g) => g.id !== skipId) : MOCK_GUIDES;
   const scored = pool.map((g) => {
     const overlap = g.topics.filter((t) => userTopics.includes(t)).length;
     return { guide: g, overlap, rating: g.rating };
@@ -303,7 +352,7 @@ export function matchGuide(userTopics, skipId) {
 export const matchCompanion = matchGuide;
 
 /* ═══════════════  MOCK CHAT REPLIES  ═══════════════ */
-const COMPANION_REPLIES = [
+const GUIDE_REPLIES = [
   "Hey, thanks for reaching out. What's on your mind today?",
   "I hear you. That sounds really tough -- want to walk me through it?",
   "You're not alone in feeling that way. A lot of people I talk to go through something similar.",
@@ -315,7 +364,7 @@ const COMPANION_REPLIES = [
 ];
 
 export function getGuideReply(index) {
-  return COMPANION_REPLIES[index % COMPANION_REPLIES.length];
+  return GUIDE_REPLIES[index % GUIDE_REPLIES.length];
 }
 
 export const QUICK_REPLIES = [
