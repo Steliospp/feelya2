@@ -26,6 +26,7 @@ import GuideProfileScreen from './screens/user/GuideProfileScreen';
 import ProfileScreen from './screens/user/ProfileScreen';
 import MyGuidesScreen from './screens/user/MyGuidesScreen';
 import SavedDiscussionsScreen from './screens/user/SavedDiscussionsScreen';
+import AllTopicsScreen from './screens/user/AllTopicsScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
 
 // Bookings
@@ -46,6 +47,7 @@ function HomeStack() {
       <Stack.Screen name="HomeMain" component={UserHomeScreen} />
       <Stack.Screen name="TopicSelect" component={TopicSelectScreen} />
       <Stack.Screen name="TopicHub" component={TopicHubScreen} />
+      <Stack.Screen name="AllTopics" component={AllTopicsScreen} />
       <Stack.Screen name="SessionModeSelect" component={SessionModeSelectScreen} />
       <Stack.Screen name="Matching" component={MatchingScreen} />
       <Stack.Screen name="GuideFound" component={GuideFoundScreen} />
@@ -54,6 +56,7 @@ function HomeStack() {
       <Stack.Screen name="SessionSummary" component={SessionSummaryScreen} />
       <Stack.Screen name="RateGuide" component={RateGuideScreen} />
       <Stack.Screen name="GuideProfile" component={GuideProfileScreen} />
+      <Stack.Screen name="HomeChatDetail" component={BookingDetailScreen} />
     </Stack.Navigator>
   );
 }

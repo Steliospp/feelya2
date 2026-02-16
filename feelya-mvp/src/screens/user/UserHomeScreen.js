@@ -90,10 +90,7 @@ export default function UserHomeScreen({ navigation }) {
                 date={formatDate(b.date)}
                 timeLabel={b.timeLabel}
                 onPress={() =>
-                  navigation.navigate('Chats', {
-                    screen: 'ChatDetail',
-                    params: { bookingId: b.id },
-                  })
+                  navigation.navigate('HomeChatDetail', { bookingId: b.id })
                 }
               />
             ))}
