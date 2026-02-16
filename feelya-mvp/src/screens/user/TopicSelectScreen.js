@@ -109,6 +109,14 @@ export default function TopicSelectScreen({ navigation, route }) {
                   />
                 ))}
               </View>
+              <TouchableOpacity
+                style={styles.viewMoreBtn}
+                onPress={() => navigation.navigate('AllTopics')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.viewMoreText}>View more topics</Text>
+                <Ionicons name="arrow-forward" size={16} color={colors.primary} />
+              </TouchableOpacity>
             </View>
 
             {/* Category Tiles */}
@@ -203,6 +211,18 @@ const styles = StyleSheet.create({
   pills: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  viewMoreBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginTop: spacing.sm,
+  },
+  viewMoreText: {
+    fontSize: font.caption,
+    fontWeight: '600',
+    color: colors.primary,
+    marginRight: 4,
   },
   tilesGrid: {
     flexDirection: 'row',
