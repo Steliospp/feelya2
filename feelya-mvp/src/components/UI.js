@@ -11,7 +11,6 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -331,8 +330,6 @@ export function BottomSheet({ visible, onClose, title, children }) {
 
   if (!visible) return null;
 
-  const bottomPad = Math.max(spacing.xxl, insets.bottom + spacing.lg);
-
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable style={sheetStyles.overlay} onPress={onClose}>
@@ -344,7 +341,7 @@ export function BottomSheet({ visible, onClose, title, children }) {
             style={[
               sheetStyles.card,
               {
-                paddingBottom: bottomPad,
+                paddingBottom: insets.bottom || spacing.md,
                 transform: [{
                   translateY: slideAnim.interpolate({
                     inputRange: [0, 1],
@@ -357,17 +354,8 @@ export function BottomSheet({ visible, onClose, title, children }) {
             <Pressable>
               <View style={sheetStyles.handle} />
               {title && <Text style={sheetStyles.title}>{title}</Text>}
+              {children}
             </Pressable>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              bounces={false}
-              nestedScrollEnabled
-              keyboardShouldPersistTaps="handled"
-            >
-              <Pressable>
-                {children}
-              </Pressable>
-            </ScrollView>
           </Animated.View>
         </KeyboardAvoidingView>
       </Pressable>
@@ -793,7 +781,6 @@ const sheetStyles = StyleSheet.create({
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     padding: spacing.screenPadding,
-    maxHeight: '85%',
   },
   handle: { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: 'center', marginBottom: spacing.md },
   title: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginBottom: spacing.md },
