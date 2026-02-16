@@ -89,7 +89,7 @@ export default function BookingDetailScreen({ navigation, route }) {
               title="Reschedule"
               icon="calendar-outline"
               onPress={() =>
-                navigation.navigate('CompanionProfileChats', {
+                navigation.navigate('GuideProfileChats', {
                   guideId: booking.guideId,
                   bookingId: booking.id,
                 })
@@ -111,7 +111,7 @@ export default function BookingDetailScreen({ navigation, route }) {
               title="Chat again"
               icon="chatbubble-outline"
               onPress={() =>
-                navigation.navigate('CompanionProfileChats', { guideId: booking.guideId, mode: 'booking' })
+                navigation.navigate('GuideProfileChats', { guideId: booking.guideId, mode: 'booking' })
               }
             />
           </View>
@@ -122,7 +122,7 @@ export default function BookingDetailScreen({ navigation, route }) {
           variant="soft"
           icon="person-outline"
           onPress={() =>
-            navigation.navigate('CompanionProfileChats', { guideId: booking.guideId })
+            navigation.navigate('GuideProfileChats', { guideId: booking.guideId })
           }
           style={{ marginTop: spacing.sm }}
         />

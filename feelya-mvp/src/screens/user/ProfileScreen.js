@@ -7,7 +7,7 @@ import {
   Screen, Card, Avatar, ListRow, Divider, SafetyBanner,
   SecondaryButton, BottomSheet, SectionTitle, Input,
 } from '../../components/UI';
-import { useApp, MOCK_COMPANIONS } from '../../store/AppContext';
+import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
 export default function ProfileScreen({ navigation }) {
   const { state, dispatch } = useApp();
@@ -44,14 +44,14 @@ export default function ProfileScreen({ navigation }) {
   const hoursSpent = (totalMinutes / 60).toFixed(1);
   const communityPosts = state.threads.filter((t) => t.author === state.userName).length;
 
-  // Get unique companions user has chatted with
+  // Get unique guides user has chatted with
   const chattedGuideIds = [
     ...new Set([
       ...state.userSessions.map((s) => s.guideId),
       ...state.bookings.map((b) => b.guideId),
     ]),
   ];
-  const myCompanions = MOCK_COMPANIONS.filter((g) => chattedGuideIds.includes(g.id));
+  const myGuides = MOCK_GUIDES.filter((g) => chattedGuideIds.includes(g.id));
 
   return (
     <Screen>
@@ -92,25 +92,25 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </Card>
 
-        {/* My Companions */}
-        {myCompanions.length > 0 && (
+        {/* My Guides */}
+        {myGuides.length > 0 && (
           <>
-            <SectionTitle>My Companions</SectionTitle>
-            {myCompanions.map((companion) => (
+            <SectionTitle>My Guides</SectionTitle>
+            {myGuides.map((guide) => (
               <Card
-                key={companion.id}
-                style={s.companionCard}
-                onPress={() => navigation.navigate('Home', { screen: 'CompanionProfile', params: { guideId: companion.id } })}
+                key={guide.id}
+                style={s.guideCard}
+                onPress={() => navigation.navigate('Home', { screen: 'GuideProfile', params: { guideId: guide.id } })}
               >
-                <View style={s.companionRow}>
-                  <Avatar name={companion.name} size={44} />
-                  <View style={s.companionInfo}>
-                    <Text style={s.companionName}>{companion.name}</Text>
-                    <Text style={s.companionBio} numberOfLines={1}>{companion.bio}</Text>
-                    <View style={s.companionRating}>
+                <View style={s.guideRow}>
+                  <Avatar name={guide.name} size={44} />
+                  <View style={s.guideInfo}>
+                    <Text style={s.guideName}>{guide.name}</Text>
+                    <Text style={s.guideBio} numberOfLines={1}>{guide.bio}</Text>
+                    <View style={s.guideRating}>
                       <Ionicons name="star" size={12} color={colors.warning} />
-                      <Text style={s.companionRatingText}>{companion.rating}</Text>
-                      <Text style={s.companionConvos}> -- {companion.conversations} conversations</Text>
+                      <Text style={s.guideRatingText}>{guide.rating}</Text>
+                      <Text style={s.guideConvos}> -- {guide.conversations} conversations</Text>
                     </View>
                   </View>
                   <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
@@ -238,15 +238,15 @@ const s = StyleSheet.create({
   statValue: { fontSize: font.xl, fontWeight: '700', color: colors.text },
   statLabel: { fontSize: font.xs, color: colors.textMuted, marginTop: 2 },
 
-  /* Companions */
-  companionCard: { marginBottom: spacing.sm },
-  companionRow: { flexDirection: 'row', alignItems: 'center' },
-  companionInfo: { flex: 1, marginLeft: 12 },
-  companionName: { fontSize: font.body, fontWeight: '600', color: colors.text },
-  companionBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 1 },
-  companionRating: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  companionRatingText: { fontSize: font.xs, fontWeight: '600', color: colors.text, marginLeft: 3 },
-  companionConvos: { fontSize: font.xs, color: colors.textMuted },
+  /* Guides */
+  guideCard: { marginBottom: spacing.sm },
+  guideRow: { flexDirection: 'row', alignItems: 'center' },
+  guideInfo: { flex: 1, marginLeft: 12 },
+  guideName: { fontSize: font.body, fontWeight: '600', color: colors.text },
+  guideBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 1 },
+  guideRating: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  guideRatingText: { fontSize: font.xs, fontWeight: '600', color: colors.text, marginLeft: 3 },
+  guideConvos: { fontSize: font.xs, color: colors.textMuted },
 
   /* Settings */
   menuCard: { marginBottom: spacing.sm, paddingHorizontal: 0, paddingVertical: 0 },

@@ -29,7 +29,7 @@ export default function RoleSelectScreen({ navigation }) {
             <View style={styles.cardContent}>
               <Text style={styles.cardTitle}>I need guidance</Text>
               <Text style={styles.cardDesc}>
-                Connect with a companion for support, conversation, and real talk.
+                Connect with a guide for support, conversation, and real talk.
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />

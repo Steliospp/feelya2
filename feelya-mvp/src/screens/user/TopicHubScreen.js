@@ -12,12 +12,12 @@ import {
   Header,
   Card,
   SectionTitle,
-  CompanionCard,
+  GuideCard,
   ResourceCard,
   Pill,
 } from '../../components/UI';
 import { colors, spacing, radius, font, shadow } from '../../theme';
-import { useApp, MOCK_COMPANIONS, TOPIC_CATEGORIES, BLOG_RESOURCES } from '../../store/AppContext';
+import { useApp, MOCK_GUIDES, TOPIC_CATEGORIES, BLOG_RESOURCES } from '../../store/AppContext';
 
 /* Prompt questions for discussion starters */
 const PROMPT_QUESTIONS = {
@@ -52,8 +52,8 @@ export default function TopicHubScreen({ navigation, route }) {
     cat.topics.includes(topic)
   );
 
-  // Find companions who cover this topic
-  const matchingCompanions = MOCK_COMPANIONS.filter((c) =>
+  // Find guides who cover this topic
+  const matchingGuides = MOCK_GUIDES.filter((c) =>
     c.topics.includes(topic)
   );
 
@@ -90,7 +90,7 @@ export default function TopicHubScreen({ navigation, route }) {
           </View>
           <Text style={s.topicTitle}>{topic}</Text>
           <Text style={s.topicSubtitle}>
-            Explore conversations, resources, and companions for {topic.toLowerCase()}.
+            Explore conversations, resources, and guides for {topic.toLowerCase()}.
           </Text>
         </View>
 
@@ -105,23 +105,23 @@ export default function TopicHubScreen({ navigation, route }) {
           </Card>
         ))}
 
-        {/* Suggested Companions */}
-        {matchingCompanions.length > 0 && (
+        {/* Suggested Guides */}
+        {matchingGuides.length > 0 && (
           <>
-            <SectionTitle style={{ marginTop: spacing.sm }}>Companions</SectionTitle>
+            <SectionTitle style={{ marginTop: spacing.sm }}>Guides</SectionTitle>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={s.companionsRow}
+              contentContainerStyle={s.guidesRow}
             >
-              {matchingCompanions.map((c) => (
-                <CompanionCard
+              {matchingGuides.map((c) => (
+                <GuideCard
                   key={c.id}
                   name={c.name}
                   rating={c.rating}
                   conversations={c.conversations}
                   topics={c.topics}
-                  onPress={() => navigation.navigate('CompanionProfile', { guideId: c.id })}
+                  onPress={() => navigation.navigate('GuideProfile', { guideId: c.id })}
                 />
               ))}
             </ScrollView>
@@ -234,7 +234,7 @@ const s = StyleSheet.create({
     marginLeft: spacing.sm,
     lineHeight: 22,
   },
-  companionsRow: {
+  guidesRow: {
     paddingBottom: spacing.sm,
   },
   threadCard: {

@@ -27,7 +27,7 @@ export default function BookingsScreen({ navigation }) {
           <EmptyState
             icon="calendar-outline"
             title="No bookings yet"
-            subtitle="Start a conversation to connect with a companion"
+            subtitle="Start a conversation to connect with a guide"
           />
         ) : (
           <>

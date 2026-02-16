@@ -450,7 +450,7 @@ export function SafetyBanner({ compact }) {
       </View>
       {!compact && (
         <Text style={miscStyles.safetyBody}>
-          Feelya connects you with companions for support and conversation.
+          Feelya connects you with guides for support and conversation.
           {'\n'}If you need immediate help, call or text{' '}
           <Text style={{ fontWeight: '600' }}>988</Text> (Suicide & Crisis Lifeline).
         </Text>
@@ -474,8 +474,76 @@ export function EmptyState({ icon, title, subtitle }) {
   );
 }
 
-/* ───── CompanionCard (horizontal scroll card) ───── */
-export function CompanionCard({ name, rating, conversations, topics, onPress, style }) {
+/* ───── QuoteCard ───── */
+export function QuoteCard({ text, author, style }) {
+  return (
+    <View style={[quoteCardStyles.card, style]}>
+      <View style={quoteCardStyles.iconWrap}>
+        <Ionicons name="leaf-outline" size={20} color={colors.primary} />
+      </View>
+      <Text style={quoteCardStyles.text}>{text}</Text>
+      {author && <Text style={quoteCardStyles.author}>-- {author}</Text>}
+    </View>
+  );
+}
+
+/* ───── PrimaryCTA ───── */
+export function PrimaryCTA({ title, subtitle, onPress, style }) {
+  return (
+    <TouchableOpacity style={[ctaStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
+      <View style={ctaStyles.content}>
+        <Text style={ctaStyles.title}>{title}</Text>
+        {subtitle && <Text style={ctaStyles.subtitle}>{subtitle}</Text>}
+      </View>
+      <View style={ctaStyles.arrow}>
+        <Ionicons name="arrow-forward" size={20} color={colors.white} />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+/* ───── CategoryTile ───── */
+export function CategoryTile({ label, icon, color, onPress, style }) {
+  return (
+    <TouchableOpacity style={[tileStyles.tile, style]} onPress={onPress} activeOpacity={0.8}>
+      <View style={[tileStyles.iconCircle, { backgroundColor: (color || colors.primary) + '18' }]}>
+        <Ionicons name={icon || 'ellipse-outline'} size={22} color={color || colors.primary} />
+      </View>
+      <Text style={tileStyles.label} numberOfLines={1}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+/* ───── ResumeCard ───── */
+export function ResumeCard({ name, topics, timeLabel, date, onPress, style }) {
+  return (
+    <TouchableOpacity style={[resumeCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
+      <View style={resumeCardStyles.row}>
+        <Avatar name={name} size={44} />
+        <View style={resumeCardStyles.info}>
+          <Text style={resumeCardStyles.name} numberOfLines={1}>{name}</Text>
+          <Text style={resumeCardStyles.topics} numberOfLines={1}>
+            {topics?.slice(0, 2).join(', ')}
+          </Text>
+          {(date || timeLabel) && (
+            <View style={resumeCardStyles.timeRow}>
+              <Ionicons name="time-outline" size={12} color={colors.textMuted} />
+              <Text style={resumeCardStyles.timeText}>
+                {date}{timeLabel ? ` at ${timeLabel}` : ''}
+              </Text>
+            </View>
+          )}
+        </View>
+        <View style={resumeCardStyles.arrowCircle}>
+          <Ionicons name="arrow-forward" size={16} color={colors.primary} />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+/* ───── GuideCard (horizontal scroll card) ───── */
+export function GuideCard({ name, rating, conversations, topics, onPress, style }) {
   const initials = (name || '?')
     .split(' ')
     .map((w) => w[0])
@@ -483,18 +551,18 @@ export function CompanionCard({ name, rating, conversations, topics, onPress, st
     .toUpperCase()
     .slice(0, 2);
   return (
-    <TouchableOpacity style={[companionCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
-      <View style={companionCardStyles.avatarBg}>
-        <Text style={companionCardStyles.avatarText}>{initials}</Text>
+    <TouchableOpacity style={[guideCardStyles.card, style]} onPress={onPress} activeOpacity={0.85}>
+      <View style={guideCardStyles.avatarBg}>
+        <Text style={guideCardStyles.avatarText}>{initials}</Text>
       </View>
-      <View style={companionCardStyles.info}>
-        <Text style={companionCardStyles.name} numberOfLines={1}>{name}</Text>
-        <View style={companionCardStyles.ratingRow}>
+      <View style={guideCardStyles.info}>
+        <Text style={guideCardStyles.name} numberOfLines={1}>{name}</Text>
+        <View style={guideCardStyles.ratingRow}>
           <Ionicons name="star" size={12} color={colors.warning} />
-          <Text style={companionCardStyles.rating}>{rating}</Text>
-          <Text style={companionCardStyles.conversations}> ({conversations})</Text>
+          <Text style={guideCardStyles.rating}>{rating}</Text>
+          <Text style={guideCardStyles.conversations}> ({conversations})</Text>
         </View>
-        <Text style={companionCardStyles.topics} numberOfLines={1}>
+        <Text style={guideCardStyles.topics} numberOfLines={1}>
           {topics?.slice(0, 2).join(' / ')}
         </Text>
       </View>
@@ -503,7 +571,7 @@ export function CompanionCard({ name, rating, conversations, topics, onPress, st
 }
 
 // Backward-compat alias
-export const GuideCard = CompanionCard;
+export const CompanionCard = GuideCard;
 
 /* ───── ResourceCard (blog/article preview) ───── */
 export function ResourceCard({ title, description, readTime, onPress, style }) {
@@ -718,7 +786,7 @@ const sheetStyles = StyleSheet.create({
   title: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginBottom: spacing.md },
 });
 
-const companionCardStyles = StyleSheet.create({
+const guideCardStyles = StyleSheet.create({
   card: {
     width: 160,
     backgroundColor: colors.surface,
@@ -766,6 +834,115 @@ const companionCardStyles = StyleSheet.create({
   topics: {
     fontSize: font.xs,
     color: colors.textSecondary,
+  },
+});
+
+const quoteCardStyles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+  },
+  iconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  text: {
+    fontSize: font.body,
+    fontWeight: '500',
+    color: colors.text,
+    lineHeight: 24,
+    fontStyle: 'italic',
+  },
+  author: {
+    fontSize: font.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+  },
+});
+
+const ctaStyles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...shadow.fab,
+  },
+  content: { flex: 1 },
+  title: {
+    fontSize: font.lg,
+    fontWeight: '700',
+    color: colors.white,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    fontSize: font.caption,
+    color: colors.white + 'CC',
+    lineHeight: 19,
+  },
+  arrow: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.white + '25',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: spacing.md,
+  },
+});
+
+const tileStyles = StyleSheet.create({
+  tile: {
+    width: '47%',
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    ...shadow.card,
+  },
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
+  label: {
+    fontSize: font.body,
+    fontWeight: '600',
+    color: colors.text,
+  },
+});
+
+const resumeCardStyles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sm,
+    ...shadow.card,
+  },
+  row: { flexDirection: 'row', alignItems: 'center' },
+  info: { flex: 1, marginLeft: 12 },
+  name: { fontSize: font.body, fontWeight: '600', color: colors.text },
+  topics: { fontSize: font.caption, color: colors.textSecondary, marginTop: 1 },
+  timeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
+  timeText: { fontSize: font.xs, color: colors.textMuted, marginLeft: 4 },
+  arrowCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
