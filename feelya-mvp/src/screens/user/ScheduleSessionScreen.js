@@ -43,9 +43,15 @@ export default function ScheduleSessionScreen({ navigation, route }) {
 
   const handleBook = () => {
     if (!selectedSlot || !selectedProvider) return;
+    const providerName = selectedProvider.name;
+    const dateStr = formatDate(selectedSlot.date);
+    const timeStr = selectedSlot.label;
+    setSelectedProvider(null);
+    setSelectedDate(null);
+    setSelectedSlot(null);
     Alert.alert(
       'Session booked',
-      `Your session with ${selectedProvider.name} is confirmed for ${formatDate(selectedSlot.date)} at ${selectedSlot.label}.`,
+      `Your session with ${providerName} is confirmed for ${dateStr} at ${timeStr}.`,
       [{ text: 'OK', onPress: () => navigation.navigate('HomeMain') }],
     );
   };
