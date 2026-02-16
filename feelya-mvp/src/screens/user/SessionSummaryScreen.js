@@ -34,7 +34,7 @@ export default function SessionSummaryScreen({ navigation }) {
       <View style={styles.content}>
         <Card style={styles.summaryCard}>
           <View style={styles.row}>
-            <Text style={styles.label}>Guide</Text>
+            <Text style={styles.label}>Companion</Text>
             <Text style={styles.value}>{session.guideName}</Text>
           </View>
           <Divider />
@@ -76,7 +76,7 @@ export default function SessionSummaryScreen({ navigation }) {
           />
         ) : (
           <PrimaryButton
-            title="Rate your guide"
+            title="Rate your companion"
             onPress={proceed}
             icon="star-outline"
           />

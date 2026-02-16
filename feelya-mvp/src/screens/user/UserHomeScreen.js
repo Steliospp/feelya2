@@ -10,35 +10,37 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   Screen,
   SearchBar,
-  CategoryIcon,
-  FeatureCard,
   Card,
   Avatar,
   SectionTitle,
   SafetyBanner,
-  GuideCard,
-  Divider,
+  CompanionCard,
+  ResourceCard,
+  Pill,
   EmptyState,
 } from '../../components/UI';
 import { colors, spacing, radius, font, shadow } from '../../theme';
-import { useApp, MOCK_GUIDES } from '../../store/AppContext';
+import { useApp, MOCK_COMPANIONS, TOPIC_CATEGORIES, BLOG_RESOURCES } from '../../store/AppContext';
 
-const CATEGORIES = [
-  { icon: 'heart-outline', label: 'Anxiety', color: '#EF4444' },
-  { icon: 'trending-up-outline', label: 'Confidence', color: '#F59E0B' },
-  { icon: 'briefcase-outline', label: 'Career', color: '#4B7BF5' },
-  { icon: 'people-outline', label: 'Relations', color: '#8B5CF6' },
-  { icon: 'fitness-outline', label: 'Fitness', color: '#10B981' },
+/* ── Popular topic bubbles for "What's on your mind" ── */
+const POPULAR_TOPICS = [
+  'Anxiety', 'Confidence', 'Relationships', 'Career', 'Loneliness',
+  'Burnout', 'Family', 'Identity', 'Motivation', 'Productivity',
+  'Social Skills', 'Public Speaking', 'Dating', 'Overthinking',
+  'Self-esteem', 'Breakups', 'Sleep', 'Stress', 'Mindset',
+  'Boundaries',
 ];
 
 export default function UserHomeScreen({ navigation }) {
   const { state } = useApp();
-  const lastGuide = state.lastGuideId
-    ? MOCK_GUIDES.find((g) => g.id === state.lastGuideId)
-    : null;
 
-  const handleCategoryPress = (label) => {
-    navigation.navigate('TopicSelect', { preselect: label });
+  const activeBookings = state.bookings.filter((b) => b.status === 'upcoming');
+  const recentSessions = state.userSessions.slice(0, 3);
+  const hasActiveChats = activeBookings.length > 0 || recentSessions.length > 0;
+
+  const handleTopicPress = (topic) => {
+    // Topic bubbles navigate to TopicHub, NOT start chat
+    navigation.navigate('TopicHub', { topic });
   };
 
   return (
@@ -48,100 +50,92 @@ export default function UserHomeScreen({ navigation }) {
         <View style={styles.greetingRow}>
           <View style={{ flex: 1 }}>
             <Text style={styles.greeting}>Hey, {state.userName || 'there'}</Text>
-            <Text style={styles.tagline}>What guidance do you need?</Text>
+            <Text style={styles.tagline}>What's on your mind today?</Text>
           </View>
           <TouchableOpacity
-            style={styles.notifBtn}
+            style={styles.profileBtn}
             onPress={() => navigation.navigate('Profile', { screen: 'ProfileMain' })}
           >
-            <Ionicons name="notifications-outline" size={22} color={colors.text} />
+            <Avatar name={state.userName} size={44} />
           </TouchableOpacity>
         </View>
 
         {/* Search Bar */}
         <SearchBar
-          placeholder="Search topics, guides..."
+          placeholder="Search topics, companions..."
           style={styles.searchBar}
           onChangeText={() => {}}
         />
 
-        {/* Category Icons */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.catRow}
-        >
-          {CATEGORIES.map((cat) => (
-            <CategoryIcon
-              key={cat.label}
-              icon={cat.icon}
-              label={cat.label}
-              color={cat.color}
-              onPress={() => handleCategoryPress(cat.label === 'Relations' ? 'Friendships' : cat.label)}
-            />
-          ))}
-        </ScrollView>
-
-        {/* Feature Card */}
-        <FeatureCard
-          title="Talk to a Guide"
-          subtitle="Pick topics, choose your mode, and connect with a peer guide in minutes."
-          icon="chatbubble-ellipses"
-          onPress={() => navigation.navigate('TopicSelect')}
-          style={styles.featureCard}
-        />
-
-        {/* Last Guide */}
-        {lastGuide && (
+        {/* Continue Conversations */}
+        {hasActiveChats && (
           <>
-            <SectionTitle>Your Last Guide</SectionTitle>
-            <Card style={styles.lastGuideCard}>
-              <View style={styles.lastGuideRow}>
-                <Avatar name={lastGuide.name} size={48} />
-                <View style={styles.lastGuideInfo}>
-                  <Text style={styles.lastGuideName}>{lastGuide.name}</Text>
-                  <View style={styles.ratingRow}>
-                    <Ionicons name="star" size={13} color={colors.warning} style={{ marginRight: 3 }} />
-                    <Text style={styles.ratingText}>{lastGuide.rating.toFixed(1)}</Text>
-                    <Text style={styles.sessionCount}> -- {lastGuide.sessions} sessions</Text>
-                  </View>
-                </View>
-              </View>
-              <Divider style={{ marginVertical: spacing.md }} />
-              <View style={styles.actionsRow}>
-                <TouchableOpacity
-                  style={styles.actionBtn}
-                  onPress={() => navigation.navigate('GuideProfile', { guideId: lastGuide.id })}
-                >
-                  <View style={[styles.actionCircle, { backgroundColor: colors.primaryLight }]}>
-                    <Ionicons name="refresh-outline" size={18} color={colors.primary} />
-                  </View>
-                  <Text style={styles.actionLabel}>Rebook</Text>
+            <SectionTitle
+              right={
+                <TouchableOpacity onPress={() => navigation.navigate('Chats')}>
+                  <Text style={styles.seeAll}>See all</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionBtn}
-                  onPress={() => navigation.navigate('GuideProfile', { guideId: lastGuide.id })}
-                >
-                  <View style={[styles.actionCircle, { backgroundColor: '#FEF3C7' }]}>
-                    <Ionicons name="calendar-outline" size={18} color="#F59E0B" />
+              }
+            >
+              Continue Conversations
+            </SectionTitle>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.chatsRow}
+            >
+              {activeBookings.map((b) => {
+                const companion = MOCK_COMPANIONS.find((g) => g.id === b.guideId);
+                return (
+                  <Card key={b.id} style={styles.chatCard} onPress={() => navigation.navigate('Chats', { screen: 'ChatDetail', params: { bookingId: b.id } })}>
+                    <Avatar name={b.guideName} size={40} />
+                    <Text style={styles.chatName} numberOfLines={1}>{b.guideName}</Text>
+                    <Text style={styles.chatPreview} numberOfLines={1}>
+                      {b.topics.slice(0, 2).join(', ')}
+                    </Text>
+                    <View style={styles.chatStatusRow}>
+                      <View style={[styles.statusDot, { backgroundColor: colors.success }]} />
+                      <Text style={styles.chatStatus}>Scheduled</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.chatContinueBtn}
+                      onPress={() => navigation.navigate('Chats', { screen: 'ChatDetail', params: { bookingId: b.id } })}
+                    >
+                      <Text style={styles.chatContinueText}>Continue</Text>
+                    </TouchableOpacity>
+                  </Card>
+                );
+              })}
+              {recentSessions.map((s) => (
+                <Card key={s.id} style={styles.chatCard}>
+                  <Avatar name={s.guideName} size={40} />
+                  <Text style={styles.chatName} numberOfLines={1}>{s.guideName}</Text>
+                  <Text style={styles.chatPreview} numberOfLines={1}>
+                    {s.topics.slice(0, 2).join(', ')}
+                  </Text>
+                  <View style={styles.chatStatusRow}>
+                    <View style={[styles.statusDot, { backgroundColor: colors.textMuted }]} />
+                    <Text style={styles.chatStatus}>Completed</Text>
                   </View>
-                  <Text style={styles.actionLabel}>Schedule</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionBtn}
-                  onPress={() => navigation.navigate('GuideProfile', { guideId: lastGuide.id })}
-                >
-                  <View style={[styles.actionCircle, { backgroundColor: '#DCFCE7' }]}>
-                    <Ionicons name="chatbubble-outline" size={18} color="#10B981" />
-                  </View>
-                  <Text style={styles.actionLabel}>Message</Text>
-                </TouchableOpacity>
-              </View>
-            </Card>
+                </Card>
+              ))}
+            </ScrollView>
           </>
         )}
 
-        {/* Top Guides */}
+        {/* What's On Your Mind */}
+        <SectionTitle>What's on your mind?</SectionTitle>
+        <View style={styles.topicBubbles}>
+          {POPULAR_TOPICS.map((topic) => (
+            <Pill
+              key={topic}
+              label={topic}
+              onPress={() => handleTopicPress(topic)}
+            />
+          ))}
+        </View>
+
+        {/* Suggested Companions */}
         <SectionTitle
           right={
             <TouchableOpacity>
@@ -149,65 +143,40 @@ export default function UserHomeScreen({ navigation }) {
             </TouchableOpacity>
           }
         >
-          Top Guides
+          Suggested Companions
         </SectionTitle>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.guidesRow}
+          contentContainerStyle={styles.companionsRow}
         >
-          {MOCK_GUIDES.map((g) => (
-            <GuideCard
+          {MOCK_COMPANIONS.map((g) => (
+            <CompanionCard
               key={g.id}
               name={g.name}
               rating={g.rating}
-              sessions={g.sessions}
+              conversations={g.conversations}
               topics={g.topics}
-              onPress={() => navigation.navigate('GuideProfile', { guideId: g.id })}
+              onPress={() => navigation.navigate('CompanionProfile', { guideId: g.id })}
             />
           ))}
         </ScrollView>
 
-        {/* Safety Banner */}
-        <SafetyBanner compact />
+        {/* Resources */}
+        <SectionTitle>Resources</SectionTitle>
+        {BLOG_RESOURCES.slice(0, 3).map((blog) => (
+          <ResourceCard
+            key={blog.id}
+            title={blog.title}
+            description={blog.description}
+            readTime={blog.readTime}
+          />
+        ))}
 
-        {/* Recent Sessions */}
-        {state.userSessions.length > 0 && (
-          <>
-            <SectionTitle style={{ marginTop: spacing.lg }}>Recent Sessions</SectionTitle>
-            {state.userSessions.slice(0, 3).map((s) => (
-              <Card key={s.id} style={styles.sessionCard}>
-                <View style={styles.sessionRow}>
-                  <Avatar name={s.guideName} size={40} />
-                  <View style={styles.sessionInfo}>
-                    <Text style={styles.sessionGuide}>{s.guideName}</Text>
-                    <Text style={styles.sessionTopics}>
-                      {s.topics.slice(0, 2).join(', ')}
-                      {s.topics.length > 2 ? ` +${s.topics.length - 2}` : ''}
-                    </Text>
-                  </View>
-                  <View style={styles.sessionRight}>
-                    <Text style={styles.sessionCost}>${s.total.toFixed(2)}</Text>
-                    <Text style={styles.sessionDur}>{s.minutes}m</Text>
-                  </View>
-                </View>
-                {s.rating ? (
-                  <View style={styles.sessionRatingRow}>
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <Ionicons
-                        key={n}
-                        name={n <= s.rating ? 'star' : 'star-outline'}
-                        size={12}
-                        color={n <= s.rating ? colors.warning : colors.border}
-                        style={{ marginRight: 2 }}
-                      />
-                    ))}
-                  </View>
-                ) : null}
-              </Card>
-            ))}
-          </>
-        )}
+        {/* Safety Banner */}
+        <View style={{ marginTop: spacing.lg }}>
+          <SafetyBanner compact />
+        </View>
       </ScrollView>
     </Screen>
   );
@@ -234,22 +203,10 @@ const styles = StyleSheet.create({
     fontSize: font.body,
     color: colors.textSecondary,
   },
-  notifBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
+  profileBtn: {
     ...shadow.card,
   },
   searchBar: {
-    marginBottom: spacing.lg,
-  },
-  catRow: {
-    paddingBottom: spacing.lg,
-  },
-  featureCard: {
     marginBottom: spacing.lg,
   },
   seeAll: {
@@ -257,34 +214,65 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: '600',
   },
-  guidesRow: {
+
+  /* Continue Conversations */
+  chatsRow: {
     paddingBottom: spacing.sm,
   },
-
-  /* Last Guide */
-  lastGuideCard: { marginBottom: spacing.lg },
-  lastGuideRow: { flexDirection: 'row', alignItems: 'center' },
-  lastGuideInfo: { flex: 1, marginLeft: spacing.md },
-  lastGuideName: { fontSize: font.body, fontWeight: '600', color: colors.text },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  ratingText: { fontSize: font.caption, fontWeight: '600', color: colors.text },
-  sessionCount: { fontSize: font.caption, color: colors.textSecondary },
-  actionsRow: { flexDirection: 'row', justifyContent: 'space-around' },
-  actionBtn: { alignItems: 'center' },
-  actionCircle: {
-    width: 44, height: 44, borderRadius: 22,
-    alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs,
+  chatCard: {
+    width: 160,
+    alignItems: 'center',
+    marginRight: spacing.md,
+    paddingVertical: spacing.md,
   },
-  actionLabel: { fontSize: font.xs, color: colors.text, fontWeight: '500' },
+  chatName: {
+    fontSize: font.body,
+    fontWeight: '600',
+    color: colors.text,
+    marginTop: spacing.sm,
+  },
+  chatPreview: {
+    fontSize: font.xs,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  chatStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: 4,
+  },
+  chatStatus: {
+    fontSize: font.xs,
+    color: colors.textMuted,
+  },
+  chatContinueBtn: {
+    marginTop: spacing.sm,
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+  },
+  chatContinueText: {
+    fontSize: font.xs,
+    fontWeight: '600',
+    color: colors.primary,
+  },
 
-  /* Session Cards */
-  sessionCard: { marginBottom: spacing.sm },
-  sessionRow: { flexDirection: 'row', alignItems: 'center' },
-  sessionInfo: { flex: 1, marginLeft: spacing.md },
-  sessionGuide: { fontSize: font.body, fontWeight: '600', color: colors.text },
-  sessionTopics: { fontSize: font.xs, color: colors.textSecondary, marginTop: 2 },
-  sessionRight: { alignItems: 'flex-end' },
-  sessionCost: { fontSize: font.body, fontWeight: '600', color: colors.text },
-  sessionDur: { fontSize: font.xs, color: colors.textMuted, marginTop: 2 },
-  sessionRatingRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
+  /* Topics */
+  topicBubbles: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: spacing.lg,
+  },
+
+  /* Companions */
+  companionsRow: {
+    paddingBottom: spacing.sm,
+  },
 });

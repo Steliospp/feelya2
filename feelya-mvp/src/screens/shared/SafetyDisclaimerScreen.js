@@ -25,9 +25,9 @@ export default function SafetyDisclaimerScreen({ navigation }) {
 
         <Card style={styles.card}>
           <Text style={styles.sectionTitle}>What Feelya is</Text>
-          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Peer-to-peer guidance and coaching" />
-          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Real conversations with real people" />
-          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Supportive, non-judgmental space" />
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="A place to talk things through with real people" />
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Supportive, non-judgmental conversations" />
+          <BulletItem icon="checkmark-circle" iconColor={colors.success} text="Real companions who get it" />
           <BulletItem icon="checkmark-circle" iconColor={colors.success} text="On-demand -- connect in minutes" />
         </Card>
 

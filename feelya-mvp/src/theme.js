@@ -1,23 +1,23 @@
-// Feelya Design System — Modern blue, clean & minimal
+// Feelya Design System V2 — Warm, human, minimal
 
 export const colors = {
-  bg: '#F6F7FB',
+  bg: '#F8F9FC',
   surface: '#FFFFFF',
-  surfaceLight: '#EEF1F8',
-  border: '#E4E8F0',
-  primary: '#4B7BF5',
-  primaryDark: '#3A62D1',
-  primaryLight: '#E8EEFF',
-  accent: '#FF8C42',
+  surfaceLight: '#F0F2F8',
+  border: '#E8ECF4',
+  primary: '#5B8DEF',
+  primaryDark: '#4A75D4',
+  primaryLight: '#EBF1FF',
+  accent: '#FF9350',
   success: '#34C759',
   warning: '#FFBE0B',
-  text: '#1C1E2B',
+  text: '#1A1D2E',
   textSecondary: '#6B7280',
   textMuted: '#9CA3AF',
   white: '#FFFFFF',
-  black: '#1C1E2B',
-  overlay: 'rgba(0,0,0,0.4)',
-  info: '#4B7BF5',
+  black: '#1A1D2E',
+  overlay: 'rgba(0,0,0,0.35)',
+  info: '#5B8DEF',
   danger: '#EF4444',
   cardShadow: '#000',
 };
@@ -55,34 +55,34 @@ export const font = {
   hero: 36,
 };
 
-// Shadow presets
+// Shadow presets — softer
 export const shadow = {
   card: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   cardHover: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   tab: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 6,
   },
   fab: {
-    shadowColor: '#4B7BF5',
+    shadowColor: '#5B8DEF',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
     elevation: 8,
   },
 };

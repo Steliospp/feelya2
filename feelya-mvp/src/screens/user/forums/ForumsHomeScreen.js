@@ -9,7 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../../theme';
 import { Screen, Card, SearchBar, Pill } from '../../../components/UI';
-import { useApp, FORUM_CATEGORIES } from '../../../store/AppContext';
+import { useApp, COMMUNITY_CATEGORIES } from '../../../store/AppContext';
 
 function timeAgo(timestamp) {
   const now = Date.now();
@@ -47,13 +47,13 @@ export default function ForumsHomeScreen({ navigation }) {
   return (
     <Screen>
       <View style={styles.topBar}>
-        <Text style={styles.title}>Forums</Text>
+        <Text style={styles.title}>Community</Text>
         <TouchableOpacity
           hitSlop={12}
           onPress={() => navigation.navigate('CreatePost')}
           style={styles.addBtn}
         >
-          <Ionicons name="add-outline" size={22} color={colors.primary} />
+          <Text style={styles.addBtnText}>Start discussion</Text>
         </TouchableOpacity>
       </View>
 
@@ -71,7 +71,7 @@ export default function ForumsHomeScreen({ navigation }) {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chipsContent}
         >
-          {FORUM_CATEGORIES.map((cat) => (
+          {COMMUNITY_CATEGORIES.map((cat) => (
             <Pill
               key={cat.id}
               label={cat.label}
@@ -191,12 +191,15 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   addBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: radius.full,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  addBtnText: {
+    fontSize: font.caption,
+    fontWeight: '600',
+    color: colors.primary,
   },
   searchWrap: {
     paddingHorizontal: spacing.screenPadding,
