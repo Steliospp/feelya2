@@ -283,6 +283,97 @@ export const MOCK_PROVIDERS = [
   },
 ];
 
+/* ═══════════════  CATEGORY DETAILS (for explore mode)  ═══════════════ */
+export const CATEGORY_DETAILS = {
+  emotional: {
+    intro: 'Emotional topics relate to how you feel internally \u2014 anxiety, sadness, overwhelm, sensitivity. Understanding your emotions is the first step toward managing them.',
+  },
+  confidence: {
+    intro: 'These topics explore your relationship with yourself \u2014 self-worth, body image, and personal strength. Building confidence starts with understanding what holds you back.',
+  },
+  relationships: {
+    intro: 'Relationships shape our lives in profound ways. These topics cover connection, conflict, trust, and the courage to be vulnerable with others.',
+  },
+  social: {
+    intro: 'Social challenges can feel isolating. These topics address loneliness, social anxiety, making friends, and navigating the complexities of social life.',
+  },
+  career: {
+    intro: 'Your career and sense of purpose are deeply connected to your wellbeing. Explore topics around work, meaning, and professional growth.',
+  },
+  mindset: {
+    intro: 'Your mindset shapes your reality. These topics help you understand thought patterns, build mental resilience, and develop a growth-oriented perspective.',
+  },
+  lifestyle: {
+    intro: 'Small daily habits create big changes over time. These topics cover productivity, sleep, fitness, and building a life that supports your wellbeing.',
+  },
+  transitions: {
+    intro: 'Life is full of transitions \u2014 some chosen, some unexpected. These topics help you navigate change, uncertainty, and new beginnings.',
+  },
+  mentalhealth: {
+    intro: 'Mental health matters. These topics cover conditions, coping strategies, and the journey of recovery. You don\'t have to face it alone.',
+  },
+  spirituality: {
+    intro: 'Inner growth is about finding meaning, practicing mindfulness, and connecting with your deeper self. These topics explore the journey inward.',
+  },
+};
+
+/* ═══════════════  SUBTOPIC CONTENT (reflective content)  ═══════════════ */
+const SUBTOPIC_CONTENT = {
+  Anxiety: {
+    questions: ['What usually triggers your anxiety?', 'How does anxiety show up in your body?', 'What have you tried so far to manage it?'],
+    resource: 'Anxiety often comes from a perceived lack of control over future events. It\'s your brain\'s way of trying to protect you \u2014 but sometimes it overreacts. Learning to recognize anxiety as a signal, rather than a threat, can be a powerful first step.',
+    exercise: 'Try this: Take 5 slow breaths. Inhale for 4 counts, hold for 4, exhale for 6. Notice how your body feels after.',
+  },
+  Depression: {
+    questions: ['When did you first notice things feeling heavier?', 'What does a typical day look like for you right now?', 'Is there anything that still brings you a small moment of joy?'],
+    resource: 'Depression isn\'t just sadness \u2014 it\'s a loss of energy, interest, and sometimes hope. It can feel like moving through fog. The important thing to remember is that it\'s treatable and temporary, even when it doesn\'t feel that way.',
+    exercise: 'Start small: name one thing you can see, hear, and touch right now. Grounding yourself in the present can interrupt the spiral.',
+  },
+  Stress: {
+    questions: ['What\'s the biggest source of stress in your life right now?', 'How does stress affect your sleep and energy?', 'Do you have any outlets that help you decompress?'],
+    resource: 'Stress is your body\'s response to demands. Some stress is healthy \u2014 it keeps you alert and motivated. But chronic stress can wear you down physically and mentally. The key is finding sustainable ways to manage it.',
+    exercise: 'Progressive muscle relaxation: tense your shoulders for 5 seconds, then release. Move to your hands, then your feet. Notice the difference between tension and relaxation.',
+  },
+  Confidence: {
+    questions: ['In what situations do you feel least confident?', 'When do you feel most like yourself?', 'What would you do differently if self-doubt wasn\'t holding you back?'],
+    resource: 'Confidence isn\'t about never feeling doubt \u2014 it\'s about taking action despite it. True confidence is built through small wins, self-compassion, and gradually expanding your comfort zone.',
+    exercise: 'Write down three things you did well this week, no matter how small. Building awareness of your wins trains your brain to notice your strengths.',
+  },
+  Loneliness: {
+    questions: ['Do you feel lonely even when surrounded by people?', 'When was the last time you felt truly connected to someone?', 'What makes it hard to reach out?'],
+    resource: 'Loneliness is not about being alone \u2014 it\'s about feeling disconnected. It\'s one of the most common human experiences, yet one of the hardest to talk about. Connection starts with being willing to be seen.',
+    exercise: 'Send a simple message to someone you haven\'t spoken to in a while. It doesn\'t have to be deep \u2014 "Hey, thinking of you" is enough.',
+  },
+  Burnout: {
+    questions: ['How long have you been feeling this way?', 'What does your typical workday look like?', 'When was the last time you took a real break?'],
+    resource: 'Burnout is more than being tired \u2014 it\'s emotional exhaustion, cynicism, and feeling ineffective. It\'s your mind and body telling you that something needs to change. Recovery starts with permission to rest.',
+    exercise: 'Block 15 minutes today with nothing planned. No phone, no tasks. Just sit. Notice what thoughts come up when you stop.',
+  },
+  Overthinking: {
+    questions: ['What thoughts tend to loop in your mind?', 'Does overthinking happen more at night or during the day?', 'What are you usually trying to figure out or control?'],
+    resource: 'Overthinking is your brain\'s attempt to find certainty in an uncertain world. The paradox is that the more you think, the further you get from clarity. Learning to tolerate uncertainty is the real breakthrough.',
+    exercise: 'Set a timer for 5 minutes. Write down every thought without filtering. When the timer stops, close the notebook. You\'ve given your thoughts a place to live outside your head.',
+  },
+  Breakups: {
+    questions: ['How recent was the breakup?', 'What do you miss most \u2014 the person or the routine?', 'What\'s one thing you want to rediscover about yourself?'],
+    resource: 'Breakups trigger real grief \u2014 the loss of a future you imagined. Healing isn\'t linear, and it\'s okay to feel conflicting emotions at the same time. The goal isn\'t to "get over it" but to grow through it.',
+    exercise: 'Write a letter you\'ll never send. Say everything you need to say. Then close it and put it away.',
+  },
+};
+
+export function getSubtopicContent(topic) {
+  if (SUBTOPIC_CONTENT[topic]) return SUBTOPIC_CONTENT[topic];
+  return {
+    questions: [
+      `What brought ${topic.toLowerCase()} to your mind today?`,
+      `How has ${topic.toLowerCase()} been affecting your daily life?`,
+      'What would feel different if this got better?',
+    ],
+    resource: `${topic} is a common area people explore on Feelya. Understanding your experience is the first step toward positive change. Everyone's journey is unique, and there's no "right" way to work through it.`,
+    exercise: 'Take a moment to check in with yourself. On a scale of 1\u201310, how are you feeling right now? There\'s no wrong answer \u2014 just notice.',
+  };
+}
+
 /* ═══════════════  MOCK BLOG RESOURCES  ═══════════════ */
 export const BLOG_RESOURCES = [
   {
@@ -552,6 +643,9 @@ const initialState = {
     },
   ],
 
+  // Pending guide requests
+  pendingRequests: [],
+
   // Community
   threads: INITIAL_THREADS,
   replies: INITIAL_REPLIES,
@@ -701,6 +795,17 @@ function reducer(state, action) {
         guideEarnings: +(state.guideEarnings + earned).toFixed(2),
         guideSessions: [rec, ...state.guideSessions],
       };
+    }
+
+    // Pending requests
+    case 'ADD_PENDING_REQUEST': {
+      const req = {
+        id: 'req_' + Date.now(),
+        ...action.payload,
+        status: 'pending',
+        requestedAt: Date.now(),
+      };
+      return { ...state, pendingRequests: [req, ...state.pendingRequests] };
     }
 
     // Bookings

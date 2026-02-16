@@ -5,7 +5,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Header, SearchBar, Avatar } from '../../components/UI';
-import { MOCK_PROVIDERS } from '../../store/AppContext';
+import { useApp, MOCK_PROVIDERS } from '../../store/AppContext';
 
 const FILTERS = [
   { id: 'all', label: 'All' },
@@ -14,6 +14,7 @@ const FILTERS = [
 ];
 
 export default function BrowseOnlineScreen({ navigation, route }) {
+  const { dispatch } = useApp();
   const {
     selectedTopics = [],
     supportType = 'all',
@@ -40,9 +41,19 @@ export default function BrowseOnlineScreen({ navigation, route }) {
   }, [filter, search]);
 
   const handleRequest = (provider) => {
+    dispatch({
+      type: 'ADD_PENDING_REQUEST',
+      payload: {
+        providerName: provider.name,
+        providerTitle: provider.title,
+        providerType: provider.type,
+        avatar: provider.avatar,
+        topics: selectedTopics,
+      },
+    });
     Alert.alert(
       'Request sent',
-      `Your request has been sent to ${provider.name}. They\'ll be notified and connect with you shortly.`,
+      `Your request has been sent to ${provider.name}. They'll be notified and connect with you shortly.`,
       [{ text: 'OK', onPress: () => navigation.navigate('HomeMain') }],
     );
   };

@@ -32,6 +32,8 @@ import ChooseSupportTypeScreen from './screens/user/ChooseSupportTypeScreen';
 import ChooseConnectionModeScreen from './screens/user/ChooseConnectionModeScreen';
 import BrowseOnlineScreen from './screens/user/BrowseOnlineScreen';
 import ScheduleSessionScreen from './screens/user/ScheduleSessionScreen';
+import CategoryDetailScreen from './screens/user/CategoryDetailScreen';
+import SubtopicScreen from './screens/user/SubtopicScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
 
 // Bookings
@@ -67,6 +69,9 @@ function HomeStack() {
       <Stack.Screen name="RateGuide" component={RateGuideScreen} />
       <Stack.Screen name="GuideProfile" component={GuideProfileScreen} />
       <Stack.Screen name="HomeChatDetail" component={BookingDetailScreen} />
+      <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} />
+      <Stack.Screen name="Subtopic" component={SubtopicScreen} />
+      <Stack.Screen name="HomeThread" component={ThreadScreen} />
     </Stack.Navigator>
   );
 }
