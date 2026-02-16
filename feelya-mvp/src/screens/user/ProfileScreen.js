@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen, Card, Avatar, ListRow, Divider, SafetyBanner,
-  SecondaryButton, BottomSheet, SectionTitle, Input,
+  SecondaryButton, BottomSheet, Input,
 } from '../../components/UI';
 import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
@@ -37,14 +37,7 @@ export default function ProfileScreen({ navigation }) {
     setEditingBio(false);
   };
 
-  // Compute stats
-  const conversationsStarted = state.userSessions.length + state.bookings.length;
-  const conversationsCompleted = state.userSessions.length + state.bookings.filter((b) => b.status === 'completed').length;
-  const totalMinutes = state.userSessions.reduce((sum, s) => sum + (s.minutes || 0), 0);
-  const hoursSpent = (totalMinutes / 60).toFixed(1);
-  const communityPosts = state.threads.filter((t) => t.author === state.userName).length;
-
-  // Get unique guides user has chatted with
+  // Guides count
   const chattedGuideIds = [
     ...new Set([
       ...state.userSessions.map((s) => s.guideId),
@@ -56,43 +49,27 @@ export default function ProfileScreen({ navigation }) {
   return (
     <Screen>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={s.title}>Profile</Text>
-
-        {/* Profile card */}
-        <Card style={s.userCard}>
-          <View style={s.userRow}>
-            <Avatar name={state.userName} size={64} />
-            <View style={s.userInfo}>
-              <Text style={s.userName}>{state.userName || 'User'}</Text>
-              {state.userBio ? (
-                <Text style={s.userBio} numberOfLines={2}>{state.userBio}</Text>
-              ) : (
-                <TouchableOpacity onPress={() => setEditingBio(true)}>
-                  <Text style={s.addBio}>Add a bio</Text>
-                </TouchableOpacity>
-              )}
-              <Text style={s.joinedDate}>Joined {new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text>
-            </View>
-          </View>
+        {/* Profile header */}
+        <View style={s.header}>
+          <Avatar name={state.userName} size={72} />
+          <Text style={s.userName}>{state.userName || 'User'}</Text>
           {state.userBio ? (
-            <TouchableOpacity onPress={() => setEditingBio(true)} style={s.editBioBtn}>
-              <Ionicons name="create-outline" size={16} color={colors.primary} />
-              <Text style={s.editBioText}>Edit bio</Text>
-            </TouchableOpacity>
+            <Text style={s.userBio}>{state.userBio}</Text>
           ) : null}
-        </Card>
+          <Text style={s.joinedDate}>
+            Member since {new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+          </Text>
+          <TouchableOpacity
+            style={s.editProfileBtn}
+            onPress={() => setEditingBio(true)}
+          >
+            <Ionicons name="create-outline" size={16} color={colors.primary} />
+            <Text style={s.editProfileText}>{state.userBio ? 'Edit profile' : 'Add bio'}</Text>
+          </TouchableOpacity>
+        </View>
 
-        {/* Stats */}
-        <Card style={s.statsCard}>
-          <View style={s.statsGrid}>
-            <StatItem label="Conversations" value={conversationsStarted} />
-            <StatItem label="Completed" value={conversationsCompleted} />
-            <StatItem label="Hours" value={hoursSpent} />
-            <StatItem label="Posts" value={communityPosts} />
-          </View>
-        </Card>
-
-        {/* My Stuff */}
+        {/* Activity group */}
+        <Text style={s.groupLabel}>Activity</Text>
         <Card style={s.menuCard}>
           <ListRow
             icon="people-outline"
@@ -100,7 +77,7 @@ export default function ProfileScreen({ navigation }) {
             subtitle={`${myGuides.length} guide${myGuides.length !== 1 ? 's' : ''}`}
             onPress={() => navigation.navigate('MyGuides')}
           />
-          <Divider style={{ marginVertical: 0 }} />
+          <Divider style={s.rowDivider} />
           <ListRow
             icon="bookmark-outline"
             title="Saved Discussions"
@@ -109,23 +86,59 @@ export default function ProfileScreen({ navigation }) {
           />
         </Card>
 
-        {/* Settings */}
-        <SectionTitle style={{ marginTop: spacing.sm }}>Settings</SectionTitle>
+        {/* General group */}
+        <Text style={s.groupLabel}>General</Text>
         <Card style={s.menuCard}>
+          <ListRow
+            icon="card-outline"
+            title="Payment"
+            subtitle="Manage payment methods"
+            onPress={() => {}}
+          />
+          <Divider style={s.rowDivider} />
+          <ListRow
+            icon="notifications-outline"
+            title="Notifications"
+            subtitle="Manage alerts and reminders"
+            onPress={() => {}}
+          />
+        </Card>
+
+        {/* Privacy & Security group */}
+        <Text style={s.groupLabel}>Privacy & Security</Text>
+        <Card style={s.menuCard}>
+          <ListRow
+            icon="lock-closed-outline"
+            title="Security"
+            subtitle="Password, login settings"
+            onPress={() => {}}
+          />
+          <Divider style={s.rowDivider} />
+          <ListRow
+            icon="eye-off-outline"
+            title="Privacy"
+            subtitle="Data and visibility preferences"
+            onPress={() => {}}
+          />
+        </Card>
+
+        {/* Support group */}
+        <Text style={s.groupLabel}>Support</Text>
+        <Card style={s.menuCard}>
+          <ListRow
+            icon="help-circle-outline"
+            title="Help"
+            subtitle="FAQs and contact support"
+            onPress={() => {}}
+          />
+          <Divider style={s.rowDivider} />
           <ListRow
             icon="shield-checkmark-outline"
             title="Safety & Resources"
             subtitle="Crisis lines and support info"
             onPress={() => setShowSafety(true)}
           />
-          <Divider style={{ marginVertical: 0 }} />
-          <ListRow
-            icon="notifications-outline"
-            title="Notifications"
-            subtitle="Manage your notification preferences"
-            onPress={() => {}}
-          />
-          <Divider style={{ marginVertical: 0 }} />
+          <Divider style={s.rowDivider} />
           <ListRow
             icon="information-circle-outline"
             title="About Feelya"
@@ -134,11 +147,21 @@ export default function ProfileScreen({ navigation }) {
           />
         </Card>
 
-        <SecondaryButton
-          title="Reset App"
-          onPress={resetApp}
-          style={{ marginTop: spacing.lg }}
-        />
+        {/* Danger zone */}
+        <Card style={s.menuCard}>
+          <ListRow
+            icon="log-out-outline"
+            title="Log Out"
+            onPress={() => {}}
+          />
+          <Divider style={s.rowDivider} />
+          <ListRow
+            icon="refresh-outline"
+            title="Reset App"
+            subtitle="Clear all data"
+            onPress={resetApp}
+          />
+        </Card>
 
         <Text style={s.version}>v2.0.0</Text>
       </ScrollView>
@@ -170,7 +193,7 @@ export default function ProfileScreen({ navigation }) {
       </BottomSheet>
 
       {/* Edit Bio Bottom Sheet */}
-      <BottomSheet visible={editingBio} onClose={() => setEditingBio(false)} title="Edit Bio">
+      <BottomSheet visible={editingBio} onClose={() => setEditingBio(false)} title="Edit Profile">
         <Input
           placeholder="Tell others a bit about yourself..."
           value={bioText}
@@ -191,45 +214,83 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
-function StatItem({ label, value }) {
-  return (
-    <View style={s.statItem}>
-      <Text style={s.statValue}>{value}</Text>
-      <Text style={s.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
 const s = StyleSheet.create({
-  scroll: { padding: spacing.screenPadding, paddingTop: spacing.xxl, paddingBottom: 100 },
-  title: { fontSize: font.title, fontWeight: '600', color: colors.text, marginBottom: spacing.lg },
+  scroll: {
+    padding: spacing.screenPadding,
+    paddingTop: spacing.xxl,
+    paddingBottom: 100,
+  },
 
-  /* User card */
-  userCard: { marginBottom: spacing.md },
-  userRow: { flexDirection: 'row', alignItems: 'center' },
-  userInfo: { flex: 1, marginLeft: spacing.md },
-  userName: { fontSize: font.lg, fontWeight: '600', color: colors.text },
-  userBio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 2, lineHeight: 18 },
-  addBio: { fontSize: font.caption, color: colors.primary, fontWeight: '500', marginTop: 2 },
-  joinedDate: { fontSize: font.xs, color: colors.textMuted, marginTop: 4 },
-  editBioBtn: {
+  /* Header */
+  header: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  userName: {
+    fontSize: font.xl,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: spacing.md,
+  },
+  userBio: {
+    fontSize: font.caption,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+    lineHeight: 19,
+    paddingHorizontal: spacing.xl,
+  },
+  joinedDate: {
+    fontSize: font.xs,
+    color: colors.textMuted,
+    marginTop: spacing.xs,
+  },
+  editProfileBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.sm,
-    alignSelf: 'flex-start',
+    marginTop: spacing.md,
+    backgroundColor: colors.primaryLight,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
   },
-  editBioText: { fontSize: font.caption, color: colors.primary, fontWeight: '500', marginLeft: 4 },
+  editProfileText: {
+    fontSize: font.caption,
+    color: colors.primary,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
 
-  /* Stats */
-  statsCard: { marginBottom: spacing.lg },
-  statsGrid: { flexDirection: 'row', justifyContent: 'space-around' },
-  statItem: { alignItems: 'center' },
-  statValue: { fontSize: font.xl, fontWeight: '700', color: colors.text },
-  statLabel: { fontSize: font.xs, color: colors.textMuted, marginTop: 2 },
+  /* Group labels */
+  groupLabel: {
+    fontSize: font.xs,
+    fontWeight: '600',
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.sm,
+    marginTop: spacing.md,
+    marginLeft: spacing.xs,
+  },
 
-  /* Settings */
-  menuCard: { marginBottom: spacing.sm, paddingHorizontal: 0, paddingVertical: 0 },
-  version: { fontSize: font.xs, color: colors.textMuted, textAlign: 'center', marginTop: spacing.lg },
+  /* Menu cards */
+  menuCard: {
+    marginBottom: spacing.sm,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  rowDivider: {
+    marginVertical: 0,
+    marginLeft: spacing.screenPadding + 36 + 12,
+  },
+
+  version: {
+    fontSize: font.xs,
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
+  },
 
   /* Bottom sheets */
   resourceSection: { marginTop: spacing.md },
