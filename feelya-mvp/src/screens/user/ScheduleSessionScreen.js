@@ -5,7 +5,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Header, SearchBar, BottomSheet, PrimaryButton } from '../../components/UI';
-import { MOCK_PROVIDERS, generateAvailability } from '../../store/AppContext';
+import { useApp, MOCK_PROVIDERS, generateAvailability } from '../../store/AppContext';
 
 const FILTERS = [
   { id: 'all', label: 'All' },
@@ -16,6 +16,7 @@ const FILTERS = [
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function ScheduleSessionScreen({ navigation, route }) {
+  const { dispatch } = useApp();
   const { selectedTopics = [], supportType = 'all' } = route.params || {};
   const [filter, setFilter] = useState(supportType === 'all' ? 'all' : supportType);
   const [search, setSearch] = useState('');
@@ -46,6 +47,37 @@ export default function ScheduleSessionScreen({ navigation, route }) {
     const providerName = selectedProvider.name;
     const dateStr = formatDate(selectedSlot.date);
     const timeStr = selectedSlot.label;
+
+    // Add booking to state so it shows in Activity "Scheduled" section
+    dispatch({
+      type: 'ADD_BOOKING',
+      payload: {
+        id: 'b_' + Date.now(),
+        guideId: selectedProvider.id,
+        guideName: selectedProvider.name,
+        date: selectedSlot.date,
+        hour: selectedSlot.hour,
+        timeLabel: selectedSlot.label,
+        mode: 'chat',
+        duration: 30,
+        price: selectedProvider.pricePerSession,
+        status: 'upcoming',
+        topics: selectedProvider.topics.slice(0, 2),
+      },
+    });
+
+    // Also add as pending request so it shows in Activity "Waiting for response"
+    dispatch({
+      type: 'ADD_PENDING_REQUEST',
+      payload: {
+        providerName: selectedProvider.name,
+        providerTitle: `Session · ${dateStr} at ${timeStr}`,
+        providerType: selectedProvider.type,
+        avatar: selectedProvider.avatar,
+        topics: selectedProvider.topics.slice(0, 2),
+      },
+    });
+
     setSelectedProvider(null);
     setSelectedDate(null);
     setSelectedSlot(null);

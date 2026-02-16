@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../../theme';
 import { Screen, Card, SearchBar, Pill, ResourceCard } from '../../../components/UI';
@@ -24,6 +25,8 @@ function timeAgo(timestamp) {
 }
 
 export default function ForumsHomeScreen({ navigation }) {
+  const scrollRef = useRef(null);
+  useScrollToTop(scrollRef);
   const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState('discussions');
   const [search, setSearch] = useState('');
@@ -118,6 +121,7 @@ export default function ForumsHomeScreen({ navigation }) {
           </View>
 
           <ScrollView
+            ref={scrollRef}
             contentContainerStyle={styles.feed}
             showsVerticalScrollIndicator={false}
           >
@@ -211,6 +215,7 @@ export default function ForumsHomeScreen({ navigation }) {
       ) : (
         /* Resources tab */
         <ScrollView
+          ref={scrollRef}
           contentContainerStyle={styles.feed}
           showsVerticalScrollIndicator={false}
         >

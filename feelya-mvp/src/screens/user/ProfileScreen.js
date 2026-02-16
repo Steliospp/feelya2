@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
@@ -10,6 +10,8 @@ import {
 import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
 export default function ProfileScreen({ navigation }) {
+  const scrollRef = useRef(null);
+  useScrollToTop(scrollRef);
   const { state, dispatch } = useApp();
   const [showSafety, setShowSafety] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
@@ -48,7 +50,7 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollRef} contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         {/* Profile header */}
         <View style={s.header}>
           <Avatar name={state.userName} size={72} />
