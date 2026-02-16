@@ -46,7 +46,7 @@ export default function TopicSelectScreen({ navigation, route }) {
   const confirmAndContinue = () => {
     setShowSafetyModal(false);
     dispatch({ type: 'SET_SELECTED_TOPICS', payload: selected });
-    navigation.navigate('SessionModeSelect');
+    navigation.navigate('TopicRefine', { selectedTopics: selected });
   };
 
   // Filter topics by search

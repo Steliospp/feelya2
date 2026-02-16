@@ -27,6 +27,11 @@ import ProfileScreen from './screens/user/ProfileScreen';
 import MyGuidesScreen from './screens/user/MyGuidesScreen';
 import SavedDiscussionsScreen from './screens/user/SavedDiscussionsScreen';
 import AllTopicsScreen from './screens/user/AllTopicsScreen';
+import TopicRefineScreen from './screens/user/TopicRefineScreen';
+import ChooseSupportTypeScreen from './screens/user/ChooseSupportTypeScreen';
+import ChooseConnectionModeScreen from './screens/user/ChooseConnectionModeScreen';
+import BrowseOnlineScreen from './screens/user/BrowseOnlineScreen';
+import ScheduleSessionScreen from './screens/user/ScheduleSessionScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
 
 // Bookings
@@ -48,6 +53,11 @@ function HomeStack() {
       <Stack.Screen name="TopicSelect" component={TopicSelectScreen} />
       <Stack.Screen name="TopicHub" component={TopicHubScreen} />
       <Stack.Screen name="AllTopics" component={AllTopicsScreen} />
+      <Stack.Screen name="TopicRefine" component={TopicRefineScreen} />
+      <Stack.Screen name="ChooseSupportType" component={ChooseSupportTypeScreen} />
+      <Stack.Screen name="ChooseConnectionMode" component={ChooseConnectionModeScreen} />
+      <Stack.Screen name="BrowseOnline" component={BrowseOnlineScreen} />
+      <Stack.Screen name="ScheduleSession" component={ScheduleSessionScreen} />
       <Stack.Screen name="SessionModeSelect" component={SessionModeSelectScreen} />
       <Stack.Screen name="Matching" component={MatchingScreen} />
       <Stack.Screen name="GuideFound" component={GuideFoundScreen} />

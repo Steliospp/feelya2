@@ -177,6 +177,112 @@ export const MOCK_GUIDES = [
 // Backward-compat alias
 export const MOCK_COMPANIONS = MOCK_GUIDES;
 
+/* ═══════════════  MOCK PROVIDERS (Licensed + Certified)  ═══════════════ */
+export const MOCK_PROVIDERS = [
+  // Licensed Professionals
+  {
+    id: 'lp1', name: 'Dr. Sarah Mitchell', type: 'licensed',
+    title: 'Licensed Clinical Psychologist',
+    bio: 'Specializing in anxiety, trauma recovery, and emotional regulation. 12 years of clinical experience.',
+    topics: ['Anxiety', 'Depression', 'Trauma', 'Stress', 'Self-esteem'],
+    rating: 4.9, reviews: 187, pricePerSession: 85,
+    online: true, lastActive: '2m ago',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    badges: ['Top Rated', 'PhD'],
+  },
+  {
+    id: 'lp2', name: 'Dr. Marcus Webb', type: 'licensed',
+    title: 'Licensed Marriage & Family Therapist',
+    bio: 'Helping individuals and couples navigate relationships, communication, and life transitions.',
+    topics: ['Relationships', 'Family', 'Dating', 'Breakups', 'Communication'],
+    rating: 4.8, reviews: 134, pricePerSession: 75,
+    online: true, lastActive: '5m ago',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    badges: ['Relationship Expert'],
+  },
+  {
+    id: 'lp3', name: 'Dr. Amara Jackson', type: 'licensed',
+    title: 'Licensed Professional Counselor',
+    bio: 'I work with burnout, career anxiety, and identity exploration. Warm, direct, evidence-based.',
+    topics: ['Burnout', 'Career', 'Identity', 'Stress', 'Motivation'],
+    rating: 4.7, reviews: 98, pricePerSession: 70,
+    online: false, lastActive: 'Yesterday',
+    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
+    badges: ['Career Focus'],
+  },
+  {
+    id: 'lp4', name: 'Dr. Liam Chen', type: 'licensed',
+    title: 'Clinical Social Worker (LCSW)',
+    bio: 'Grief, loss, and major life changes. A safe space to process what you\'re carrying.',
+    topics: ['Grief', 'Loss', 'Loneliness', 'Depression', 'Life Transitions'],
+    rating: 4.9, reviews: 156, pricePerSession: 80,
+    online: false, lastActive: '3h ago',
+    avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
+    badges: ['Highly Empathetic', 'Top Rated'],
+  },
+  // Certified Guides
+  {
+    id: 'cg1', name: 'Maya Chen', type: 'guide',
+    title: 'Certified Mindset Coach',
+    bio: 'I help people find their confidence and build the mindset to go after what they want.',
+    topics: ['Confidence', 'Mindset', 'Career', 'Public Speaking', 'Motivation'],
+    rating: 4.9, reviews: 342, pricePerSession: 25,
+    online: true, lastActive: '1m ago',
+    avatar: 'https://randomuser.me/api/portraits/women/26.jpg',
+    badges: ['Top Rated', 'Fast Responder'],
+  },
+  {
+    id: 'cg2', name: 'Jordan Ellis', type: 'guide',
+    title: 'Peer Support Specialist',
+    bio: 'Real talk about anxiety, sleep, and figuring out college life. No judgment.',
+    topics: ['Anxiety', 'Sleep', 'College Stress', 'Habits', 'Productivity'],
+    rating: 4.7, reviews: 189, pricePerSession: 20,
+    online: true, lastActive: 'just now',
+    avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
+    badges: ['Empathetic'],
+  },
+  {
+    id: 'cg3', name: 'Priya Sharma', type: 'guide',
+    title: 'Relationship & Wellness Guide',
+    bio: 'Relationships, friendships, dating -- I\'ve been through it all. Let\'s talk it through.',
+    topics: ['Dating', 'Breakups', 'Friendships', 'Family', 'Loneliness', 'Self-esteem'],
+    rating: 4.8, reviews: 256, pricePerSession: 30,
+    online: false, lastActive: '1h ago',
+    avatar: 'https://randomuser.me/api/portraits/women/35.jpg',
+    badges: ['Relationship Pro'],
+  },
+  {
+    id: 'cg4', name: 'Kai Williams', type: 'guide',
+    title: 'Accountability & Fitness Coach',
+    bio: 'Fitness, sports, and the mindset behind both. Let\'s push through together.',
+    topics: ['Fitness', 'Sports', 'Motivation', 'Confidence', 'Habits'],
+    rating: 4.5, reviews: 97, pricePerSession: 15,
+    online: true, lastActive: '3m ago',
+    avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
+    badges: ['Active Lifestyle'],
+  },
+  {
+    id: 'cg5', name: 'Sam Rivera', type: 'guide',
+    title: 'Lived Experience Mentor',
+    bio: 'Been through depression, anxiety, career pivots. I get it. Here to listen.',
+    topics: ['Depression', 'Anxiety', 'Career', 'Mindset', 'Self-esteem', 'Loneliness'],
+    rating: 4.6, reviews: 214, pricePerSession: 20,
+    online: false, lastActive: '45m ago',
+    avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
+    badges: ['Lived Experience'],
+  },
+  {
+    id: 'cg6', name: 'Nina Okafor', type: 'guide',
+    title: 'Certified Wellbeing Coach',
+    bio: 'Overthinking, boundaries, and people-pleasing are my specialty. Let\'s untangle it.',
+    topics: ['Overthinking', 'Boundaries', 'People-Pleasing', 'Stress', 'Self-esteem'],
+    rating: 4.8, reviews: 178, pricePerSession: 22,
+    online: true, lastActive: 'just now',
+    avatar: 'https://randomuser.me/api/portraits/women/50.jpg',
+    badges: ['Boundary Expert'],
+  },
+];
+
 /* ═══════════════  MOCK BLOG RESOURCES  ═══════════════ */
 export const BLOG_RESOURCES = [
   {
