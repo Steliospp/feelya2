@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
@@ -11,23 +11,57 @@ export default function ChatsScreen({ navigation }) {
   const { state } = useApp();
   const upcoming = state.bookings.filter((b) => b.status === 'upcoming');
   const past = state.bookings.filter((b) => b.status !== 'upcoming');
+  const pending = state.pendingRequests || [];
 
   const modeIcon = (m) =>
     m === 'chat' ? 'chatbubble-outline' : m === 'voice' ? 'mic-outline' : 'videocam-outline';
+
+  const hasAnything = pending.length > 0 || state.bookings.length > 0 || state.userSessions.length > 0;
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <Text style={s.title}>Activity</Text>
 
-        {state.bookings.length === 0 && state.userSessions.length === 0 ? (
+        {!hasAnything ? (
           <EmptyState
-            icon="chatbubbles-outline"
-            title="No conversations yet"
+            icon="pulse-outline"
+            title="No activity yet"
             subtitle="Start a conversation to connect with a guide"
           />
         ) : (
           <>
+            {/* Pending requests */}
+            {pending.length > 0 && (
+              <>
+                <SectionTitle>Waiting for response</SectionTitle>
+                {pending.map((req) => (
+                  <Card key={req.id} style={s.card}>
+                    <View style={s.row}>
+                      {req.avatar ? (
+                        <Image source={{ uri: req.avatar }} style={s.avatarImg} />
+                      ) : (
+                        <Avatar name={req.providerName} size={48} />
+                      )}
+                      <View style={s.info}>
+                        <Text style={s.name}>{req.providerName}</Text>
+                        <Text style={s.bio} numberOfLines={1}>{req.providerTitle}</Text>
+                        {req.topics && req.topics.length > 0 && (
+                          <Text style={s.dateText}>
+                            {req.topics.slice(0, 2).join(', ')}
+                          </Text>
+                        )}
+                      </View>
+                      <View style={s.waitingBadge}>
+                        <Ionicons name="time-outline" size={12} color={colors.accent} />
+                        <Text style={s.waitingText}>Waiting</Text>
+                      </View>
+                    </View>
+                  </Card>
+                ))}
+              </>
+            )}
+
             {/* Active / Scheduled chats */}
             {upcoming.length > 0 && (
               <>
@@ -157,6 +191,26 @@ const s = StyleSheet.create({
   bio: { fontSize: font.caption, color: colors.textSecondary, marginTop: 1 },
   dateText: { fontSize: font.xs, color: colors.textMuted, marginTop: 2 },
   timeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  avatarImg: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.surfaceLight,
+  },
+  waitingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF7ED',
+    borderRadius: radius.full,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  waitingText: {
+    fontSize: font.xs,
+    fontWeight: '600',
+    color: colors.accent,
+    marginLeft: 4,
+  },
   footerRow: {
     flexDirection: 'row',
     alignItems: 'center',

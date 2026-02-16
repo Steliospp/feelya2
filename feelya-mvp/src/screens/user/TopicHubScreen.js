@@ -95,12 +95,12 @@ export default function TopicHubScreen({ navigation, route }) {
           </Text>
         </View>
 
-        {/* Find a guide CTA */}
+        {/* Find a guide CTA — go directly to TopicRefine, skip AllTopics */}
         <PrimaryCTA
           title="Find a guide"
           subtitle={`Talk to someone about ${topic.toLowerCase()}`}
           onPress={() => {
-            navigation.navigate('AllTopics', { preselect: topic, fromHub: true });
+            navigation.navigate('TopicRefine', { selectedTopics: [topic] });
           }}
           style={s.findGuideCta}
         />
@@ -147,7 +147,7 @@ export default function TopicHubScreen({ navigation, route }) {
               <Card
                 key={thread.id}
                 style={s.threadCard}
-                onPress={() => navigation.navigate('Community', { screen: 'Thread', params: { threadId: thread.id } })}
+                onPress={() => navigation.navigate('HomeThread', { threadId: thread.id })}
               >
                 <Text style={s.threadTitle}>{thread.title}</Text>
                 <Text style={s.threadBody} numberOfLines={2}>{thread.body}</Text>
