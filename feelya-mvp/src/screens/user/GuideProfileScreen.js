@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Image, Animated, Dimensions, Alert,
+  Image, Animated, Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -224,11 +224,10 @@ export default function GuideProfileScreen({ navigation, route }) {
 
     setShowConfirm(false);
     setShowBooking(false);
-    Alert.alert(
-      bookingId ? 'Rescheduled' : 'Booking Confirmed!',
-      `Your chat with ${name} is set for ${fmtDate(slot.date)} at ${slot.label}`,
-      [{ text: 'Great!', onPress: () => navigation.navigate('Chats', { screen: 'ChatsMain' }) }],
-    );
+    // Wait for the Modal to finish its close animation before navigating
+    setTimeout(() => {
+      navigation.navigate('Chats', { screen: 'ChatsMain' });
+    }, 350);
   };
 
   /* ──────── RENDER ──────── */
