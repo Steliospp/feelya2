@@ -51,6 +51,11 @@ export default function ChatsScreen({ navigation, route }) {
   // "Too early" bottom sheet state
   const [earlyJoinBooking, setEarlyJoinBooking] = useState(null);
 
+  // Leave review bottom sheet state
+  const [reviewTarget, setReviewTarget] = useState(null); // { id, type: 'booking'|'session', name }
+  const [reviewStars, setReviewStars] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+
   const isFocused = useIsFocused();
 
   /* Set tab when Activity screen gains focus — respect initialTab param */
@@ -107,6 +112,31 @@ export default function ChatsScreen({ navigation, route }) {
       // Within join window or session started — go to lobby
       navigation.navigate('SessionLobby', { bookingId: booking.id });
     }
+  };
+
+  /* Cancel a scheduled booking */
+  const handleCancelBooking = (booking) => {
+    Alert.alert(
+      'Cancel session',
+      `Cancel your chat with ${booking.guideName}?`,
+      [
+        { text: 'Keep it', style: 'cancel' },
+        { text: 'Cancel session', style: 'destructive', onPress: () => dispatch({ type: 'CANCEL_BOOKING', payload: booking.id }) },
+      ],
+    );
+  };
+
+  /* Submit a review */
+  const handleSubmitReview = () => {
+    if (!reviewTarget || reviewStars === 0) return;
+    if (reviewTarget.type === 'booking') {
+      dispatch({ type: 'RATE_BOOKING', payload: { bookingId: reviewTarget.id, rating: reviewStars, review: reviewText } });
+    } else {
+      dispatch({ type: 'RATE_SESSION', payload: { sessionId: reviewTarget.id, rating: reviewStars, note: reviewText } });
+    }
+    setReviewTarget(null);
+    setReviewStars(0);
+    setReviewText('');
   };
 
   /* Card tap → Guide Profile */
@@ -225,6 +255,8 @@ export default function ChatsScreen({ navigation, route }) {
                   const mins = Math.floor(remaining / 60000);
                   const secs = Math.floor((remaining % 60000) / 1000);
                   const timeStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                  const guide = findGuide(req.guideId);
+                  const topic = req.topics?.[0];
                   return (
                     <TouchableOpacity
                       key={req.id}
@@ -236,6 +268,7 @@ export default function ChatsScreen({ navigation, route }) {
                       }}
                     >
                       <View style={s.card}>
+                        {/* Top row: avatar + name + waiting badge */}
                         <View style={s.cardTop}>
                           {req.avatar ? (
                             <Image source={{ uri: req.avatar }} style={s.avatarImg} />
@@ -243,24 +276,37 @@ export default function ChatsScreen({ navigation, route }) {
                             <Avatar name={req.providerName} size={52} />
                           )}
                           <View style={s.cardInfo}>
-                            <Text style={s.cardName}>{req.providerName}</Text>
-                            <Text style={s.cardSub} numberOfLines={1}>{req.providerTitle}</Text>
+                            <View style={s.nameRow}>
+                              <Text style={s.cardName}>{req.providerName}</Text>
+                            </View>
+                            {topic && (
+                              <View style={s.topicPill}>
+                                <Text style={s.topicText}>{topic}</Text>
+                              </View>
+                            )}
+                          </View>
+                          <View style={s.waitingBadge}>
+                            <Ionicons name="time-outline" size={13} color={colors.accent} />
+                            <Text style={s.waitingBadgeText}>Waiting</Text>
                           </View>
                         </View>
-                        <View style={s.waitingRow}>
-                          <View style={s.waitingPill}>
-                            <Ionicons name="time-outline" size={14} color={colors.accent} />
-                            <Text style={s.waitingLabel}>Waiting</Text>
-                          </View>
-                          <Text style={s.waitingTimer}>{timeStr}</Text>
+
+                        {/* Timer row */}
+                        <View style={s.timerRow}>
+                          <Text style={s.timerLabel}>Time remaining</Text>
+                          <Text style={s.timerValue}>{timeStr}</Text>
                         </View>
-                        <TouchableOpacity
-                          style={s.cancelBtn}
-                          activeOpacity={0.7}
-                          onPress={() => handleCancelRequest(req)}
-                        >
-                          <Text style={s.cancelBtnText}>Cancel Request</Text>
-                        </TouchableOpacity>
+
+                        {/* Cancel button */}
+                        <View style={s.btnRow}>
+                          <TouchableOpacity
+                            style={s.btnOutline}
+                            activeOpacity={0.7}
+                            onPress={() => handleCancelRequest(req)}
+                          >
+                            <Text style={s.btnOutlineText}>Cancel Request</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </TouchableOpacity>
                   );
@@ -342,6 +388,13 @@ export default function ChatsScreen({ navigation, route }) {
                             <Text style={s.btnFilledText}>Join Chat</Text>
                           </TouchableOpacity>
                         </View>
+                        <TouchableOpacity
+                          style={s.cancelLinkBtn}
+                          activeOpacity={0.7}
+                          onPress={() => handleCancelBooking(b)}
+                        >
+                          <Text style={s.cancelLinkText}>Cancel session</Text>
+                        </TouchableOpacity>
                       </View>
                     </TouchableOpacity>
                   );
@@ -422,7 +475,7 @@ export default function ChatsScreen({ navigation, route }) {
                               <TouchableOpacity
                                 style={s.btnFilled}
                                 activeOpacity={0.7}
-                                onPress={() => navigation.navigate('ChatDetail', { bookingId: b.id })}
+                                onPress={() => setReviewTarget({ id: b.id, type: 'booking', name: b.guideName })}
                               >
                                 <Ionicons name="star-outline" size={15} color={colors.white} style={{ marginRight: 4 }} />
                                 <Text style={s.btnFilledText}>Leave Review</Text>
@@ -484,7 +537,11 @@ export default function ChatsScreen({ navigation, route }) {
                             <Text style={s.btnOutlineText}>Book Again</Text>
                           </TouchableOpacity>
                           {!sess.rating && (
-                            <TouchableOpacity style={s.btnFilled} activeOpacity={0.7}>
+                            <TouchableOpacity
+                              style={s.btnFilled}
+                              activeOpacity={0.7}
+                              onPress={() => setReviewTarget({ id: sess.id, type: 'session', name: sess.guideName })}
+                            >
                               <Ionicons name="star-outline" size={15} color={colors.white} style={{ marginRight: 4 }} />
                               <Text style={s.btnFilledText}>Leave Review</Text>
                             </TouchableOpacity>
@@ -528,6 +585,46 @@ export default function ChatsScreen({ navigation, route }) {
                 style={{ flex: 1 }}
               />
             </View>
+          </View>
+        )}
+      </BottomSheet>
+
+      {/* Leave Review bottom sheet */}
+      <BottomSheet
+        visible={!!reviewTarget}
+        onClose={() => { setReviewTarget(null); setReviewStars(0); setReviewText(''); }}
+        title="Leave a Review"
+      >
+        {reviewTarget && (
+          <View>
+            <Text style={s.reviewSheetSub}>How was your chat with {reviewTarget.name}?</Text>
+            <View style={s.starRow}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity key={star} onPress={() => setReviewStars(star)} activeOpacity={0.7} style={s.starBtn}>
+                  <Ionicons
+                    name={star <= reviewStars ? 'star' : 'star-outline'}
+                    size={36}
+                    color={star <= reviewStars ? colors.warning : colors.border}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            {reviewStars > 0 && <Text style={s.starLabel}>{['', 'Poor', 'Fair', 'Good', 'Great', 'Amazing'][reviewStars]}</Text>}
+            <TextInput
+              style={s.reviewInput}
+              placeholder="Share your experience (optional)"
+              placeholderTextColor={colors.textMuted}
+              value={reviewText}
+              onChangeText={setReviewText}
+              multiline
+              numberOfLines={3}
+              textAlignVertical="top"
+            />
+            <PrimaryButton
+              title="Submit Review"
+              onPress={handleSubmitReview}
+              style={{ marginTop: spacing.md, opacity: reviewStars === 0 ? 0.4 : 1 }}
+            />
           </View>
         )}
       </BottomSheet>
@@ -793,17 +890,8 @@ const s = StyleSheet.create({
     marginLeft: 3,
   },
 
-  /* Waiting (active tab) */
-  waitingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-  },
-  waitingPill: {
+  /* Waiting badge (active tab — top-right of card) */
+  waitingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF7ED',
@@ -811,32 +899,75 @@ const s = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  waitingLabel: {
+  waitingBadgeText: {
     fontSize: font.xs,
     fontWeight: '600',
     color: colors.accent,
     marginLeft: 4,
   },
-  waitingTimer: {
+
+  /* Timer row (active tab) */
+  timerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+  },
+  timerLabel: {
     fontSize: font.caption,
-    fontWeight: '700',
+    color: colors.textMuted,
+    fontWeight: '500',
+  },
+  timerValue: {
+    fontSize: font.xl,
+    fontWeight: '800',
+    color: colors.accent,
+    letterSpacing: 1,
+  },
+
+  /* Cancel link (scheduled tab — below action buttons) */
+  cancelLinkBtn: {
+    alignItems: 'center',
+    marginTop: 10,
+    paddingVertical: 4,
+  },
+  cancelLinkText: {
+    fontSize: font.caption,
+    fontWeight: '500',
     color: colors.textMuted,
   },
 
-  /* Cancel button (active tab) */
-  cancelBtn: {
-    marginTop: 12,
-    paddingVertical: 10,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cancelBtnText: {
-    fontSize: font.caption,
-    fontWeight: '500',
+  /* Leave review bottom sheet */
+  reviewSheetSub: {
+    fontSize: font.body,
     color: colors.textSecondary,
+    marginBottom: spacing.lg,
+  },
+  starRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
+  starBtn: {
+    paddingHorizontal: 6,
+  },
+  starLabel: {
+    fontSize: font.caption,
+    fontWeight: '600',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  reviewInput: {
+    backgroundColor: colors.surfaceLight,
+    borderRadius: radius.md,
+    padding: spacing.cardPadding,
+    fontSize: font.body,
+    color: colors.text,
+    minHeight: 80,
   },
 
   /* Search bar */
