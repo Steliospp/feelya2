@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
@@ -21,19 +21,38 @@ const MOCK_REVIEWS = [
 
 export default function GuideProfileScreen({ navigation, route }) {
   const { dispatch } = useApp();
-  const { guideId, bookingId, mode: initialMode } = route.params || {};
+  const {
+    guideId,
+    bookingId,
+    mode: initialMode,
+    autoOpenAvailability,
+    preselectedMode,
+  } = route.params || {};
   const guide = MOCK_GUIDES.find((g) => g.id === guideId)
     || MOCK_PROVIDERS.find((p) => p.id === guideId);
 
   const slots = generateAvailability(guideId);
   const dates = [...new Set(slots.map((s) => s.date))];
 
+  const scrollRef = useRef(null);
+  const availabilityY = useRef(0);
+
   const [selectedDate, setSelectedDate] = useState(dates[0]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [showBooking, setShowBooking] = useState(!!initialMode);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [selectedMode, setSelectedMode] = useState('chat');
+  const [selectedMode, setSelectedMode] = useState(preselectedMode || 'chat');
   const [showReviews, setShowReviews] = useState(false);
+
+  /* Auto-scroll to Availability when coming from Reschedule */
+  useEffect(() => {
+    if (autoOpenAvailability && scrollRef.current) {
+      const timer = setTimeout(() => {
+        scrollRef.current.scrollTo({ y: availabilityY.current, animated: true });
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [autoOpenAvailability]);
 
   if (!guide) {
     return (
@@ -97,7 +116,7 @@ export default function GuideProfileScreen({ navigation, route }) {
   return (
     <Screen>
       <Header title={guide.name} onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollRef} contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         {/* Profile header */}
         <View style={s.profile}>
           <Avatar name={guide.name} size={72} />
@@ -149,7 +168,9 @@ export default function GuideProfileScreen({ navigation, route }) {
         <Divider />
 
         {/* Inline availability (always visible for profile context) */}
-        <SectionTitle>Availability</SectionTitle>
+        <View onLayout={(e) => { availabilityY.current = e.nativeEvent.layout.y; }}>
+          <SectionTitle>{bookingId ? 'Pick a new time' : 'Availability'}</SectionTitle>
+        </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.weekStrip}>
           {dates.map((d) => {
             const dt = new Date(d + 'T12:00:00');
@@ -200,7 +221,10 @@ export default function GuideProfileScreen({ navigation, route }) {
       {/* Footer for when a slot is selected */}
       {selectedSlot && !showBooking && (
         <View style={s.footer}>
-          <PrimaryButton title="Plan a chat" onPress={() => setShowBooking(true)} />
+          <PrimaryButton
+            title={bookingId ? 'Reschedule to this time' : 'Plan a chat'}
+            onPress={() => setShowBooking(true)}
+          />
         </View>
       )}
 
