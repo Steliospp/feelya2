@@ -6,14 +6,15 @@ import {
   Screen, Header, PrimaryButton, SecondaryButton, Card,
   Pill, Divider, Badge, Avatar, BottomSheet, SectionTitle,
 } from '../../components/UI';
-import { useApp, MOCK_GUIDES, generateAvailability } from '../../store/AppContext';
+import { useApp, MOCK_GUIDES, MOCK_PROVIDERS, generateAvailability } from '../../store/AppContext';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function GuideProfileScreen({ navigation, route }) {
   const { dispatch } = useApp();
   const { guideId, bookingId, mode: initialMode } = route.params || {};
-  const guide = MOCK_GUIDES.find((g) => g.id === guideId);
+  const guide = MOCK_GUIDES.find((g) => g.id === guideId)
+    || MOCK_PROVIDERS.find((p) => p.id === guideId);
 
   const slots = generateAvailability(guideId);
   const dates = [...new Set(slots.map((s) => s.date))];
