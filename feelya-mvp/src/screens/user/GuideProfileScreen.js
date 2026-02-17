@@ -227,7 +227,7 @@ export default function GuideProfileScreen({ navigation, route }) {
     Alert.alert(
       bookingId ? 'Rescheduled' : 'Booking Confirmed!',
       `Your chat with ${name} is set for ${fmtDate(slot.date)} at ${slot.label}`,
-      [{ text: 'Great!', onPress: () => navigation.goBack() }],
+      [{ text: 'Great!', onPress: () => navigation.navigate('Chats', { screen: 'ChatsMain' }) }],
     );
   };
 
@@ -474,7 +474,7 @@ export default function GuideProfileScreen({ navigation, route }) {
       </Animated.ScrollView>
 
       {/* ── Bottom action bar ── */}
-      <View style={[s.bottomBar, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+      <View style={[s.bottomBar, { paddingBottom: 6 }]}>
         <TouchableOpacity
           style={s.btnPlan}
           onPress={() => setShowBooking(true)}
@@ -946,14 +946,14 @@ const s = StyleSheet.create({
   bottomBar: {
     flexDirection: 'row',
     paddingHorizontal: spacing.screenPadding,
-    paddingTop: 14,
+    paddingTop: 4,
     backgroundColor: colors.white,
   },
   btnPlan: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center', justifyContent: 'center',
-    height: 52,
+    height: 48,
     borderRadius: radius.full,
     backgroundColor: colors.primary,
   },
