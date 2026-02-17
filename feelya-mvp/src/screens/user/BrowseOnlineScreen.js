@@ -45,6 +45,7 @@ export default function BrowseOnlineScreen({ navigation, route }) {
     dispatch({
       type: 'ADD_PENDING_REQUEST',
       payload: {
+        guideId: provider.id,
         providerName: provider.name,
         providerTitle: provider.title,
         providerType: provider.type,
