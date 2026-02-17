@@ -35,7 +35,7 @@ function friendlyDay(dateStr) {
   return target.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
-export default function ChatsScreen({ navigation }) {
+export default function ChatsScreen({ navigation, route }) {
   const scrollRef = useTabScrollToTop();
   const { state, dispatch } = useApp();
 
@@ -53,12 +53,15 @@ export default function ChatsScreen({ navigation }) {
 
   const isFocused = useIsFocused();
 
-  /* Reset to Scheduled tab every time Activity screen regains focus */
+  /* Set tab when Activity screen gains focus — respect initialTab param */
   useEffect(() => {
     if (isFocused) {
-      setActiveTab('Scheduled');
+      const tab = route.params?.initialTab;
+      setActiveTab(tab || 'Scheduled');
       setSearchQuery('');
       setShowSearch(false);
+      // Clear param so subsequent focus resets normally
+      if (tab) navigation.setParams({ initialTab: undefined });
     }
   }, [isFocused]);
 

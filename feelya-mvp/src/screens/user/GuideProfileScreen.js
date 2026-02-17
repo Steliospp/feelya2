@@ -43,6 +43,7 @@ export default function GuideProfileScreen({ navigation, route }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedMode, setSelectedMode] = useState(preselectedMode || 'chat');
   const [showReviews, setShowReviews] = useState(false);
+  const [reviewFilter, setReviewFilter] = useState(0); // 0 = All
 
   /* Auto-scroll to Availability when coming from Reschedule */
   useEffect(() => {
@@ -324,14 +325,32 @@ export default function GuideProfileScreen({ navigation, route }) {
       </BottomSheet>
 
       {/* Reviews bottom sheet */}
-      <BottomSheet visible={showReviews} onClose={() => setShowReviews(false)} title="Reviews">
+      <BottomSheet visible={showReviews} onClose={() => { setShowReviews(false); setReviewFilter(0); }} title="Reviews">
         <View style={s.reviewSummary}>
           <Ionicons name="star" size={20} color={colors.warning} />
           <Text style={s.reviewRating}>{guide.rating}</Text>
           <Text style={s.reviewCount}>({guide.conversations || guide.reviews} reviews)</Text>
         </View>
-        <ScrollView style={s.reviewScroll} showsVerticalScrollIndicator={false}>
-          {MOCK_REVIEWS.map((r) => (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.filterStrip}>
+          {[0, 5, 4, 3, 2, 1].map((star) => {
+            const isActive = reviewFilter === star;
+            return (
+              <TouchableOpacity
+                key={star}
+                style={[s.filterChip, isActive && s.filterChipActive]}
+                onPress={() => setReviewFilter(star)}
+                activeOpacity={0.7}
+              >
+                {star > 0 && <Ionicons name="star" size={12} color={isActive ? colors.white : colors.warning} style={{ marginRight: 3 }} />}
+                <Text style={[s.filterChipText, isActive && s.filterChipTextActive]}>
+                  {star === 0 ? 'All' : String(star)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          {MOCK_REVIEWS.filter((r) => reviewFilter === 0 || r.rating === reviewFilter).map((r) => (
             <View key={r.id} style={s.reviewCard}>
               <View style={s.reviewHeader}>
                 <Avatar name={r.author} size={32} />
@@ -348,6 +367,9 @@ export default function GuideProfileScreen({ navigation, route }) {
               <Text style={s.reviewText}>{r.text}</Text>
             </View>
           ))}
+          {MOCK_REVIEWS.filter((r) => reviewFilter === 0 || r.rating === reviewFilter).length === 0 && (
+            <Text style={s.noSlots}>No reviews with this rating</Text>
+          )}
         </ScrollView>
       </BottomSheet>
     </Screen>
@@ -445,7 +467,20 @@ const s = StyleSheet.create({
   },
   reviewRating: { fontSize: font.xl, fontWeight: '700', color: colors.text, marginLeft: 6 },
   reviewCount: { fontSize: font.caption, color: colors.textSecondary, marginLeft: 6 },
-  reviewScroll: { maxHeight: 500 },
+  filterStrip: { marginBottom: spacing.md, flexGrow: 0 },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    marginRight: spacing.sm,
+    ...shadow.card,
+  },
+  filterChipActive: { backgroundColor: colors.primary },
+  filterChipText: { fontSize: font.caption, fontWeight: '600', color: colors.text },
+  filterChipTextActive: { color: colors.white },
   reviewCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
