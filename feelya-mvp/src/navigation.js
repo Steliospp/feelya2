@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, shadow } from './theme';
+import { colors, spacing, font, radius, shadow } from './theme';
 
 /* ═══════════════  SCREEN IMPORTS  ═══════════════ */
 // Shared
@@ -109,22 +109,23 @@ function ProfileStack() {
   );
 }
 
-/* ═══════════════  FAB BUTTON  ═══════════════ */
-function FabButton({ onPress }) {
+/* ═══════════════  TALK BUTTON  ═══════════════ */
+function TalkButton({ onPress }) {
   return (
     <TouchableOpacity
-      style={styles.fabContainer}
+      style={styles.talkContainer}
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <View style={styles.fab}>
-        <Ionicons name="add" size={28} color={colors.white} />
+      <View style={styles.talkBtn}>
+        <Ionicons name="chatbubble-ellipses" size={18} color={colors.white} />
+        <Text style={styles.talkText}>Talk to someone</Text>
       </View>
     </TouchableOpacity>
   );
 }
 
-/* Placeholder component for the FAB tab (never renders) */
+/* Placeholder component for the Talk tab (never renders) */
 function Placeholder() {
   return null;
 }
@@ -175,7 +176,7 @@ function UserTabs() {
         options={{
           tabBarLabel: () => null,
           tabBarButton: (props) => (
-            <FabButton
+            <TalkButton
               onPress={() => {
                 props.onPress?.();
               }}
@@ -208,18 +209,24 @@ export default function AppNavigator() {
 }
 
 const styles = StyleSheet.create({
-  fabContainer: {
-    top: -16,
+  talkContainer: {
+    top: -12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary,
+  talkBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: radius.full,
     ...shadow.fab,
+  },
+  talkText: {
+    color: colors.white,
+    fontSize: font.caption,
+    fontWeight: '600',
+    marginLeft: 6,
   },
 });
