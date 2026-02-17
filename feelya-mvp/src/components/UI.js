@@ -341,6 +341,7 @@ export function BottomSheet({ visible, onClose, title, children }) {
             style={[
               sheetStyles.card,
               {
+                maxHeight: '85%',
                 paddingBottom: insets.bottom || spacing.md,
                 transform: [{
                   translateY: slideAnim.interpolate({
@@ -351,11 +352,11 @@ export function BottomSheet({ visible, onClose, title, children }) {
               },
             ]}
           >
-            <Pressable>
+            <View onStartShouldSetResponder={() => true}>
               <View style={sheetStyles.handle} />
               {title && <Text style={sheetStyles.title}>{title}</Text>}
-              {children}
-            </Pressable>
+            </View>
+            {children}
           </Animated.View>
         </KeyboardAvoidingView>
       </Pressable>

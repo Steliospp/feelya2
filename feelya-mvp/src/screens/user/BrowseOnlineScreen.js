@@ -54,7 +54,7 @@ export default function BrowseOnlineScreen({ navigation, route }) {
         sessionMode,
       },
     });
-    navigation.navigate('Chats', { screen: 'ChatsMain' });
+    navigation.navigate('Chats', { screen: 'ChatsMain', params: { initialTab: 'Active' } });
   };
 
   return (
