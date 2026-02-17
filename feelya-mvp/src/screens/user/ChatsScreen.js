@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, TextInput,
 } from 'react-native';
@@ -11,7 +11,6 @@ import {
 } from '../../components/UI';
 import { useApp, MOCK_GUIDES, MOCK_PROVIDERS } from '../../store/AppContext';
 
-const REQUEST_TIMEOUT_MS = 5 * 60 * 1000;
 const JOIN_WINDOW_MINUTES = 10;
 const TABS = ['Active', 'Scheduled', 'Past'];
 
@@ -52,7 +51,6 @@ export default function ChatsScreen({ navigation }) {
   // "Too early" bottom sheet state
   const [earlyJoinBooking, setEarlyJoinBooking] = useState(null);
 
-  const expiredShown = useRef(new Set());
   const isFocused = useIsFocused();
 
   /* Reset to Scheduled tab every time Activity screen regains focus */
@@ -69,23 +67,7 @@ export default function ChatsScreen({ navigation }) {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    pending.forEach((req) => {
-      const elapsed = Date.now() - req.requestedAt;
-      if (elapsed >= REQUEST_TIMEOUT_MS && !expiredShown.current.has(req.id)) {
-        expiredShown.current.add(req.id);
-        dispatch({ type: 'REMOVE_PENDING_REQUEST', payload: req.id });
-        Alert.alert(
-          `${req.providerName} wasn't available`,
-          'Would you like to request a new session?',
-          [
-            { text: 'No', style: 'cancel' },
-            { text: 'Yes', onPress: () => navigation.navigate('Home', { screen: 'TopicSelect' }) },
-          ],
-        );
-      }
-    });
-  }, [pending, dispatch, navigation]);
+  /* Timeout handling is now global in AppContext */
 
   const handleCancelRequest = useCallback((req) => {
     Alert.alert(
@@ -229,12 +211,20 @@ export default function ChatsScreen({ navigation }) {
               ) : (
                 filteredPending.map((req) => {
                   const elapsed = Date.now() - req.requestedAt;
-                  const remaining = Math.max(0, REQUEST_TIMEOUT_MS - elapsed);
+                  const remaining = Math.max(0, (5 * 60 * 1000) - elapsed);
                   const mins = Math.floor(remaining / 60000);
                   const secs = Math.floor((remaining % 60000) / 1000);
                   const timeStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
                   return (
-                    <TouchableOpacity key={req.id} activeOpacity={0.85} onPress={() => handleCancelRequest(req)}>
+                    <TouchableOpacity
+                      key={req.id}
+                      activeOpacity={0.85}
+                      onPress={() => {
+                        if (req.guideId) {
+                          navigation.navigate('GuideProfileChats', { guideId: req.guideId });
+                        }
+                      }}
+                    >
                       <View style={s.card}>
                         <View style={s.cardTop}>
                           {req.avatar ? (
@@ -254,6 +244,13 @@ export default function ChatsScreen({ navigation }) {
                           </View>
                           <Text style={s.waitingTimer}>{timeStr}</Text>
                         </View>
+                        <TouchableOpacity
+                          style={s.cancelBtn}
+                          activeOpacity={0.7}
+                          onPress={() => handleCancelRequest(req)}
+                        >
+                          <Text style={s.cancelBtnText}>Cancel Request</Text>
+                        </TouchableOpacity>
                       </View>
                     </TouchableOpacity>
                   );
@@ -717,6 +714,22 @@ const s = StyleSheet.create({
     fontSize: font.caption,
     fontWeight: '700',
     color: colors.textMuted,
+  },
+
+  /* Cancel button (active tab) */
+  cancelBtn: {
+    marginTop: 12,
+    paddingVertical: 10,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelBtnText: {
+    fontSize: font.caption,
+    fontWeight: '500',
+    color: colors.textSecondary,
   },
 
   /* Search bar */

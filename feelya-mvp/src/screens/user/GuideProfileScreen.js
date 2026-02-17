@@ -215,7 +215,7 @@ export default function GuideProfileScreen({ navigation, route }) {
           )}
         </View>
 
-        <View style={{ height: 32 }} />
+        <View style={{ height: 8 }} />
       </ScrollView>
 
       {/* Footer for when a slot is selected */}
@@ -361,7 +361,7 @@ function formatDate(dateStr) {
 }
 
 const s = StyleSheet.create({
-  scroll: { padding: spacing.screenPadding, paddingBottom: 120 },
+  scroll: { padding: spacing.screenPadding, paddingBottom: 80 },
   profile: { alignItems: 'center', marginBottom: spacing.lg },
   name: { fontSize: font.xl, fontWeight: '700', color: colors.text, marginTop: spacing.md },
   ratingRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
@@ -394,7 +394,7 @@ const s = StyleSheet.create({
   dayName: { fontSize: font.xs, color: colors.textSecondary, fontWeight: '500' },
   dayNum: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginTop: 2 },
   dayTextSelected: { color: colors.white },
-  slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.lg },
+  slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.xs },
   slotBtn: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 2,

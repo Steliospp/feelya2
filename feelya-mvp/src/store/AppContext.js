@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
+import { Alert } from 'react-native';
 
 /* ═══════════════════════  CONSTANTS  ═══════════════════════ */
 export const ALL_TOPICS = [
@@ -950,8 +951,34 @@ function reducer(state, action) {
 /* ═══════════════  CONTEXT  ═══════════════ */
 const AppContext = createContext();
 
+const REQUEST_TIMEOUT_MS = 5 * 60 * 1000;
+
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const expiredShown = useRef(new Set());
+
+  /* Global pending-request timeout — fires on any screen */
+  useEffect(() => {
+    if (!state.pendingRequests || state.pendingRequests.length === 0) return;
+    const check = () => {
+      state.pendingRequests.forEach((req) => {
+        const elapsed = Date.now() - req.requestedAt;
+        if (elapsed >= REQUEST_TIMEOUT_MS && !expiredShown.current.has(req.id)) {
+          expiredShown.current.add(req.id);
+          dispatch({ type: 'REMOVE_PENDING_REQUEST', payload: req.id });
+          Alert.alert(
+            'Request not accepted',
+            `${req.providerName} was not able to accept your request.`,
+            [{ text: 'OK' }],
+          );
+        }
+      });
+    };
+    check();
+    const interval = setInterval(check, 1000);
+    return () => clearInterval(interval);
+  }, [state.pendingRequests]);
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}
