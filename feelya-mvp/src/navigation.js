@@ -141,9 +141,9 @@ function UserTabs() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
         tabBarStyle: {
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          height: Platform.OS === 'ios' ? 78 : 60,
+          paddingTop: 6,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 6,
           borderTopWidth: 0,
           backgroundColor: colors.surface,
           ...shadow.tab,

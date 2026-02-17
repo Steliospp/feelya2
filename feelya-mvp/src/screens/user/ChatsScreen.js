@@ -538,9 +538,9 @@ export default function ChatsScreen({ navigation, route }) {
 /* ═══════════════  STYLES  ═══════════════ */
 const s = StyleSheet.create({
   scroll: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.xxl + 8,
-    paddingBottom: 120,
+    paddingHorizontal: spacing.screenPadding + 4,
+    paddingTop: spacing.xxl + 12,
+    paddingBottom: 100,
   },
 
   /* Header */
@@ -548,7 +548,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   headerTitle: {
     fontSize: font.hero,
@@ -571,8 +571,8 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.surfaceLight,
     borderRadius: radius.full,
-    padding: 3,
-    marginBottom: spacing.xs,
+    padding: 4,
+    marginBottom: spacing.md,
   },
   segmentBtn: {
     flex: 1,
@@ -616,10 +616,12 @@ const s = StyleSheet.create({
     color: colors.white,
   },
   tabHint: {
-    fontSize: font.caption,
-    color: colors.textMuted,
+    fontSize: font.body,
+    fontWeight: '500',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.lg,
+    letterSpacing: 0.1,
   },
 
   /* Card */

@@ -352,11 +352,11 @@ export function BottomSheet({ visible, onClose, title, children }) {
               },
             ]}
           >
-            <View onStartShouldSetResponder={() => true}>
+            <Pressable style={{ flex: 1 }}>
               <View style={sheetStyles.handle} />
               {title && <Text style={sheetStyles.title}>{title}</Text>}
-            </View>
-            {children}
+              {children}
+            </Pressable>
           </Animated.View>
         </KeyboardAvoidingView>
       </Pressable>
