@@ -88,7 +88,7 @@ export default function BookingsScreen({ navigation }) {
                         <Text style={s.modeText}>{b.mode}</Text>
                       </View>
                       <Text style={s.price}>${b.price.toFixed(2)}</Text>
-                      <Badge label={b.status} color={statusColor(b.status)} />
+                      <Badge label={b.status.charAt(0).toUpperCase() + b.status.slice(1)} color={statusColor(b.status)} />
                     </View>
                   </Card>
                 ))}

@@ -98,7 +98,7 @@ export default function BookingDetailScreen({ navigation, route }) {
           <Divider />
           <View style={s.detailRow}>
             <Text style={s.detailLabel}>Status</Text>
-            <Badge label={booking.status} color={statusColor} />
+            <Badge label={booking.status.charAt(0).toUpperCase() + booking.status.slice(1)} color={statusColor} />
           </View>
         </Card>
 
