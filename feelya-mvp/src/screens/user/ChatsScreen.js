@@ -432,7 +432,7 @@ const s = StyleSheet.create({
   segmentRow: {
     flexDirection: 'row',
     backgroundColor: colors.surfaceLight,
-    borderRadius: radius.sm,
+    borderRadius: radius.full,
     padding: 3,
     marginBottom: spacing.lg,
   },
@@ -442,7 +442,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    borderRadius: radius.sm - 2,
+    borderRadius: radius.full,
   },
   segmentBtnActive: {
     backgroundColor: colors.surface,
@@ -576,7 +576,7 @@ const s = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: radius.full,
-    borderWidth: 1.2,
+    borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
     alignItems: 'center',

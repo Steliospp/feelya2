@@ -1,10 +1,10 @@
 // Feelya Design System V2 — Warm, human, minimal
 
 export const colors = {
-  bg: '#F8F9FC',
+  bg: '#FAF8F5',
   surface: '#FFFFFF',
-  surfaceLight: '#F0F2F8',
-  border: '#E8ECF4',
+  surfaceLight: '#F3F0EB',
+  border: '#E8E4DF',
   primary: '#5B8DEF',
   primaryDark: '#4A75D4',
   primaryLight: '#EBF1FF',
