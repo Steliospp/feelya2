@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, font, radius, shadow } from './theme';
+import { colors, spacing, shadow } from './theme';
 
 /* ═══════════════  SCREEN IMPORTS  ═══════════════ */
 // Shared
@@ -109,23 +109,22 @@ function ProfileStack() {
   );
 }
 
-/* ═══════════════  TALK BUTTON  ═══════════════ */
-function TalkButton({ onPress }) {
+/* ═══════════════  FAB BUTTON  ═══════════════ */
+function FabButton({ onPress }) {
   return (
     <TouchableOpacity
-      style={styles.talkContainer}
+      style={styles.fabContainer}
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <View style={styles.talkBtn}>
-        <Ionicons name="chatbubble-ellipses" size={18} color={colors.white} />
-        <Text style={styles.talkText}>Talk to someone</Text>
+      <View style={styles.fab}>
+        <Ionicons name="chatbubble-ellipses" size={26} color={colors.white} />
       </View>
     </TouchableOpacity>
   );
 }
 
-/* Placeholder component for the Talk tab (never renders) */
+/* Placeholder component for the FAB tab (never renders) */
 function Placeholder() {
   return null;
 }
@@ -176,7 +175,7 @@ function UserTabs() {
         options={{
           tabBarLabel: () => null,
           tabBarButton: (props) => (
-            <TalkButton
+            <FabButton
               onPress={() => {
                 props.onPress?.();
               }}
@@ -209,24 +208,18 @@ export default function AppNavigator() {
 }
 
 const styles = StyleSheet.create({
-  talkContainer: {
-    top: -12,
+  fabContainer: {
+    top: -16,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  talkBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  fab: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
     ...shadow.fab,
-  },
-  talkText: {
-    color: colors.white,
-    fontSize: font.caption,
-    fontWeight: '600',
-    marginLeft: 6,
   },
 });
