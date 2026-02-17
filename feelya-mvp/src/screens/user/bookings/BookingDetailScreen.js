@@ -6,7 +6,7 @@ import {
   Screen, Header, PrimaryButton, SecondaryButton, Card,
   Avatar, Badge, Divider, BottomSheet, Pill,
 } from '../../../components/UI';
-import { useApp, MOCK_GUIDES } from '../../../store/AppContext';
+import { useApp, MOCK_GUIDES, MOCK_PROVIDERS } from '../../../store/AppContext';
 
 const CANCEL_REASONS = [
   'Schedule conflict',
@@ -19,7 +19,8 @@ export default function BookingDetailScreen({ navigation, route }) {
   const { state, dispatch } = useApp();
   const { bookingId } = route.params || {};
   const booking = state.bookings.find((b) => b.id === bookingId);
-  const guide = MOCK_GUIDES.find((g) => g.id === booking?.guideId);
+  const guide = MOCK_GUIDES.find((g) => g.id === booking?.guideId)
+    || MOCK_PROVIDERS.find((p) => p.id === booking?.guideId);
   const [showCancel, setShowCancel] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
 
