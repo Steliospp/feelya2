@@ -18,6 +18,7 @@ export default function BrowseOnlineScreen({ navigation, route }) {
   const {
     selectedTopics = [],
     supportType = 'all',
+    sessionMode = 'chat',
     fallbackMessage,
   } = route.params || {};
 
@@ -49,6 +50,7 @@ export default function BrowseOnlineScreen({ navigation, route }) {
         providerType: provider.type,
         avatar: provider.avatar,
         topics: selectedTopics,
+        sessionMode,
       },
     });
     navigation.navigate('Chats', { screen: 'ChatsMain' });

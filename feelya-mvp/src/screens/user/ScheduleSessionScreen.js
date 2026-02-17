@@ -17,7 +17,7 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function ScheduleSessionScreen({ navigation, route }) {
   const { dispatch } = useApp();
-  const { selectedTopics = [], supportType = 'all' } = route.params || {};
+  const { selectedTopics = [], supportType = 'all', sessionMode = 'chat' } = route.params || {};
   const [filter, setFilter] = useState(supportType === 'all' ? 'all' : supportType);
   const [search, setSearch] = useState('');
   const [selectedProvider, setSelectedProvider] = useState(null);
@@ -58,7 +58,7 @@ export default function ScheduleSessionScreen({ navigation, route }) {
         date: selectedSlot.date,
         hour: selectedSlot.hour,
         timeLabel: selectedSlot.label,
-        mode: 'chat',
+        mode: sessionMode,
         duration: 30,
         price: selectedProvider.pricePerSession,
         status: 'upcoming',
