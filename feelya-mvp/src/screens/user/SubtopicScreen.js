@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
-  Screen, Header, Card, PrimaryButton, SecondaryButton,
+  Screen, Header, Card, PrimaryButton,
 } from '../../components/UI';
 import { TOPIC_CATEGORIES, getSubtopicContent } from '../../store/AppContext';
 
@@ -75,15 +75,6 @@ export default function SubtopicScreen({ navigation, route }) {
           title={`Talk about ${topic}`}
           onPress={() => navigation.navigate('TopicRefine', { selectedTopics: [topic] })}
           icon="chatbubble-outline"
-          style={{ marginBottom: spacing.sm }}
-        />
-        <SecondaryButton
-          title="Save for later"
-          variant="ghost"
-          icon="bookmark-outline"
-          onPress={() => {
-            Alert.alert('Saved', `${topic} has been saved to your interests.`);
-          }}
         />
       </View>
     </Screen>

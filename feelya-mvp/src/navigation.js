@@ -35,6 +35,7 @@ import ScheduleSessionScreen from './screens/user/ScheduleSessionScreen';
 import CategoryDetailScreen from './screens/user/CategoryDetailScreen';
 import SubtopicScreen from './screens/user/SubtopicScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
+import ResourceDetailScreen from './screens/user/ResourceDetailScreen';
 
 // Bookings
 import BookingDetailScreen from './screens/user/bookings/BookingDetailScreen';
@@ -72,6 +73,7 @@ function HomeStack() {
       <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} />
       <Stack.Screen name="Subtopic" component={SubtopicScreen} />
       <Stack.Screen name="HomeThread" component={ThreadScreen} />
+      <Stack.Screen name="HomeResourceDetail" component={ResourceDetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -82,6 +84,7 @@ function CommunityStack() {
       <Stack.Screen name="CommunityMain" component={ForumsHomeScreen} />
       <Stack.Screen name="Thread" component={ThreadScreen} />
       <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+      <Stack.Screen name="CommunityResourceDetail" component={ResourceDetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -155,7 +158,16 @@ function UserTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeStack} />
+      <Tab.Screen
+        name="Home"
+        component={HomeStack}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate('Home', { screen: 'HomeMain' });
+          },
+        })}
+      />
       <Tab.Screen name="Community" component={CommunityStack} />
       <Tab.Screen
         name="StartChat"

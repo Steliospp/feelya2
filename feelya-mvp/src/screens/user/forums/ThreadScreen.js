@@ -26,7 +26,7 @@ function timeAgo(timestamp) {
 }
 
 export default function ThreadScreen({ navigation, route }) {
-  const { threadId } = route.params;
+  const { threadId, autoFocusReply } = route.params;
   const { state, dispatch } = useApp();
   const [replyText, setReplyText] = useState('');
 
@@ -200,6 +200,7 @@ export default function ThreadScreen({ navigation, route }) {
               onChangeText={setReplyText}
               returnKeyType="send"
               onSubmitEditing={handleSendReply}
+              autoFocus={!!autoFocusReply}
               style={styles.composerInput}
             />
             <TouchableOpacity

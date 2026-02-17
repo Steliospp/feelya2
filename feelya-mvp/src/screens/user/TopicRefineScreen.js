@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
-  Screen, Header, SearchBar, PrimaryButton, SecondaryButton, Pill,
+  Screen, Header, SearchBar, PrimaryButton, Pill,
 } from '../../components/UI';
 import { QUICK_PICK_TOPICS, ALL_TOPICS } from '../../store/AppContext';
 
@@ -83,12 +83,6 @@ export default function TopicRefineScreen({ navigation, route }) {
         <PrimaryButton
           title="Continue"
           onPress={() => goNext(selected)}
-          style={{ marginBottom: spacing.sm }}
-        />
-        <SecondaryButton
-          title="Skip -- just use my original topic"
-          variant="ghost"
-          onPress={() => goNext(initial)}
         />
       </View>
     </Screen>
