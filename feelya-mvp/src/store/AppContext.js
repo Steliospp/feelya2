@@ -888,6 +888,15 @@ function reducer(state, action) {
           b.id === action.payload ? { ...b, status: 'cancelled' } : b
         ),
       };
+    case 'RATE_BOOKING': {
+      const { bookingId: rbId, rating: rbRating, review: rbReview } = action.payload;
+      return {
+        ...state,
+        bookings: state.bookings.map((b) =>
+          b.id === rbId ? { ...b, rated: true, rating: rbRating, review: rbReview } : b
+        ),
+      };
+    }
     case 'RESCHEDULE_BOOKING': {
       const { bookingId, date, hour, timeLabel } = action.payload;
       return {
