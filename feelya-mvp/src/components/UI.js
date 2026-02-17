@@ -170,7 +170,7 @@ export function SecondaryButton({
       style={[
         btnStyles.secondary,
         !isGhost && !isSoft && {
-          borderWidth: 1.5,
+          borderWidth: 1,
           borderColor: isDanger ? colors.danger : colors.border,
         },
         isSoft && { backgroundColor: colors.surfaceLight },
@@ -693,23 +693,23 @@ const featStyles = StyleSheet.create({
 
 const btnStyles = StyleSheet.create({
   primary: {
-    height: 52,
+    height: 50,
     backgroundColor: colors.primary,
-    borderRadius: radius.md,
+    borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
   },
   primaryText: { color: colors.white, fontSize: font.body, fontWeight: '600', letterSpacing: 0.2 },
   secondary: {
-    height: 52,
-    backgroundColor: 'transparent',
-    borderRadius: radius.md,
+    height: 50,
+    backgroundColor: colors.surface,
+    borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
   },
-  secondaryText: { color: colors.text, fontSize: font.body, fontWeight: '600', letterSpacing: 0.2 },
+  secondaryText: { color: colors.text, fontSize: font.body, fontWeight: '500', letterSpacing: 0.1 },
   inner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
 });
 
