@@ -57,7 +57,7 @@ export default function BookingDetailScreen({ navigation, route }) {
           {guide && (
             <View style={s.ratingRow}>
               <Ionicons name="star" size={14} color={colors.warning} />
-              <Text style={s.ratingText}>{guide.rating} ({guide.conversations || guide.sessions} conversations)</Text>
+              <Text style={s.ratingText}>{guide.rating} ({guide.conversations || guide.reviews} conversations)</Text>
             </View>
           )}
         </View>

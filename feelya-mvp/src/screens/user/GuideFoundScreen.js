@@ -72,7 +72,7 @@ export default function GuideFoundScreen({ navigation }) {
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={14} color={colors.warning} />
             <Text style={styles.ratingText}>
-              {guide.rating} ({guide.conversations || guide.sessions} conversations)
+              {guide.rating} ({guide.conversations || guide.reviews} conversations)
             </Text>
           </View>
         </View>
@@ -120,7 +120,7 @@ export default function GuideFoundScreen({ navigation }) {
             <View style={styles.statItem}>
               <Text style={styles.sectionLabel}>Rate</Text>
               <Text style={styles.statValue}>
-                ${guide.ratePerMin.toFixed(2)}/min
+                {guide.ratePerMin ? `$${guide.ratePerMin.toFixed(2)}/min` : `$${guide.pricePerSession}`}
               </Text>
             </View>
             <View style={styles.statDivider} />
