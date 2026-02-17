@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -9,8 +9,6 @@ import {
   Modal,
   Animated,
   Pressable,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -313,30 +311,67 @@ export function ListRow({ icon, title, subtitle, right, onPress, showChevron = t
 /* ───── BottomSheet ───── */
 export function BottomSheet({ visible, onClose, title, children }) {
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const backdropAnim = useRef(new Animated.Value(0)).current;
+  const [isRendered, setIsRendered] = useState(false);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (visible) {
-      Animated.spring(slideAnim, {
-        toValue: 1,
-        useNativeDriver: true,
-        tension: 65,
-        friction: 11,
-      }).start();
-    } else {
+      setIsRendered(true);
       slideAnim.setValue(0);
+      backdropAnim.setValue(0);
+      // Slight delay so the Modal is mounted before we animate
+      const raf = requestAnimationFrame(() => {
+        Animated.parallel([
+          Animated.timing(backdropAnim, {
+            toValue: 1,
+            duration: 250,
+            useNativeDriver: true,
+          }),
+          Animated.spring(slideAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+            tension: 50,
+            friction: 10,
+          }),
+        ]).start();
+      });
+      return () => cancelAnimationFrame(raf);
+    } else if (isRendered) {
+      Animated.parallel([
+        Animated.timing(backdropAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(({ finished }) => {
+        if (finished) setIsRendered(false);
+      });
     }
   }, [visible]);
 
-  if (!visible) return null;
+  if (!isRendered) return null;
 
   return (
-    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-      <Pressable style={sheetStyles.overlay} onPress={onClose}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={{ width: '100%' }}
+    <Modal transparent visible animationType="none" onRequestClose={onClose}>
+      <View style={sheetStyles.root}>
+        {/* Backdrop — separate layer, sibling to sheet */}
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            { backgroundColor: colors.overlay, opacity: backdropAnim },
+          ]}
         >
+          <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
+        </Animated.View>
+
+        {/* Sheet — positioned at bottom, NOT a child of the backdrop */}
+        <View style={sheetStyles.sheetContainer} pointerEvents="box-none">
           <Animated.View
             style={[
               sheetStyles.card,
@@ -346,20 +381,18 @@ export function BottomSheet({ visible, onClose, title, children }) {
                 transform: [{
                   translateY: slideAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [300, 0],
+                    outputRange: [600, 0],
                   }),
                 }],
               },
             ]}
           >
-            <Pressable style={{ flex: 1 }}>
-              <View style={sheetStyles.handle} />
-              {title && <Text style={sheetStyles.title}>{title}</Text>}
-              {children}
-            </Pressable>
+            <View style={sheetStyles.handle} />
+            {title && <Text style={sheetStyles.title}>{title}</Text>}
+            {children}
           </Animated.View>
-        </KeyboardAvoidingView>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -776,11 +809,12 @@ const listStyles = StyleSheet.create({
 });
 
 const sheetStyles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'flex-end' },
+  root: { flex: 1 },
+  sheetContainer: { flex: 1, justifyContent: 'flex-end' },
   card: {
     backgroundColor: colors.surface,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
+    borderTopLeftRadius: radius.xl + 4,
+    borderTopRightRadius: radius.xl + 4,
     padding: spacing.screenPadding,
   },
   handle: { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: 'center', marginBottom: spacing.md },
