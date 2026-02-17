@@ -324,13 +324,12 @@ export default function ChatsScreen({ navigation, route }) {
                   const cred = getCredentialLabel(guide);
                   const topic = b.topics?.[0];
                   return (
-                    <TouchableOpacity
-                      key={b.id}
-                      activeOpacity={0.85}
-                      onPress={() => handleCardTap(b)}
-                    >
-                      <View style={s.card}>
-                        {/* Top row: avatar + name + credential */}
+                    <View key={b.id} style={s.card}>
+                      {/* Tappable top row: avatar + name + credential → profile */}
+                      <TouchableOpacity
+                        activeOpacity={0.85}
+                        onPress={() => handleCardTap(b)}
+                      >
                         <View style={s.cardTop}>
                           {guide?.avatar ? (
                             <Image source={{ uri: guide.avatar }} style={s.avatarImg} />
@@ -346,7 +345,6 @@ export default function ChatsScreen({ navigation, route }) {
                                 </View>
                               )}
                             </View>
-                            {/* Topic pill */}
                             {topic && (
                               <View style={s.topicPill}>
                                 <Text style={s.topicText}>{topic}</Text>
@@ -354,49 +352,49 @@ export default function ChatsScreen({ navigation, route }) {
                             )}
                           </View>
                         </View>
+                      </TouchableOpacity>
 
-                        {/* Meta row: day, time, duration */}
-                        <View style={s.metaRow}>
-                          <View style={s.metaItem}>
-                            <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
-                            <Text style={s.metaText}>{friendlyDay(b.date)}</Text>
-                          </View>
-                          <View style={s.metaItem}>
-                            <Ionicons name="time-outline" size={15} color={colors.textMuted} />
-                            <Text style={s.metaText}>{b.timeLabel}</Text>
-                          </View>
-                          <View style={s.metaItem}>
-                            <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
-                            <Text style={s.metaText}>{b.duration} min</Text>
-                          </View>
+                      {/* Meta row: day, time, duration */}
+                      <View style={s.metaRow}>
+                        <View style={s.metaItem}>
+                          <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
+                          <Text style={s.metaText}>{friendlyDay(b.date)}</Text>
                         </View>
+                        <View style={s.metaItem}>
+                          <Ionicons name="time-outline" size={15} color={colors.textMuted} />
+                          <Text style={s.metaText}>{b.timeLabel}</Text>
+                        </View>
+                        <View style={s.metaItem}>
+                          <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
+                          <Text style={s.metaText}>{b.duration} min</Text>
+                        </View>
+                      </View>
 
-                        {/* Action buttons */}
-                        <View style={s.btnRow}>
-                          <TouchableOpacity
-                            style={s.btnOutline}
-                            activeOpacity={0.7}
-                            onPress={() => handleReschedule(b)}
-                          >
-                            <Text style={s.btnOutlineText}>Reschedule</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={s.btnFilled}
-                            activeOpacity={0.7}
-                            onPress={() => handleJoinChat(b)}
-                          >
-                            <Text style={s.btnFilledText}>Join Chat</Text>
-                          </TouchableOpacity>
-                        </View>
+                      {/* Action buttons */}
+                      <View style={s.btnRow}>
                         <TouchableOpacity
-                          style={s.cancelLinkBtn}
+                          style={s.btnOutline}
                           activeOpacity={0.7}
-                          onPress={() => handleCancelBooking(b)}
+                          onPress={() => handleReschedule(b)}
                         >
-                          <Text style={s.cancelLinkText}>Cancel session</Text>
+                          <Text style={s.btnOutlineText}>Reschedule</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={s.btnFilled}
+                          activeOpacity={0.7}
+                          onPress={() => handleJoinChat(b)}
+                        >
+                          <Text style={s.btnFilledText}>Join Chat</Text>
                         </TouchableOpacity>
                       </View>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        style={s.cancelLinkBtn}
+                        activeOpacity={0.7}
+                        onPress={() => handleCancelBooking(b)}
+                      >
+                        <Text style={s.cancelLinkText}>Cancel session</Text>
+                      </TouchableOpacity>
+                    </View>
                   );
                 })
               )
@@ -415,13 +413,12 @@ export default function ChatsScreen({ navigation, route }) {
                     const isCancelled = b.status === 'cancelled';
                     const isNoShow = b.status === 'no-show';
                     return (
-                      <TouchableOpacity
-                        key={b.id}
-                        activeOpacity={0.85}
-                        onPress={() => navigation.navigate('ChatDetail', { bookingId: b.id })}
-                      >
-                        <View style={s.card}>
-                          {/* Top row: avatar + name + status badge */}
+                      <View key={b.id} style={s.card}>
+                        {/* Tappable top row: avatar + name → detail */}
+                        <TouchableOpacity
+                          activeOpacity={0.85}
+                          onPress={() => navigation.navigate('GuideProfileChats', { guideId: b.guideId })}
+                        >
                           <View style={s.cardTop}>
                             {guide?.avatar ? (
                               <Image source={{ uri: guide.avatar }} style={s.avatarImg} />
@@ -444,46 +441,46 @@ export default function ChatsScreen({ navigation, route }) {
                               </Text>
                             </View>
                           </View>
+                        </TouchableOpacity>
 
-                          {/* Meta row */}
-                          <View style={s.metaRow}>
-                            <View style={s.metaItem}>
-                              <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
-                              <Text style={s.metaText}>{formatDateLong(b.date)}</Text>
-                            </View>
-                            <View style={s.metaItem}>
-                              <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
-                              <Text style={s.metaText}>{b.duration || 30} min</Text>
-                            </View>
+                        {/* Meta row */}
+                        <View style={s.metaRow}>
+                          <View style={s.metaItem}>
+                            <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>{formatDateLong(b.date)}</Text>
                           </View>
-
-                          {/* Action buttons */}
-                          <View style={s.btnRow}>
-                            {(isCompleted || isCancelled || isNoShow) && (
-                              <TouchableOpacity
-                                style={s.btnOutline}
-                                activeOpacity={0.7}
-                                onPress={() => navigation.navigate('GuideProfileChats', {
-                                  guideId: b.guideId,
-                                  autoOpenAvailability: true,
-                                })}
-                              >
-                                <Text style={s.btnOutlineText}>{isCancelled || isNoShow ? 'Rebook' : 'Book Again'}</Text>
-                              </TouchableOpacity>
-                            )}
-                            {isCompleted && !b.rated && (
-                              <TouchableOpacity
-                                style={s.btnFilled}
-                                activeOpacity={0.7}
-                                onPress={() => setReviewTarget({ id: b.id, type: 'booking', name: b.guideName })}
-                              >
-                                <Ionicons name="star-outline" size={15} color={colors.white} style={{ marginRight: 4 }} />
-                                <Text style={s.btnFilledText}>Leave Review</Text>
-                              </TouchableOpacity>
-                            )}
+                          <View style={s.metaItem}>
+                            <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>{b.duration || 30} min</Text>
                           </View>
                         </View>
-                      </TouchableOpacity>
+
+                        {/* Action buttons */}
+                        <View style={s.btnRow}>
+                          {(isCompleted || isCancelled || isNoShow) && (
+                            <TouchableOpacity
+                              style={s.btnOutline}
+                              activeOpacity={0.7}
+                              onPress={() => navigation.navigate('GuideProfileChats', {
+                                guideId: b.guideId,
+                                autoOpenAvailability: true,
+                              })}
+                            >
+                              <Text style={s.btnOutlineText}>{isCancelled || isNoShow ? 'Rebook' : 'Book Again'}</Text>
+                            </TouchableOpacity>
+                          )}
+                          {isCompleted && !b.rated && (
+                            <TouchableOpacity
+                              style={s.btnFilled}
+                              activeOpacity={0.7}
+                              onPress={() => setReviewTarget({ id: b.id, type: 'booking', name: b.guideName })}
+                            >
+                              <Ionicons name="star-outline" size={15} color={colors.white} style={{ marginRight: 4 }} />
+                              <Text style={s.btnFilledText}>Leave Review</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      </View>
                     );
                   })}
                   {filteredSessions.slice(0, 5).map((sess) => {
@@ -663,25 +660,31 @@ const s = StyleSheet.create({
     ...shadow.card,
   },
 
-  /* Segmented control */
+  /* Segmented control — glassy bubbly */
   segmentRow: {
     flexDirection: 'row',
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: 'rgba(0,0,0,0.04)',
     borderRadius: radius.full,
-    padding: 4,
+    padding: 6,
     marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.6)',
+    overflow: 'hidden',
   },
   segmentBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 11,
+    paddingVertical: 14,
     borderRadius: radius.full,
   },
   segmentBtnActive: {
     backgroundColor: colors.text,
     ...shadow.cardHover,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
   segmentText: {
     fontSize: font.caption,
@@ -937,7 +940,7 @@ const s = StyleSheet.create({
   cancelLinkText: {
     fontSize: font.caption,
     fontWeight: '500',
-    color: colors.textMuted,
+    color: colors.danger,
   },
 
   /* Leave review bottom sheet */
