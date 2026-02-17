@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,26 +12,33 @@ import {
   Screen,
   QuoteCard,
   PrimaryCTA,
-  ResumeCard,
   GuideCard,
   SectionTitle,
   ResourceCard,
 } from '../../components/UI';
+import MoodCheckInCard from '../../components/MoodCheckInCard';
 import { colors, spacing, radius, font } from '../../theme';
 import { useApp, MOCK_GUIDES, BLOG_RESOURCES, getDailyQuote } from '../../store/AppContext';
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-}
+const CTA_COPY = {
+  calm: { title: 'Talk it through', subtitle: 'Stay grounded, reflect, or browse support.' },
+  okay: { title: 'Talk it through', subtitle: 'Stay grounded, reflect, or browse support.' },
+  overwhelmed: { title: 'Talk it through', subtitle: 'Get support or try a quick reset.' },
+  anxious: { title: 'Talk it through', subtitle: 'Get support or try a quick reset.' },
+  low: { title: 'Talk it through', subtitle: 'Find someone to listen\u2014no pressure.' },
+  drained: { title: 'Talk it through', subtitle: 'Find someone to listen\u2014no pressure.' },
+  frustrated: { title: 'Talk it through', subtitle: 'Vent, then get clarity.' },
+};
 
 export default function UserHomeScreen({ navigation }) {
   const scrollRef = useTabScrollToTop();
   const { state } = useApp();
   const quote = getDailyQuote();
 
-  const activeBookings = state.bookings.filter((b) => b.status === 'upcoming');
-  const hasResume = activeBookings.length > 0;
+  const [mood, setMood] = useState('okay');
+  const onMoodChange = useCallback((m) => setMood(m), []);
+
+  const cta = CTA_COPY[mood] || CTA_COPY.okay;
 
   // Show max 3 suggested guides
   const suggestedGuides = MOCK_GUIDES.slice(0, 3);
@@ -64,40 +71,16 @@ export default function UserHomeScreen({ navigation }) {
           style={styles.quoteCard}
         />
 
+        {/* Mood Check-In */}
+        <MoodCheckInCard onMoodChange={onMoodChange} style={styles.moodCard} />
+
         {/* Primary CTA */}
         <PrimaryCTA
-          title="Talk it through"
-          subtitle="Find someone to listen, share, or just talk."
+          title={cta.title}
+          subtitle={cta.subtitle}
           onPress={() => navigation.navigate('TopicSelect')}
           style={styles.cta}
         />
-
-        {/* Resume section */}
-        {hasResume && (
-          <>
-            <SectionTitle
-              right={
-                <TouchableOpacity onPress={() => navigation.navigate('Chats')}>
-                  <Text style={styles.seeAll}>See all</Text>
-                </TouchableOpacity>
-              }
-            >
-              Pick up where you left off
-            </SectionTitle>
-            {activeBookings.slice(0, 2).map((b) => (
-              <ResumeCard
-                key={b.id}
-                name={b.guideName}
-                topics={b.topics}
-                date={formatDate(b.date)}
-                timeLabel={b.timeLabel}
-                onPress={() =>
-                  navigation.navigate('HomeChatDetail', { bookingId: b.id })
-                }
-              />
-            ))}
-          </>
-        )}
 
         {/* Suggested Guides */}
         <SectionTitle>Recommended for you</SectionTitle>
@@ -189,6 +172,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   quoteCard: {
+    marginBottom: spacing.md,
+  },
+  moodCard: {
     marginBottom: spacing.md,
   },
   cta: {
