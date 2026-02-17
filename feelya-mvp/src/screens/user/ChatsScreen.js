@@ -199,6 +199,13 @@ export default function ChatsScreen({ navigation, route }) {
           })}
         </View>
 
+        {/* Tab description */}
+        <Text style={s.tabHint}>
+          {activeTab === 'Active' && 'Waiting for a guide to accept'}
+          {activeTab === 'Scheduled' && 'Your upcoming sessions'}
+          {activeTab === 'Past' && 'Previous conversations'}
+        </Text>
+
         {!hasAnything ? (
           <EmptyState
             icon="pulse-outline"
@@ -350,14 +357,18 @@ export default function ChatsScreen({ navigation, route }) {
                 <>
                   {filteredPast.map((b) => {
                     const guide = findGuide(b.guideId);
-                    const cred = getCredentialLabel(guide);
+                    const topic = b.topics?.[0];
+                    const isCompleted = b.status === 'completed';
+                    const isCancelled = b.status === 'cancelled';
+                    const isNoShow = b.status === 'no-show';
                     return (
                       <TouchableOpacity
                         key={b.id}
-                        activeOpacity={0.7}
+                        activeOpacity={0.85}
                         onPress={() => navigation.navigate('ChatDetail', { bookingId: b.id })}
                       >
                         <View style={s.card}>
+                          {/* Top row: avatar + name + status badge */}
                           <View style={s.cardTop}>
                             {guide?.avatar ? (
                               <Image source={{ uri: guide.avatar }} style={s.avatarImg} />
@@ -367,44 +378,121 @@ export default function ChatsScreen({ navigation, route }) {
                             <View style={s.cardInfo}>
                               <View style={s.nameRow}>
                                 <Text style={s.cardName}>{b.guideName}</Text>
-                                {cred && (
-                                  <View style={s.credPill}>
-                                    <Text style={s.credText}>{cred}</Text>
-                                  </View>
-                                )}
                               </View>
-                              <Text style={s.cardSub}>{formatDateLong(b.date)}</Text>
+                              {topic && (
+                                <View style={s.topicPill}>
+                                  <Text style={s.topicText}>{topic}</Text>
+                                </View>
+                              )}
                             </View>
-                            <View style={[s.statusPill, b.status === 'completed' ? s.statusCompleted : s.statusCancelled]}>
-                              <Text style={[s.statusText, b.status === 'completed' ? s.statusTextCompleted : s.statusTextCancelled]}>
-                                {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
+                            <View style={[s.statusPill, isCompleted && s.statusCompleted, isCancelled && s.statusCancelled, isNoShow && s.statusNoShow]}>
+                              <Text style={[s.statusText, isCompleted && s.statusTextCompleted, isCancelled && s.statusTextCancelled, isNoShow && s.statusTextNoShow]}>
+                                {isNoShow ? 'Missed' : b.status.charAt(0).toUpperCase() + b.status.slice(1)}
                               </Text>
                             </View>
+                          </View>
+
+                          {/* Meta row */}
+                          <View style={s.metaRow}>
+                            <View style={s.metaItem}>
+                              <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
+                              <Text style={s.metaText}>{formatDateLong(b.date)}</Text>
+                            </View>
+                            <View style={s.metaItem}>
+                              <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
+                              <Text style={s.metaText}>{b.duration || 30} min</Text>
+                            </View>
+                          </View>
+
+                          {/* Action buttons */}
+                          <View style={s.btnRow}>
+                            {(isCompleted || isCancelled || isNoShow) && (
+                              <TouchableOpacity
+                                style={s.btnOutline}
+                                activeOpacity={0.7}
+                                onPress={() => navigation.navigate('GuideProfileChats', {
+                                  guideId: b.guideId,
+                                  autoOpenAvailability: true,
+                                })}
+                              >
+                                <Text style={s.btnOutlineText}>{isCancelled || isNoShow ? 'Rebook' : 'Book Again'}</Text>
+                              </TouchableOpacity>
+                            )}
+                            {isCompleted && !b.rated && (
+                              <TouchableOpacity
+                                style={s.btnFilled}
+                                activeOpacity={0.7}
+                                onPress={() => navigation.navigate('ChatDetail', { bookingId: b.id })}
+                              >
+                                <Ionicons name="star-outline" size={15} color={colors.white} style={{ marginRight: 4 }} />
+                                <Text style={s.btnFilledText}>Leave Review</Text>
+                              </TouchableOpacity>
+                            )}
                           </View>
                         </View>
                       </TouchableOpacity>
                     );
                   })}
-                  {filteredSessions.slice(0, 5).map((sess) => (
-                    <View key={sess.id} style={s.card}>
-                      <View style={s.cardTop}>
-                        <Avatar name={sess.guideName} size={52} />
-                        <View style={s.cardInfo}>
-                          <Text style={s.cardName}>{sess.guideName}</Text>
-                          <Text style={s.cardSub}>
-                            {new Date(sess.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                            {' · '}{sess.minutes}m
-                          </Text>
-                        </View>
-                        {sess.rating ? (
-                          <View style={s.ratingPill}>
-                            <Ionicons name="star" size={12} color={colors.warning} />
-                            <Text style={s.ratingText}>{sess.rating}</Text>
+                  {filteredSessions.slice(0, 5).map((sess) => {
+                    const guide = findGuide(sess.guideId);
+                    return (
+                      <View key={sess.id} style={s.card}>
+                        <View style={s.cardTop}>
+                          <Avatar name={sess.guideName} size={52} />
+                          <View style={s.cardInfo}>
+                            <View style={s.nameRow}>
+                              <Text style={s.cardName}>{sess.guideName}</Text>
+                            </View>
+                            {sess.topic && (
+                              <View style={s.topicPill}>
+                                <Text style={s.topicText}>{sess.topic}</Text>
+                              </View>
+                            )}
                           </View>
-                        ) : null}
+                          <View style={[s.statusPill, s.statusCompleted]}>
+                            <Text style={[s.statusText, s.statusTextCompleted]}>Completed</Text>
+                          </View>
+                        </View>
+
+                        <View style={s.metaRow}>
+                          <View style={s.metaItem}>
+                            <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>
+                              {new Date(sess.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                            </Text>
+                          </View>
+                          <View style={s.metaItem}>
+                            <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>{sess.minutes} min</Text>
+                          </View>
+                          {sess.rating ? (
+                            <View style={s.metaItem}>
+                              <Ionicons name="star" size={14} color={colors.warning} />
+                              <Text style={s.metaText}>{sess.rating}</Text>
+                            </View>
+                          ) : null}
+                        </View>
+
+                        <View style={s.btnRow}>
+                          <TouchableOpacity
+                            style={s.btnOutline}
+                            activeOpacity={0.7}
+                            onPress={() => {
+                              if (sess.guideId) navigation.navigate('GuideProfileChats', { guideId: sess.guideId, autoOpenAvailability: true });
+                            }}
+                          >
+                            <Text style={s.btnOutlineText}>Book Again</Text>
+                          </TouchableOpacity>
+                          {!sess.rating && (
+                            <TouchableOpacity style={s.btnFilled} activeOpacity={0.7}>
+                              <Ionicons name="star-outline" size={15} color={colors.white} style={{ marginRight: 4 }} />
+                              <Text style={s.btnFilledText}>Leave Review</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       </View>
-                    </View>
-                  ))}
+                    );
+                  })}
                 </>
               )
             )}
@@ -460,17 +548,18 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   headerTitle: {
-    fontSize: font.title,
-    fontWeight: '700',
+    fontSize: font.hero,
+    fontWeight: '800',
     color: colors.text,
+    letterSpacing: -0.5,
   },
   searchBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
@@ -483,19 +572,19 @@ const s = StyleSheet.create({
     backgroundColor: colors.surfaceLight,
     borderRadius: radius.full,
     padding: 3,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xs,
   },
   segmentBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 11,
     borderRadius: radius.full,
   },
   segmentBtnActive: {
-    backgroundColor: colors.surface,
-    ...shadow.card,
+    backgroundColor: colors.text,
+    ...shadow.cardHover,
   },
   segmentText: {
     fontSize: font.caption,
@@ -503,7 +592,7 @@ const s = StyleSheet.create({
     color: colors.textMuted,
   },
   segmentTextActive: {
-    color: colors.text,
+    color: colors.white,
   },
   segmentBadge: {
     minWidth: 18,
@@ -512,11 +601,11 @@ const s = StyleSheet.create({
     backgroundColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 5,
+    marginLeft: 6,
     paddingHorizontal: 5,
   },
   segmentBadgeActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: 'rgba(255,255,255,0.25)',
   },
   segmentBadgeText: {
     fontSize: 10,
@@ -525,6 +614,12 @@ const s = StyleSheet.create({
   },
   segmentBadgeTextActive: {
     color: colors.white,
+  },
+  tabHint: {
+    fontSize: font.caption,
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
   },
 
   /* Card */
@@ -638,6 +733,7 @@ const s = StyleSheet.create({
   },
   btnFilled: {
     flex: 1,
+    flexDirection: 'row',
     paddingVertical: 12,
     borderRadius: radius.full,
     backgroundColor: colors.text,
@@ -671,6 +767,12 @@ const s = StyleSheet.create({
   },
   statusTextCancelled: {
     color: colors.danger,
+  },
+  statusNoShow: {
+    backgroundColor: '#FFF7ED',
+  },
+  statusTextNoShow: {
+    color: colors.accent,
   },
 
   /* Rating (past sessions) */
