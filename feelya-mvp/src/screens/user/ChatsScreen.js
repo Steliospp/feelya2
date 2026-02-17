@@ -162,13 +162,6 @@ export default function ChatsScreen({ navigation }) {
                           <Ionicons name={modeIcon(b.mode)} size={14} color={colors.primary} />
                           <Text style={s.modeText}>{b.mode}</Text>
                         </View>
-                        <TouchableOpacity
-                          style={s.continueBtn}
-                          onPress={() => navigation.navigate('ChatDetail', { bookingId: b.id })}
-                        >
-                          <Text style={s.continueText}>Continue</Text>
-                          <Ionicons name="arrow-forward" size={14} color={colors.primary} />
-                        </TouchableOpacity>
                       </View>
                     </Card>
                   );
@@ -199,7 +192,7 @@ export default function ChatsScreen({ navigation }) {
                             {formatDate(b.date)}
                           </Text>
                         </View>
-                        <Badge label={b.status} color={b.status === 'completed' ? colors.textSecondary : colors.danger} />
+                        <Badge label={b.status.charAt(0).toUpperCase() + b.status.slice(1)} color={b.status === 'completed' ? colors.textSecondary : colors.danger} />
                       </View>
                     </Card>
                   );

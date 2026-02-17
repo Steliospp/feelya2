@@ -10,6 +10,15 @@ import { useApp, MOCK_GUIDES, MOCK_PROVIDERS, generateAvailability } from '../..
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+const MOCK_REVIEWS = [
+  { id: 'r1', author: 'Alex M.', rating: 5, date: '2 weeks ago', text: 'Really helped me work through my anxiety about starting a new job. Felt heard and understood the whole time.' },
+  { id: 'r2', author: 'Jamie T.', rating: 5, date: '3 weeks ago', text: 'So easy to talk to. Gave me practical advice I could actually use, not just generic stuff.' },
+  { id: 'r3', author: 'Morgan L.', rating: 4, date: '1 month ago', text: 'Great listener and very patient. Would definitely book again.' },
+  { id: 'r4', author: 'Taylor R.', rating: 5, date: '1 month ago', text: 'This was my first time trying something like this and they made me feel completely comfortable. Highly recommend.' },
+  { id: 'r5', author: 'Casey W.', rating: 4, date: '2 months ago', text: 'Helpful conversation about relationship issues. Gave me a new perspective I hadn\'t considered.' },
+  { id: 'r6', author: 'Riley K.', rating: 5, date: '2 months ago', text: 'Talked about career stuff and they really got where I was coming from. Left feeling motivated.' },
+];
+
 export default function GuideProfileScreen({ navigation, route }) {
   const { dispatch } = useApp();
   const { guideId, bookingId, mode: initialMode } = route.params || {};
@@ -24,6 +33,7 @@ export default function GuideProfileScreen({ navigation, route }) {
   const [showBooking, setShowBooking] = useState(!!initialMode);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedMode, setSelectedMode] = useState('chat');
+  const [showReviews, setShowReviews] = useState(false);
 
   if (!guide) {
     return (
@@ -115,7 +125,7 @@ export default function GuideProfileScreen({ navigation, route }) {
             title="Reviews"
             variant="soft"
             icon="star-outline"
-            onPress={() => {}}
+            onPress={() => setShowReviews(true)}
             style={{ flex: 1 }}
           />
         </View>
@@ -288,6 +298,34 @@ export default function GuideProfileScreen({ navigation, route }) {
           <PrimaryButton title={bookingId ? 'Reschedule' : 'Continue'} onPress={handleBook} style={{ marginTop: spacing.md }} />
         )}
       </BottomSheet>
+
+      {/* Reviews bottom sheet */}
+      <BottomSheet visible={showReviews} onClose={() => setShowReviews(false)} title="Reviews">
+        <View style={s.reviewSummary}>
+          <Ionicons name="star" size={20} color={colors.warning} />
+          <Text style={s.reviewRating}>{guide.rating}</Text>
+          <Text style={s.reviewCount}>({guide.conversations || guide.reviews} reviews)</Text>
+        </View>
+        <ScrollView style={s.reviewScroll} showsVerticalScrollIndicator={false}>
+          {MOCK_REVIEWS.map((r) => (
+            <View key={r.id} style={s.reviewCard}>
+              <View style={s.reviewHeader}>
+                <Avatar name={r.author} size={32} />
+                <View style={{ marginLeft: 10, flex: 1 }}>
+                  <Text style={s.reviewAuthor}>{r.author}</Text>
+                  <Text style={s.reviewDate}>{r.date}</Text>
+                </View>
+                <View style={s.reviewStars}>
+                  {Array.from({ length: r.rating }).map((_, i) => (
+                    <Ionicons key={i} name="star" size={12} color={colors.warning} />
+                  ))}
+                </View>
+              </View>
+              <Text style={s.reviewText}>{r.text}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </BottomSheet>
     </Screen>
   );
 }
@@ -376,4 +414,24 @@ const s = StyleSheet.create({
   confirmDetailLabel: { fontSize: font.caption, color: colors.textSecondary },
   confirmDetailValue: { fontSize: font.caption, fontWeight: '600', color: colors.text },
   bookingSubtitle: { fontSize: font.body, color: colors.textSecondary, marginBottom: spacing.md },
+  reviewSummary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  reviewRating: { fontSize: font.xl, fontWeight: '700', color: colors.text, marginLeft: 6 },
+  reviewCount: { fontSize: font.caption, color: colors.textSecondary, marginLeft: 6 },
+  reviewScroll: { maxHeight: 360 },
+  reviewCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sm,
+    ...shadow.card,
+  },
+  reviewHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
+  reviewAuthor: { fontSize: font.body, fontWeight: '600', color: colors.text },
+  reviewDate: { fontSize: font.xs, color: colors.textMuted, marginTop: 1 },
+  reviewStars: { flexDirection: 'row' },
+  reviewText: { fontSize: font.caption, color: colors.textSecondary, lineHeight: 20 },
 });
