@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import useTabScrollToTop from '../../../hooks/useTabScrollToTop';
 import { colors, spacing, radius, font, shadow } from '../../../theme';
 import { Screen, Card, SearchBar, Pill, ResourceCard } from '../../../components/UI';
 import { useApp, COMMUNITY_CATEGORIES, BLOG_RESOURCES } from '../../../store/AppContext';
@@ -25,8 +25,7 @@ function timeAgo(timestamp) {
 }
 
 export default function ForumsHomeScreen({ navigation }) {
-  const scrollRef = useRef(null);
-  useScrollToTop(scrollRef);
+  const scrollRef = useTabScrollToTop();
   const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState('discussions');
   const [search, setSearch] = useState('');

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import useTabScrollToTop from '../../hooks/useTabScrollToTop';
 import {
   Screen,
   QuoteCard,
@@ -26,8 +26,7 @@ function formatDate(dateStr) {
 }
 
 export default function UserHomeScreen({ navigation }) {
-  const scrollRef = useRef(null);
-  useScrollToTop(scrollRef);
+  const scrollRef = useTabScrollToTop();
   const { state } = useApp();
   const quote = getDailyQuote();
 
