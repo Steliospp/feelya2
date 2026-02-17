@@ -218,12 +218,12 @@ export default function GuideProfileScreen({ navigation, route }) {
         <View style={{ height: 8 }} />
       </ScrollView>
 
-      {/* Footer for when a slot is selected */}
-      {selectedSlot && !showBooking && (
+      {/* Footer for when a slot is selected inline — skip straight to confirm */}
+      {selectedSlot && !showBooking && !showConfirm && (
         <View style={s.footer}>
           <PrimaryButton
             title={bookingId ? 'Reschedule to this time' : 'Plan a chat'}
-            onPress={() => setShowBooking(true)}
+            onPress={() => setShowConfirm(true)}
           />
         </View>
       )}
@@ -445,7 +445,7 @@ const s = StyleSheet.create({
   },
   reviewRating: { fontSize: font.xl, fontWeight: '700', color: colors.text, marginLeft: 6 },
   reviewCount: { fontSize: font.caption, color: colors.textSecondary, marginLeft: 6 },
-  reviewScroll: { maxHeight: 360 },
+  reviewScroll: { maxHeight: 500 },
   reviewCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
