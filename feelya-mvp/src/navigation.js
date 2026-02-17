@@ -35,6 +35,7 @@ import ScheduleSessionScreen from './screens/user/ScheduleSessionScreen';
 import CategoryDetailScreen from './screens/user/CategoryDetailScreen';
 import SubtopicScreen from './screens/user/SubtopicScreen';
 import ChatsScreen from './screens/user/ChatsScreen';
+import SessionLobbyScreen from './screens/user/SessionLobbyScreen';
 import ResourceDetailScreen from './screens/user/ResourceDetailScreen';
 
 // Bookings
@@ -95,6 +96,7 @@ function ChatsStack() {
       <Stack.Screen name="ChatsMain" component={ChatsScreen} />
       <Stack.Screen name="ChatDetail" component={BookingDetailScreen} />
       <Stack.Screen name="GuideProfileChats" component={GuideProfileScreen} />
+      <Stack.Screen name="SessionLobby" component={SessionLobbyScreen} />
     </Stack.Navigator>
   );
 }

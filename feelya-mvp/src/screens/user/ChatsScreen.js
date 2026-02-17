@@ -6,13 +6,18 @@ import { Ionicons } from '@expo/vector-icons';
 import useTabScrollToTop from '../../hooks/useTabScrollToTop';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
-  Screen, Avatar, BottomSheet, PrimaryButton, EmptyState,
+  Screen, Avatar, BottomSheet, PrimaryButton, SecondaryButton, EmptyState,
 } from '../../components/UI';
-import { useApp, MOCK_GUIDES, MOCK_PROVIDERS, generateAvailability } from '../../store/AppContext';
+import { useApp, MOCK_GUIDES, MOCK_PROVIDERS } from '../../store/AppContext';
 
 const REQUEST_TIMEOUT_MS = 5 * 60 * 1000;
+const JOIN_WINDOW_MINUTES = 10;
 const TABS = ['Active', 'Scheduled', 'Past'];
-const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function formatDateLong(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+}
 
 function getCredentialLabel(guide) {
   if (!guide) return null;
@@ -30,11 +35,6 @@ function friendlyDay(dateStr) {
   return target.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
-function formatDateLong(dateStr) {
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
 export default function ChatsScreen({ navigation }) {
   const scrollRef = useTabScrollToTop();
   const { state, dispatch } = useApp();
@@ -46,13 +46,8 @@ export default function ChatsScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('Scheduled');
   const [, tick] = useState(0);
 
-  // Reschedule bottom sheet state
-  const [rescheduleBooking, setRescheduleBooking] = useState(null);
-  const slots = rescheduleBooking ? generateAvailability(rescheduleBooking.guideId) : [];
-  const dates = [...new Set(slots.map((sl) => sl.date))];
-  const [selectedDate, setSelectedDate] = useState(dates[0]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const daySlots = slots.filter((sl) => sl.date === selectedDate);
+  // "Too early" bottom sheet state
+  const [earlyJoinBooking, setEarlyJoinBooking] = useState(null);
 
   const expiredShown = useRef(new Set());
 
@@ -90,24 +85,35 @@ export default function ChatsScreen({ navigation }) {
     );
   }, [dispatch]);
 
-  const openReschedule = (booking) => {
-    const sl = generateAvailability(booking.guideId);
-    const ds = [...new Set(sl.map((s) => s.date))];
-    setRescheduleBooking(booking);
-    setSelectedDate(ds[0]);
-    setSelectedSlot(null);
+  /* Reschedule → navigate to Guide Profile with availability auto-opened */
+  const handleReschedule = (booking) => {
+    navigation.navigate('GuideProfileChats', {
+      guideId: booking.guideId,
+      bookingId: booking.id,
+      autoOpenAvailability: true,
+      preselectedMode: booking.mode,
+    });
   };
 
-  const handleReschedule = () => {
-    if (!selectedSlot || !rescheduleBooking) return;
-    const slot = slots.find((sl) => sl.id === selectedSlot);
-    if (!slot) return;
-    dispatch({
-      type: 'RESCHEDULE_BOOKING',
-      payload: { bookingId: rescheduleBooking.id, date: slot.date, hour: slot.hour, timeLabel: slot.label },
-    });
-    setRescheduleBooking(null);
-    Alert.alert('Rescheduled', `Chat moved to ${formatDateLong(slot.date)} at ${slot.label}`);
+  /* Join Chat → time-based routing */
+  const handleJoinChat = (booking) => {
+    const startTime = new Date(booking.date + 'T00:00:00');
+    startTime.setHours(booking.hour, 0, 0, 0);
+    const diffMs = startTime - Date.now();
+    const diffMins = diffMs / (1000 * 60);
+
+    if (diffMins > JOIN_WINDOW_MINUTES) {
+      // Too early — show hint sheet
+      setEarlyJoinBooking(booking);
+    } else {
+      // Within join window or session started — go to lobby
+      navigation.navigate('SessionLobby', { bookingId: booking.id });
+    }
+  };
+
+  /* Card tap → Guide Profile */
+  const handleCardTap = (booking) => {
+    navigation.navigate('GuideProfileChats', { guideId: booking.guideId });
   };
 
   const tabCounts = {
@@ -212,66 +218,72 @@ export default function ChatsScreen({ navigation }) {
                   const cred = getCredentialLabel(guide);
                   const topic = b.topics?.[0];
                   return (
-                    <View key={b.id} style={s.card}>
-                      {/* Top row: avatar + name + credential */}
-                      <View style={s.cardTop}>
-                        {guide?.avatar ? (
-                          <Image source={{ uri: guide.avatar }} style={s.avatarImg} />
-                        ) : (
-                          <Avatar name={b.guideName} size={52} />
-                        )}
-                        <View style={s.cardInfo}>
-                          <View style={s.nameRow}>
-                            <Text style={s.cardName}>{b.guideName}</Text>
-                            {cred && (
-                              <View style={s.credPill}>
-                                <Text style={s.credText}>{cred}</Text>
+                    <TouchableOpacity
+                      key={b.id}
+                      activeOpacity={0.85}
+                      onPress={() => handleCardTap(b)}
+                    >
+                      <View style={s.card}>
+                        {/* Top row: avatar + name + credential */}
+                        <View style={s.cardTop}>
+                          {guide?.avatar ? (
+                            <Image source={{ uri: guide.avatar }} style={s.avatarImg} />
+                          ) : (
+                            <Avatar name={b.guideName} size={52} />
+                          )}
+                          <View style={s.cardInfo}>
+                            <View style={s.nameRow}>
+                              <Text style={s.cardName}>{b.guideName}</Text>
+                              {cred && (
+                                <View style={s.credPill}>
+                                  <Text style={s.credText}>{cred}</Text>
+                                </View>
+                              )}
+                            </View>
+                            {/* Topic pill */}
+                            {topic && (
+                              <View style={s.topicPill}>
+                                <Text style={s.topicText}>{topic}</Text>
                               </View>
                             )}
                           </View>
-                          {/* Topic pill */}
-                          {topic && (
-                            <View style={s.topicPill}>
-                              <Text style={s.topicText}>{topic}</Text>
-                            </View>
-                          )}
                         </View>
-                      </View>
 
-                      {/* Meta row: day, time, duration */}
-                      <View style={s.metaRow}>
-                        <View style={s.metaItem}>
-                          <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
-                          <Text style={s.metaText}>{friendlyDay(b.date)}</Text>
+                        {/* Meta row: day, time, duration */}
+                        <View style={s.metaRow}>
+                          <View style={s.metaItem}>
+                            <Ionicons name="calendar-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>{friendlyDay(b.date)}</Text>
+                          </View>
+                          <View style={s.metaItem}>
+                            <Ionicons name="time-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>{b.timeLabel}</Text>
+                          </View>
+                          <View style={s.metaItem}>
+                            <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
+                            <Text style={s.metaText}>{b.duration} min</Text>
+                          </View>
                         </View>
-                        <View style={s.metaItem}>
-                          <Ionicons name="time-outline" size={15} color={colors.textMuted} />
-                          <Text style={s.metaText}>{b.timeLabel}</Text>
-                        </View>
-                        <View style={s.metaItem}>
-                          <Ionicons name="hourglass-outline" size={15} color={colors.textMuted} />
-                          <Text style={s.metaText}>{b.duration} min</Text>
-                        </View>
-                      </View>
 
-                      {/* Action buttons */}
-                      <View style={s.btnRow}>
-                        <TouchableOpacity
-                          style={s.btnOutline}
-                          activeOpacity={0.7}
-                          onPress={() => openReschedule(b)}
-                        >
-                          <Text style={s.btnOutlineText}>Reschedule</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={s.btnFilled}
-                          activeOpacity={0.7}
-                          onPress={() => navigation.navigate('ChatDetail', { bookingId: b.id })}
-                        >
-                          <Text style={s.btnFilledText}>Join Chat</Text>
-                        </TouchableOpacity>
+                        {/* Action buttons */}
+                        <View style={s.btnRow}>
+                          <TouchableOpacity
+                            style={s.btnOutline}
+                            activeOpacity={0.7}
+                            onPress={() => handleReschedule(b)}
+                          >
+                            <Text style={s.btnOutlineText}>Reschedule</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={s.btnFilled}
+                            activeOpacity={0.7}
+                            onPress={() => handleJoinChat(b)}
+                          >
+                            <Text style={s.btnFilledText}>Join Chat</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   );
                 })
               )
@@ -347,51 +359,35 @@ export default function ChatsScreen({ navigation }) {
         )}
       </ScrollView>
 
-      {/* Reschedule bottom sheet */}
+      {/* "Too early" bottom sheet */}
       <BottomSheet
-        visible={!!rescheduleBooking}
-        onClose={() => setRescheduleBooking(null)}
-        title="Reschedule Chat"
+        visible={!!earlyJoinBooking}
+        onClose={() => setEarlyJoinBooking(null)}
+        title="Your chat hasn't started yet"
       >
-        <Text style={s.sheetSub}>Pick a new date & time</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: spacing.md }}>
-          {dates.map((d) => {
-            const dt = new Date(d + 'T12:00:00');
-            const isSel = d === selectedDate;
-            return (
-              <TouchableOpacity
-                key={d}
-                style={[s.dayBtn, isSel && s.dayBtnSel]}
-                onPress={() => { setSelectedDate(d); setSelectedSlot(null); }}
-                activeOpacity={0.7}
-              >
-                <Text style={[s.dayName, isSel && s.dayTextSel]}>{DAYS_SHORT[dt.getDay()]}</Text>
-                <Text style={[s.dayNum, isSel && s.dayTextSel]}>{dt.getDate()}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-        <View style={s.slotsGrid}>
-          {daySlots.length === 0 ? (
-            <Text style={s.noSlots}>No available slots</Text>
-          ) : (
-            daySlots.map((sl) => {
-              const isSel = sl.id === selectedSlot;
-              return (
-                <TouchableOpacity
-                  key={sl.id}
-                  style={[s.slotBtn, isSel && s.slotBtnSel]}
-                  onPress={() => setSelectedSlot(sl.id)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[s.slotText, isSel && s.slotTextSel]}>{sl.label}</Text>
-                </TouchableOpacity>
-              );
-            })
-          )}
-        </View>
-        {selectedSlot && (
-          <PrimaryButton title="Confirm Reschedule" onPress={handleReschedule} style={{ marginTop: spacing.md }} />
+        {earlyJoinBooking && (
+          <View>
+            <Text style={s.sheetSub}>
+              Starts at {earlyJoinBooking.timeLabel}. You can join 10 minutes before.
+            </Text>
+            <View style={s.earlyBtnRow}>
+              <SecondaryButton
+                title="OK"
+                variant="outline"
+                onPress={() => setEarlyJoinBooking(null)}
+                style={{ flex: 1, marginRight: spacing.sm }}
+              />
+              <PrimaryButton
+                title="Reschedule"
+                onPress={() => {
+                  const b = earlyJoinBooking;
+                  setEarlyJoinBooking(null);
+                  handleReschedule(b);
+                }}
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
         )}
       </BottomSheet>
     </Screen>
@@ -670,44 +666,15 @@ const s = StyleSheet.create({
     color: colors.textMuted,
   },
 
-  /* Reschedule bottom sheet */
+  /* "Too early" bottom sheet */
   sheetSub: {
     fontSize: font.body,
     color: colors.textSecondary,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
+    lineHeight: 22,
   },
-  dayBtn: {
-    width: 52,
-    height: 64,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.sm,
-    backgroundColor: colors.surface,
-    ...shadow.card,
+  earlyBtnRow: {
+    flexDirection: 'row',
+    marginTop: spacing.sm,
   },
-  dayBtnSel: {
-    backgroundColor: colors.primary,
-    ...shadow.fab,
-  },
-  dayName: { fontSize: font.xs, color: colors.textSecondary, fontWeight: '500' },
-  dayNum: { fontSize: font.lg, fontWeight: '600', color: colors.text, marginTop: 2 },
-  dayTextSel: { color: colors.white },
-  slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.sm },
-  slotBtn: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 2,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    marginRight: spacing.sm,
-    marginBottom: spacing.sm,
-    ...shadow.card,
-  },
-  slotBtnSel: {
-    backgroundColor: colors.primary,
-    ...shadow.fab,
-  },
-  slotText: { fontSize: font.caption, fontWeight: '500', color: colors.text },
-  slotTextSel: { color: colors.white },
-  noSlots: { fontSize: font.caption, color: colors.textMuted, padding: spacing.md },
 });
