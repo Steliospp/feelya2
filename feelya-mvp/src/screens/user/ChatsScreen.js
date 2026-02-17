@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import useTabScrollToTop from '../../hooks/useTabScrollToTop';
 import { colors, spacing, radius, font, shadow } from '../../theme';
@@ -8,12 +8,61 @@ import {
 } from '../../components/UI';
 import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
+const REQUEST_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
 export default function ChatsScreen({ navigation }) {
   const scrollRef = useTabScrollToTop();
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const upcoming = state.bookings.filter((b) => b.status === 'upcoming');
   const past = state.bookings.filter((b) => b.status !== 'upcoming');
   const pending = state.pendingRequests || [];
+
+  // Track which request IDs have already shown the expiry prompt
+  const expiredShown = useRef(new Set());
+  // Force re-render every second so countdown updates
+  const [, tick] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Check for expired requests
+  useEffect(() => {
+    pending.forEach((req) => {
+      const elapsed = Date.now() - req.requestedAt;
+      if (elapsed >= REQUEST_TIMEOUT_MS && !expiredShown.current.has(req.id)) {
+        expiredShown.current.add(req.id);
+        dispatch({ type: 'REMOVE_PENDING_REQUEST', payload: req.id });
+        Alert.alert(
+          `${req.providerName} wasn't available`,
+          'Would you like to request a new session?',
+          [
+            { text: 'No', style: 'cancel' },
+            {
+              text: 'Yes',
+              onPress: () => navigation.navigate('Home', { screen: 'TopicSelect' }),
+            },
+          ],
+        );
+      }
+    });
+  }, [pending, dispatch, navigation]);
+
+  const handleCancelRequest = useCallback((req) => {
+    Alert.alert(
+      'Cancel request',
+      `Cancel your request to ${req.providerName}?`,
+      [
+        { text: 'Keep waiting', style: 'cancel' },
+        {
+          text: 'Cancel',
+          style: 'destructive',
+          onPress: () => dispatch({ type: 'REMOVE_PENDING_REQUEST', payload: req.id }),
+        },
+      ],
+    );
+  }, [dispatch]);
 
   const modeIcon = (m) =>
     m === 'chat' ? 'chatbubble-outline' : m === 'voice' ? 'mic-outline' : 'videocam-outline';
@@ -37,30 +86,47 @@ export default function ChatsScreen({ navigation }) {
             {pending.length > 0 && (
               <>
                 <SectionTitle>Waiting for response</SectionTitle>
-                {pending.map((req) => (
-                  <Card key={req.id} style={s.card}>
-                    <View style={s.row}>
-                      {req.avatar ? (
-                        <Image source={{ uri: req.avatar }} style={s.avatarImg} />
-                      ) : (
-                        <Avatar name={req.providerName} size={48} />
-                      )}
-                      <View style={s.info}>
-                        <Text style={s.name}>{req.providerName}</Text>
-                        <Text style={s.bio} numberOfLines={1}>{req.providerTitle}</Text>
-                        {req.topics && req.topics.length > 0 && (
-                          <Text style={s.dateText}>
-                            {req.topics.slice(0, 2).join(', ')}
-                          </Text>
-                        )}
-                      </View>
-                      <View style={s.waitingBadge}>
-                        <Ionicons name="time-outline" size={12} color={colors.accent} />
-                        <Text style={s.waitingText}>Waiting</Text>
-                      </View>
-                    </View>
-                  </Card>
-                ))}
+                {pending.map((req) => {
+                  const elapsed = Date.now() - req.requestedAt;
+                  const remaining = Math.max(0, REQUEST_TIMEOUT_MS - elapsed);
+                  const mins = Math.floor(remaining / 60000);
+                  const secs = Math.floor((remaining % 60000) / 1000);
+                  const timeStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+                  return (
+                    <TouchableOpacity
+                      key={req.id}
+                      activeOpacity={0.85}
+                      onPress={() => handleCancelRequest(req)}
+                    >
+                      <Card style={s.card}>
+                        <View style={s.row}>
+                          {req.avatar ? (
+                            <Image source={{ uri: req.avatar }} style={s.avatarImg} />
+                          ) : (
+                            <Avatar name={req.providerName} size={48} />
+                          )}
+                          <View style={s.info}>
+                            <Text style={s.name}>{req.providerName}</Text>
+                            <Text style={s.bio} numberOfLines={1}>{req.providerTitle}</Text>
+                            {req.topics && req.topics.length > 0 && (
+                              <Text style={s.dateText}>
+                                {req.topics.slice(0, 2).join(', ')}
+                              </Text>
+                            )}
+                          </View>
+                          <View style={s.waitingCol}>
+                            <View style={s.waitingBadge}>
+                              <Ionicons name="time-outline" size={12} color={colors.accent} />
+                              <Text style={s.waitingText}>Waiting</Text>
+                            </View>
+                            <Text style={s.timerText}>{timeStr}</Text>
+                          </View>
+                        </View>
+                      </Card>
+                    </TouchableOpacity>
+                  );
+                })}
               </>
             )}
 
@@ -199,6 +265,9 @@ const s = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: colors.surfaceLight,
   },
+  waitingCol: {
+    alignItems: 'center',
+  },
   waitingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -212,6 +281,12 @@ const s = StyleSheet.create({
     fontWeight: '600',
     color: colors.accent,
     marginLeft: 4,
+  },
+  timerText: {
+    fontSize: font.xs,
+    fontWeight: '600',
+    color: colors.textMuted,
+    marginTop: 4,
   },
   footerRow: {
     flexDirection: 'row',

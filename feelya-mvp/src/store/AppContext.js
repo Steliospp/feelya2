@@ -870,6 +870,13 @@ function reducer(state, action) {
       return { ...state, pendingRequests: [req, ...state.pendingRequests] };
     }
 
+    case 'REMOVE_PENDING_REQUEST': {
+      return {
+        ...state,
+        pendingRequests: state.pendingRequests.filter((r) => r.id !== action.payload),
+      };
+    }
+
     // Bookings
     case 'ADD_BOOKING':
       return { ...state, bookings: [action.payload, ...state.bookings] };

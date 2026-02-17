@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
@@ -51,11 +51,7 @@ export default function BrowseOnlineScreen({ navigation, route }) {
         topics: selectedTopics,
       },
     });
-    Alert.alert(
-      'Request sent',
-      `Your request has been sent to ${provider.name}. They'll be notified and connect with you shortly.`,
-      [{ text: 'OK', onPress: () => navigation.navigate('HomeMain') }],
-    );
+    navigation.navigate('Chats', { screen: 'ChatsMain' });
   };
 
   return (
