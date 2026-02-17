@@ -480,19 +480,8 @@ export default function GuideProfileScreen({ navigation, route }) {
           onPress={() => setShowBooking(true)}
           activeOpacity={0.8}
         >
-          <Ionicons name="calendar-outline" size={18} color={colors.primary} style={{ marginRight: 6 }} />
+          <Ionicons name="calendar-outline" size={18} color={colors.white} style={{ marginRight: 6 }} />
           <Text style={s.btnPlanText}>Plan a chat</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={s.btnStart}
-          onPress={() => {
-            dispatch({ type: 'SET_SELECTED_TOPICS', payload: topics.slice(0, 3) });
-            navigation.navigate('SessionModeSelect');
-          }}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.white} style={{ marginRight: 6 }} />
-          <Text style={s.btnStartText}>Start chat</Text>
         </TouchableOpacity>
       </View>
 
@@ -640,7 +629,7 @@ function fmtDate(dateStr) {
 
 /* ══════════════ STYLES ══════════════ */
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root: { flex: 1, backgroundColor: colors.white },
 
   /* header background */
   headerBg: {
@@ -684,7 +673,7 @@ const s = StyleSheet.create({
     marginTop: -AVATAR_SIZE / 2,
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.lg,
-    backgroundColor: colors.bg,
+    backgroundColor: colors.white,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
   },
@@ -958,10 +947,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: spacing.screenPadding,
     paddingTop: 14,
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    ...shadow.tab,
+    backgroundColor: colors.white,
   },
   btnPlan: {
     flex: 1,
@@ -969,24 +955,9 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     height: 52,
     borderRadius: radius.full,
-    borderWidth: 1.5,
-    borderColor: colors.primary,
-    backgroundColor: colors.white,
-    marginRight: spacing.sm,
+    backgroundColor: colors.primary,
   },
   btnPlanText: {
-    fontSize: font.body, fontWeight: '600', color: colors.primary,
-  },
-  btnStart: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center', justifyContent: 'center',
-    height: 52,
-    borderRadius: radius.full,
-    backgroundColor: colors.primary,
-    ...shadow.fab,
-  },
-  btnStartText: {
     fontSize: font.body, fontWeight: '600', color: colors.white,
   },
 
@@ -1074,7 +1045,7 @@ const s = StyleSheet.create({
   /* empty */
   emptyWrap: {
     flex: 1, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: colors.bg,
+    backgroundColor: colors.white,
   },
   floatBack: {
     position: 'absolute', top: 60, left: 20,
