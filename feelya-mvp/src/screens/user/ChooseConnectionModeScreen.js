@@ -1,34 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import { Screen, Header } from '../../components/UI';
-import { MOCK_PROVIDERS } from '../../store/AppContext';
+import { MOCK_PROVIDERS, SESSION_MODES, useApp } from '../../store/AppContext';
 
 export default function ChooseConnectionModeScreen({ navigation, route }) {
+  const { dispatch } = useApp();
   const { selectedTopics = [], supportType = 'guide' } = route.params || {};
+  const [sessionMode, setSessionMode] = useState('chat');
 
   const onlineCount = MOCK_PROVIDERS.filter(
     (p) => p.type === supportType && p.online,
   ).length;
 
   const handleStartNow = () => {
-    // Check if anyone is online for this support type
+    dispatch({ type: 'SET_SESSION_MODE', payload: sessionMode });
     const onlineProviders = MOCK_PROVIDERS.filter(
       (p) => p.type === supportType && p.online,
     );
     if (onlineProviders.length === 0) {
-      // Fallback to browse with message
       navigation.navigate('BrowseOnline', {
         selectedTopics,
         supportType,
+        sessionMode,
         fallbackMessage: 'No one is available right now. Browse who\'s online instead.',
       });
     } else {
-      // Auto-match: pick first online match
       navigation.navigate('Matching', {
         selectedTopics,
         supportType,
+        sessionMode,
         autoMatch: true,
       });
     }
@@ -39,7 +41,29 @@ export default function ChooseConnectionModeScreen({ navigation, route }) {
       <Header title="" onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <Text style={s.heading}>How would you like to connect?</Text>
-        <Text style={s.sub}>Choose what works best for you right now.</Text>
+        <Text style={s.sub}>Choose your session type, then pick how to get started.</Text>
+
+        {/* Session mode selector */}
+        <View style={s.modeRow}>
+          {SESSION_MODES.map((m) => {
+            const active = sessionMode === m.id;
+            return (
+              <TouchableOpacity
+                key={m.id}
+                style={[s.modeChip, active && s.modeChipActive]}
+                onPress={() => setSessionMode(m.id)}
+                activeOpacity={0.8}
+              >
+                <Ionicons
+                  name={m.icon}
+                  size={18}
+                  color={active ? colors.white : colors.textSecondary}
+                />
+                <Text style={[s.modeLabel, active && s.modeLabelActive]}>{m.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
         {/* Start Now - PRIMARY */}
         <TouchableOpacity style={s.primaryCard} onPress={handleStartNow} activeOpacity={0.85}>
@@ -65,7 +89,7 @@ export default function ChooseConnectionModeScreen({ navigation, route }) {
         <TouchableOpacity
           style={s.secondaryCard}
           onPress={() =>
-            navigation.navigate('BrowseOnline', { selectedTopics, supportType })
+            navigation.navigate('BrowseOnline', { selectedTopics, supportType, sessionMode })
           }
           activeOpacity={0.85}
         >
@@ -85,7 +109,7 @@ export default function ChooseConnectionModeScreen({ navigation, route }) {
         <TouchableOpacity
           style={s.secondaryCard}
           onPress={() =>
-            navigation.navigate('ScheduleSession', { selectedTopics, supportType })
+            navigation.navigate('ScheduleSession', { selectedTopics, supportType, sessionMode })
           }
           activeOpacity={0.85}
         >
@@ -120,7 +144,34 @@ const s = StyleSheet.create({
   sub: {
     fontSize: font.body,
     color: colors.textSecondary,
+    marginBottom: spacing.lg,
+  },
+  /* Mode selector */
+  modeRow: {
+    flexDirection: 'row',
     marginBottom: spacing.xl,
+  },
+  modeChip: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceLight,
+    marginRight: spacing.sm,
+  },
+  modeChipActive: {
+    backgroundColor: colors.primary,
+  },
+  modeLabel: {
+    fontSize: font.caption,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    marginLeft: 6,
+  },
+  modeLabelActive: {
+    color: colors.white,
   },
   /* Primary card */
   primaryCard: {
