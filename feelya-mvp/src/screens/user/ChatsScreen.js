@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useIsFocused } from '@react-navigation/native';
 import useTabScrollToTop from '../../hooks/useTabScrollToTop';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
@@ -45,11 +46,23 @@ export default function ChatsScreen({ navigation }) {
 
   const [activeTab, setActiveTab] = useState('Scheduled');
   const [, tick] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
 
   // "Too early" bottom sheet state
   const [earlyJoinBooking, setEarlyJoinBooking] = useState(null);
 
   const expiredShown = useRef(new Set());
+  const isFocused = useIsFocused();
+
+  /* Reset to Scheduled tab every time Activity screen regains focus */
+  useEffect(() => {
+    if (isFocused) {
+      setActiveTab('Scheduled');
+      setSearchQuery('');
+      setShowSearch(false);
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     const interval = setInterval(() => tick((n) => n + 1), 1000);
@@ -116,6 +129,21 @@ export default function ChatsScreen({ navigation }) {
     navigation.navigate('GuideProfileChats', { guideId: booking.guideId });
   };
 
+  /* Search filtering — scoped to current tab */
+  const q = searchQuery.toLowerCase().trim();
+  const filteredPending = q
+    ? pending.filter((r) => r.providerName.toLowerCase().includes(q) || (r.providerTitle || '').toLowerCase().includes(q))
+    : pending;
+  const filteredUpcoming = q
+    ? upcoming.filter((b) => b.guideName.toLowerCase().includes(q) || (b.topics || []).some((t) => t.toLowerCase().includes(q)))
+    : upcoming;
+  const filteredPast = q
+    ? past.filter((b) => b.guideName.toLowerCase().includes(q) || (b.topics || []).some((t) => t.toLowerCase().includes(q)))
+    : past;
+  const filteredSessions = q
+    ? state.userSessions.filter((s) => s.guideName.toLowerCase().includes(q))
+    : state.userSessions;
+
   const tabCounts = {
     Active: pending.length,
     Scheduled: upcoming.length,
@@ -133,10 +161,35 @@ export default function ChatsScreen({ navigation }) {
         {/* Header */}
         <View style={s.header}>
           <Text style={s.headerTitle}>Activity</Text>
-          <TouchableOpacity style={s.searchBtn} activeOpacity={0.7}>
-            <Ionicons name="search-outline" size={20} color={colors.text} />
+          <TouchableOpacity
+            style={s.searchBtn}
+            activeOpacity={0.7}
+            onPress={() => { setShowSearch((v) => !v); if (showSearch) setSearchQuery(''); }}
+          >
+            <Ionicons name={showSearch ? 'close' : 'search-outline'} size={20} color={colors.text} />
           </TouchableOpacity>
         </View>
+
+        {/* Search bar */}
+        {showSearch && (
+          <View style={s.searchBar}>
+            <Ionicons name="search-outline" size={16} color={colors.textMuted} />
+            <TextInput
+              style={s.searchInput}
+              placeholder={`Search ${activeTab.toLowerCase()}…`}
+              placeholderTextColor={colors.textMuted}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={8}>
+                <Ionicons name="close-circle" size={16} color={colors.textMuted} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
 
         {/* Segmented tabs */}
         <View style={s.segmentRow}>
@@ -147,7 +200,7 @@ export default function ChatsScreen({ navigation }) {
               <TouchableOpacity
                 key={tab}
                 style={[s.segmentBtn, isActive && s.segmentBtnActive]}
-                onPress={() => setActiveTab(tab)}
+                onPress={() => { setActiveTab(tab); setSearchQuery(''); }}
                 activeOpacity={0.7}
               >
                 <Text style={[s.segmentText, isActive && s.segmentTextActive]}>{tab}</Text>
@@ -171,10 +224,10 @@ export default function ChatsScreen({ navigation }) {
           <>
             {/* ── Active tab (pending requests) ── */}
             {activeTab === 'Active' && (
-              pending.length === 0 ? (
-                <EmptyState icon="chatbubble-outline" title="No active chats" subtitle="Your active conversations will appear here" />
+              filteredPending.length === 0 ? (
+                <EmptyState icon="chatbubble-outline" title={q ? 'No results' : 'No active chats'} subtitle={q ? 'Try a different search' : 'Your active conversations will appear here'} />
               ) : (
-                pending.map((req) => {
+                filteredPending.map((req) => {
                   const elapsed = Date.now() - req.requestedAt;
                   const remaining = Math.max(0, REQUEST_TIMEOUT_MS - elapsed);
                   const mins = Math.floor(remaining / 60000);
@@ -210,10 +263,10 @@ export default function ChatsScreen({ navigation }) {
 
             {/* ── Scheduled tab ── */}
             {activeTab === 'Scheduled' && (
-              upcoming.length === 0 ? (
-                <EmptyState icon="calendar-outline" title="No scheduled chats" subtitle="Book a session to see it here" />
+              filteredUpcoming.length === 0 ? (
+                <EmptyState icon="calendar-outline" title={q ? 'No results' : 'No scheduled chats'} subtitle={q ? 'Try a different search' : 'Book a session to see it here'} />
               ) : (
-                upcoming.map((b) => {
+                filteredUpcoming.map((b) => {
                   const guide = findGuide(b.guideId);
                   const cred = getCredentialLabel(guide);
                   const topic = b.topics?.[0];
@@ -291,11 +344,11 @@ export default function ChatsScreen({ navigation }) {
 
             {/* ── Past tab ── */}
             {activeTab === 'Past' && (
-              (past.length === 0 && state.userSessions.length === 0) ? (
-                <EmptyState icon="checkmark-done-outline" title="No past chats" subtitle="Completed conversations will show here" />
+              (filteredPast.length === 0 && filteredSessions.length === 0) ? (
+                <EmptyState icon="checkmark-done-outline" title={q ? 'No results' : 'No past chats'} subtitle={q ? 'Try a different search' : 'Completed conversations will show here'} />
               ) : (
                 <>
-                  {past.map((b) => {
+                  {filteredPast.map((b) => {
                     const guide = findGuide(b.guideId);
                     const cred = getCredentialLabel(guide);
                     return (
@@ -332,7 +385,7 @@ export default function ChatsScreen({ navigation }) {
                       </TouchableOpacity>
                     );
                   })}
-                  {state.userSessions.slice(0, 5).map((sess) => (
+                  {filteredSessions.slice(0, 5).map((sess) => (
                     <View key={sess.id} style={s.card}>
                       <View style={s.cardTop}>
                         <Avatar name={sess.guideName} size={52} />
@@ -545,6 +598,7 @@ const s = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-evenly',
     marginTop: 14,
     paddingTop: 14,
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -553,13 +607,12 @@ const s = StyleSheet.create({
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 20,
   },
   metaText: {
     fontSize: font.caption,
-    color: colors.textSecondary,
+    color: colors.text,
     marginLeft: 5,
-    fontWeight: '500',
+    fontWeight: '700',
   },
 
   /* Action buttons */
@@ -664,6 +717,24 @@ const s = StyleSheet.create({
     fontSize: font.caption,
     fontWeight: '700',
     color: colors.textMuted,
+  },
+
+  /* Search bar */
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: radius.full,
+    paddingHorizontal: 14,
+    height: 42,
+    marginBottom: spacing.md,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: font.body,
+    color: colors.text,
+    marginLeft: 8,
+    paddingVertical: 0,
   },
 
   /* "Too early" bottom sheet */

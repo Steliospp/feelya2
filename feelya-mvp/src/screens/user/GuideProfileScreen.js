@@ -215,7 +215,7 @@ export default function GuideProfileScreen({ navigation, route }) {
           )}
         </View>
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 32 }} />
       </ScrollView>
 
       {/* Footer for when a slot is selected */}
