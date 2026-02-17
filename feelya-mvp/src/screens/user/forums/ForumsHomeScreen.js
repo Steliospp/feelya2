@@ -178,7 +178,13 @@ export default function ForumsHomeScreen({ navigation }) {
                           {thread.upvotes}
                         </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.metaBtn} hitSlop={8}>
+                      <TouchableOpacity
+                        style={styles.metaBtn}
+                        hitSlop={8}
+                        onPress={() =>
+                          navigation.navigate('Thread', { threadId: thread.id, autoFocusReply: true })
+                        }
+                      >
                         <Ionicons
                           name="chatbubble-outline"
                           size={14}
@@ -229,6 +235,7 @@ export default function ForumsHomeScreen({ navigation }) {
                 title={resource.title}
                 description={resource.description}
                 readTime={resource.readTime}
+                onPress={() => navigation.navigate('CommunityResourceDetail', { resourceId: resource.id })}
               />
             ))
           )}

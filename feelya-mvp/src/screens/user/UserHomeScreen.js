@@ -139,6 +139,7 @@ export default function UserHomeScreen({ navigation }) {
               title={r.title}
               description={r.description}
               readTime={r.readTime}
+              onPress={() => navigation.navigate('HomeResourceDetail', { resourceId: r.id })}
               style={styles.resourceCardHorizontal}
             />
           ))}

@@ -175,6 +175,7 @@ export default function TopicHubScreen({ navigation, route }) {
                 title={blog.title}
                 description={blog.description}
                 readTime={blog.readTime}
+                onPress={() => navigation.navigate('HomeResourceDetail', { resourceId: blog.id })}
               />
             ))}
           </>

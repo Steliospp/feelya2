@@ -66,25 +66,13 @@ export default function ScheduleSessionScreen({ navigation, route }) {
       },
     });
 
-    // Also add as pending request so it shows in Activity "Waiting for response"
-    dispatch({
-      type: 'ADD_PENDING_REQUEST',
-      payload: {
-        providerName: selectedProvider.name,
-        providerTitle: `Session · ${dateStr} at ${timeStr}`,
-        providerType: selectedProvider.type,
-        avatar: selectedProvider.avatar,
-        topics: selectedProvider.topics.slice(0, 2),
-      },
-    });
-
     setSelectedProvider(null);
     setSelectedDate(null);
     setSelectedSlot(null);
     Alert.alert(
       'Session booked',
       `Your session with ${providerName} is confirmed for ${dateStr} at ${timeStr}.`,
-      [{ text: 'OK', onPress: () => navigation.navigate('HomeMain') }],
+      [{ text: 'OK', onPress: () => navigation.navigate('Chats', { screen: 'ChatsMain' }) }],
     );
   };
 

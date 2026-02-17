@@ -70,24 +70,14 @@ export default function GuideProfileScreen({ navigation, route }) {
         },
       });
 
-      // Also add as pending request so it shows in Activity "Waiting for response"
-      dispatch({
-        type: 'ADD_PENDING_REQUEST',
-        payload: {
-          providerName: guide.name,
-          providerTitle: `${selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)} session · ${formatDate(slot.date)} at ${slot.label}`,
-          providerType: 'guide',
-          topics: guide.topics.slice(0, 2),
-        },
-      });
     }
 
     setShowConfirm(false);
     setShowBooking(false);
     Alert.alert(
-      bookingId ? 'Rescheduled' : 'Planned',
+      bookingId ? 'Rescheduled' : 'Confirmed',
       `Chat with ${guide.name} on ${formatDate(slot.date)} at ${slot.label}`,
-      [{ text: 'OK', onPress: () => navigation.goBack() }]
+      [{ text: 'OK', onPress: () => navigation.navigate('Chats', { screen: 'ChatsMain' }) }]
     );
   };
 
