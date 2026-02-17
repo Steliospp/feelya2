@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import useTabScrollToTop from '../../hooks/useTabScrollToTop';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
   Screen, Card, Avatar, Badge, SectionTitle, EmptyState,
@@ -9,8 +9,7 @@ import {
 import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
 export default function ChatsScreen({ navigation }) {
-  const scrollRef = useRef(null);
-  useScrollToTop(scrollRef);
+  const scrollRef = useTabScrollToTop();
   const { state } = useApp();
   const upcoming = state.bookings.filter((b) => b.status === 'upcoming');
   const past = state.bookings.filter((b) => b.status !== 'upcoming');

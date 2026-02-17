@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { CommonActions, useScrollToTop } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
+import useTabScrollToTop from '../../hooks/useTabScrollToTop';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, font, shadow } from '../../theme';
 import {
@@ -10,8 +11,7 @@ import {
 import { useApp, MOCK_GUIDES } from '../../store/AppContext';
 
 export default function ProfileScreen({ navigation }) {
-  const scrollRef = useRef(null);
-  useScrollToTop(scrollRef);
+  const scrollRef = useTabScrollToTop();
   const { state, dispatch } = useApp();
   const [showSafety, setShowSafety] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
