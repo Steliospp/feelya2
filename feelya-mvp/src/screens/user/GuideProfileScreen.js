@@ -46,7 +46,9 @@ export default function GuideProfileScreen({ navigation, route }) {
   const confirmBooking = () => {
     const slot = slots.find((sl) => sl.id === selectedSlot);
     if (!slot) return;
-    const price = +(30 * guide.ratePerMin).toFixed(2);
+    const price = guide.ratePerMin
+      ? +(30 * guide.ratePerMin).toFixed(2)
+      : guide.pricePerSession || 0;
 
     if (bookingId) {
       dispatch({
@@ -92,7 +94,7 @@ export default function GuideProfileScreen({ navigation, route }) {
           <Text style={s.name}>{guide.name}</Text>
           <View style={s.ratingRow}>
             <Ionicons name="star" size={16} color={colors.warning} />
-            <Text style={s.ratingText}>{guide.rating} ({guide.conversations} conversations)</Text>
+            <Text style={s.ratingText}>{guide.rating} ({guide.conversations || guide.reviews} conversations)</Text>
           </View>
         </View>
 
@@ -217,16 +219,27 @@ export default function GuideProfileScreen({ navigation, route }) {
             <Text style={s.confirmDetailLabel}>Duration</Text>
             <Text style={s.confirmDetailValue}>30 min</Text>
           </View>
-          <View style={s.confirmDetailRow}>
-            <Text style={s.confirmDetailLabel}>Rate</Text>
-            <Text style={s.confirmDetailValue}>${guide.ratePerMin.toFixed(2)}/min</Text>
-          </View>
-          <View style={s.confirmDetailRow}>
-            <Text style={s.confirmDetailLabel}>Estimated total</Text>
-            <Text style={[s.confirmDetailValue, { fontWeight: '700' }]}>
-              ${(30 * guide.ratePerMin).toFixed(2)}
-            </Text>
-          </View>
+          {guide.ratePerMin ? (
+            <>
+              <View style={s.confirmDetailRow}>
+                <Text style={s.confirmDetailLabel}>Rate</Text>
+                <Text style={s.confirmDetailValue}>${guide.ratePerMin.toFixed(2)}/min</Text>
+              </View>
+              <View style={s.confirmDetailRow}>
+                <Text style={s.confirmDetailLabel}>Estimated total</Text>
+                <Text style={[s.confirmDetailValue, { fontWeight: '700' }]}>
+                  ${(30 * guide.ratePerMin).toFixed(2)}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <View style={s.confirmDetailRow}>
+              <Text style={s.confirmDetailLabel}>Session price</Text>
+              <Text style={[s.confirmDetailValue, { fontWeight: '700' }]}>
+                ${guide.pricePerSession || 0}
+              </Text>
+            </View>
+          )}
         </View>
 
         <PrimaryButton title="Confirm" onPress={confirmBooking} style={{ marginTop: spacing.md }} />
