@@ -149,6 +149,7 @@ export default function GuideProfileScreen({ navigation, route }) {
   const [showBooking, setShowBooking] = useState(!!initialMode);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedMode, setSelectedMode] = useState(preselectedMode || 'chat');
+  const [navigating, setNavigating] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   /* Auto-scroll to Availability when coming from Reschedule */
@@ -222,12 +223,15 @@ export default function GuideProfileScreen({ navigation, route }) {
       });
     }
 
+    // Force-unmount both BottomSheets (removes their Modals instantly)
+    // then navigate once React has flushed the unmount
+    setNavigating(true);
     setShowConfirm(false);
     setShowBooking(false);
-    // Wait for the Modal to finish its close animation before navigating
     setTimeout(() => {
       navigation.navigate('Chats', { screen: 'ChatsMain' });
-    }, 350);
+      setNavigating(false);
+    }, 50);
   };
 
   /* ──────── RENDER ──────── */
@@ -485,7 +489,7 @@ export default function GuideProfileScreen({ navigation, route }) {
       </View>
 
       {/* ── Plan a Chat bottom sheet ── */}
-      <BottomSheet visible={showBooking && !showConfirm} onClose={() => setShowBooking(false)} title="Plan a chat">
+      {!navigating && <BottomSheet visible={showBooking && !showConfirm} onClose={() => setShowBooking(false)} title="Plan a chat">
         {/* Mini profile in sheet */}
         <View style={s.sheetProfile}>
           {avatarUrl ? (
@@ -580,10 +584,10 @@ export default function GuideProfileScreen({ navigation, route }) {
             {selectedSlot ? (bookingId ? 'Reschedule' : 'Confirm booking') : 'Select a time to continue'}
           </Text>
         </TouchableOpacity>
-      </BottomSheet>
+      </BottomSheet>}
 
       {/* ── Booking confirmed bottom sheet ── */}
-      <BottomSheet visible={showConfirm} onClose={() => setShowConfirm(false)}>
+      {!navigating && <BottomSheet visible={showConfirm} onClose={() => setShowConfirm(false)}>
         <View style={s.confirmWrap}>
           <View style={s.confirmCircle}>
             <Ionicons name="checkmark" size={36} color={colors.white} />
@@ -614,7 +618,7 @@ export default function GuideProfileScreen({ navigation, route }) {
             <Text style={s.sheetBtnText}>Done</Text>
           </TouchableOpacity>
         </View>
-      </BottomSheet>
+      </BottomSheet>}
     </View>
   );
 }
